@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">إضافة منتج - زِينَة</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" as="script">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/product-service.js"></script>
+    <script src="../js/governorate-filter.js"></script>
+    <script src="../js/cities-service.js"></script>
+    <script src="../js/enhanced-auto-slideshow.js"></script>
+    
+    <!-- Cities Filter Styles -->
+    <style>
+        .cities-filter-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .cities-header {
+            position: relative;
+        }
+
+        .cities-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 48px;
+        }
+
+        .cities-trigger:hover {
+            border-color: #d1d5db;
+        }
+
+        .cities-trigger.active {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .trigger-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .location-icon {
+            width: 20px;
+            height: 20px;
+            color: #6b7280;
+            flex-shrink: 0;
+        }
+
+        .trigger-text {
+            color: #374151;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .selected-count {
+            background: #3b82f6;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .chevron-icon {
+            width: 16px;
+            height: 16px;
+            color: #6b7280;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .cities-trigger.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .cities-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            margin-top: 4px;
+            max-height: 400px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .cities-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: #9ca3af;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        .cities-list {
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .city-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .city-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .city-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .city-input {
+            width: 16px;
+            height: 16px;
+            accent-color: #3b82f6;
+        }
+
+        .city-name {
+            color: #374151;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .dropdown-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .apply-btn {
+            width: 100%;
+            padding: 10px 16px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .apply-btn:hover {
+            background: #2563eb;
+        }
+
+        .selected-cities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .selected-city-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .remove-city {
+            background: none;
+            border: none;
+            color: #1e40af;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 0;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .remove-city:hover {
+            background: rgba(30, 64, 175, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 640px) {
+            .cities-filter-container {
+                max-width: 100%;
+            }
+            
+            .cities-trigger {
+                padding: 10px 12px;
+                min-height: 44px;
+            }
+            
+            .trigger-text {
+                font-size: 14px;
+            }
+            
+            .cities-dropdown {
+                max-height: 300px;
+            }
+            
+            .cities-list {
+                max-height: 200px;
+            }
+        }
+    </style>
+    
+    <!-- Ensure ProductService is available -->
+    <script>
+        // Wait for ProductService to be loaded
+        function waitForProductService() {
+            return new Promise((resolve) => {
+                if (window.ProductService && window.supabaseClient) {
+                    console.log('✅ ProductService and Supabase already loaded');
+                    resolve(window.ProductService);
+                } else {
+                    console.log('⏳ Waiting for ProductService and Supabase to load...');
+                    const checkInterval = setInterval(() => {
+                        if (window.ProductService && window.supabaseClient) {
+                            clearInterval(checkInterval);
+                            console.log('✅ ProductService and Supabase loaded successfully');
+                            resolve(window.ProductService);
+                        }
+                    }, 100);
+                    
+                    // Timeout after 5 seconds
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        console.error('❌ ProductService or Supabase not loaded after 5 seconds');
+                        resolve(null);
+                    }, 5000);
+                }
+            });
+        }
+        
+        // Check if all required services are loaded
+        function checkRequiredServices() {
+            const services = {
+                'Supabase': typeof window.supabaseClient !== 'undefined',
+                'ProductService': typeof window.ProductService !== 'undefined',
+                'ProductService.addProduct': typeof window.ProductService?.addProduct === 'function',
+                'ProductService.supabase': typeof window.ProductService?.supabase !== 'undefined'
+            };
+            
+            console.log('🔍 Checking required services:', services);
+            
+            // Check if all services are available
+            const allAvailable = Object.values(services).every(available => available);
+            if (!allAvailable) {
+                console.error('❌ Some required services are not available:', services);
+            }
+            
+            return services;
+        }
+    </script>
+    <!-- Authentication Check Script -->
+    <script>
+        // Check authentication status before loading the page
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Wait for ProductService to be loaded
+                const productService = await waitForProductService();
+                if (!productService) {
+                    console.error('ProductService failed to load');
+                    showError('خطأ في تحميل خدمات النظام');
+                    return;
+                }
+                
+                // Get current session
+                const { data: { session }, error } = await window.supabaseClient.auth.getSession();
+                
+                if (error) {
+                    console.error('Error checking session:', error);
+                    redirectToLogin();
+                    return;
+                }
+                
+                // If no session, redirect to login
+                if (!session) {
+                    redirectToLogin();
+                    return;
+                }
+                
+                // User is authenticated, show the page content
+                document.body.style.display = 'block';
+                
+                // Check all required services
+                const servicesStatus = checkRequiredServices();
+                console.log('✅ ProductService loaded successfully');
+                
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                redirectToLogin();
+            }
+        });
+        
+        function redirectToLogin() {
+            // Show loading message
+            document.body.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-yellow-100">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-600 mx-auto mb-4"></div>
+                        <p class="text-gray-600 mb-4">جاري التحقق من تسجيل الدخول...</p>
+                        <p class="text-sm text-gray-500">سيتم توجيهك لصفحة تسجيل الدخول</p>
+                    </div>
+                </div>
+            `;
+            
+            // Redirect to login page after a short delay
+            setTimeout(() => {
+                window.location.href = 'login.html?redirect=add-product';
+            }, 2000);
+        }
+    </script>
+    <style>
+        :root {
+            --primary-pink: #f8d7e4;
+            --primary-green: #d8e9d6;
+            --primary-beige: #f5f0e6;
+            --gold: #d4af37;
+            --dark-gold: #b8941f;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: none; /* Hide content until authentication is verified */
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+            background: white;
+        }
+        
+        .textarea-field {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--dark-gold) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--gold);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--gold);
+            background: #fef3c7;
+        }
+        
+        .upload-area.dragover {
+            border-color: var(--gold);
+            background: #fef3c7;
+            transform: scale(1.02);
+        }
+        
+        .image-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .image-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        /* Sortable Image Styles */
+        .sortable-image {
+            cursor: grab;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sortable-image:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .sortable-image.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+            z-index: 1000;
+            cursor: grabbing;
+        }
+
+        .sortable-image.drag-over {
+            border: 2px dashed var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .image-drag-handle {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .image-drag-handle:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+
+        .image-number {
+            position: absolute;
+            bottom: 0.5rem;
+            left: 0.5rem;
+            background: var(--gold);
+            color: white;
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .image-sort-instructions {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        
+        .image-remove {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .image-remove:hover {
+            background: rgba(239, 68, 68, 1);
+            transform: scale(1.1);
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-icon {
+            width: 2rem;
+            height: 2rem;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--dark-gold) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--dark-gold) 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: #ef4444;
+            font-weight: bold;
+        }
+        
+        .optional-field::after {
+            content: " (اختياري)";
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: normal;
+        }
+        
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .section-card {
+                padding: 1.5rem;
+            }
+            
+            .image-preview {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gold-200">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mr-3">
+                        <span class="text-white font-bold text-xs text-center leading-tight">منصة<br>الخطوبة</span>
+                    </div>
+                    <h1 class="text-xl font-bold gold-text">زِينَة</h1>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden lg:flex items-center space-x-8 space-x-reverse">
+                    <a href="../index.html" class="text-gray-600 hover:text-yellow-600 font-medium transition-colors">الرئيسية</a>
+                    <a href="admin-products.html" class="text-gray-600 hover:text-yellow-600 font-medium transition-colors">إدارة المنتجات</a>
+                    <a href="#" class="text-yellow-600 font-medium">إضافة منتج</a>
+                </nav>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="lg:hidden p-2 text-gray-600 hover:text-yellow-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-gray-200">
+            <div class="px-4 py-2 space-y-2">
+                                    <a href="../index.html" class="block py-2 text-gray-600 hover:text-yellow-600 font-medium">الرئيسية</a>
+                <a href="admin-products.html" class="block py-2 text-gray-600 hover:text-yellow-600 font-medium">إدارة المنتجات</a>
+                <a href="#" class="block py-2 text-yellow-600 font-medium">إضافة منتج</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-2xl font-bold text-gray-800">إضافة منتج جديد</h2>
+                <span class="text-sm text-gray-600" id="progress-text">1 من 3</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 33%"></div>
+            </div>
+        </div>
+
+        <form id="add-product-form" class="form-container p-8">
+            <!-- Product Details Section -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <div class="section-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    تفاصيل المنتج
+                </h3>
+                
+                <div class="input-group">
+                    <label for="product-description" class="block text-sm font-medium text-gray-700 mb-2 required-field">وصف المنتج</label>
+                    <textarea id="product-description" class="input-field textarea-field" placeholder="اكتب وصفاً مفصلاً للمنتج..." required></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label for="product-price" class="block text-sm font-medium text-gray-700 mb-2 optional-field">سعر المنتج (ج.م)</label>
+                    <input type="number" id="product-price" class="input-field" placeholder="0" min="0" step="0.01">
+                </div>
+                
+                <div class="input-group">
+                    <label for="product-category" class="block text-sm font-medium text-gray-700 mb-2 required-field">التصنيف الرئيسي</label>
+                    <select id="product-category" class="input-field" required>
+                        <option value="">اختر التصنيف الرئيسي</option>
+                        <option value="koshat">كوشات</option>
+                        <option value="mirr">مرايا</option>
+                        <option value="cake">تورتات وشكولاتات</option>
+                        <option value="other">ديكورات متنوعة</option>
+                        <option value="invitations">دعوات وتوزيعات</option>
+                    </select>
+                </div>
+                
+                <div class="input-group" id="subcategory-group" style="display: none;">
+                    <label for="product-subcategory" class="block text-sm font-medium text-gray-700 mb-2 required-field">التصنيف الفرعي</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="subcategory-options">
+                        <!-- Subcategory options will be populated here -->
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">يجب اختيار تصنيف فرعي واحد على الأقل</p>
+                </div>
+                
+                <div class="input-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-2 required-field">المحافظات المتوفرة</label>
+                    <div id="product-governorate-container"></div>
+                    <p class="text-xs text-gray-500 mt-1">يمكنك اختيار أكثر من محافظة إذا كان المنتج متوفر في عدة محافظات</p>
+                </div>
+                
+                <div class="input-group" id="cities-group" style="display: none;">
+                    <label class="block text-sm font-medium text-gray-700 mb-2 optional-field">المناطق/المدن المتوفرة</label>
+                    <div id="cities-container">
+                        <div class="cities-filter-container">
+                            <div class="cities-header">
+                                <div class="cities-trigger" id="cities-trigger">
+                                    <div class="trigger-content">
+                                        <svg class="location-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        <span class="trigger-text">اختر المناطق/المدن (اختياري)</span>
+                                        <span class="selected-count" id="cities-selected-count"></span>
+                                    </div>
+                                    <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6,9 12,15 18,9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <div class="cities-dropdown" id="cities-dropdown">
+                                <div class="dropdown-header">
+                                    <div class="search-container">
+                                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <path d="m21 21-4.35-4.35"></path>
+                                        </svg>
+                                        <input type="text" id="cities-search" placeholder="ابحث عن منطقة..." class="search-input">
+                                    </div>
+                                    <div class="actions">
+                                        <button type="button" id="select-all-cities-btn" class="action-btn">تحديد الكل</button>
+                                        <button type="button" id="clear-all-cities-btn" class="action-btn">إلغاء الكل</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="cities-list" id="cities-list">
+                                    <!-- Cities will be populated here -->
+                                </div>
+                                
+                                <div class="dropdown-footer">
+                                    <button type="button" id="apply-cities-filter" class="apply-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20,6 9,17 4,12"></polyline>
+                                        </svg>
+                                        تطبيق الفلتر
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="selected-cities" class="selected-cities"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">اختر المناطق أو المدن المتوفرة داخل المحافظات المختارة (اختياري - يمكنك تخطي هذا الحقل)</p>
+                </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <div class="section-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                    </div>
+                    معلومات التواصل
+                </h3>
+                
+                <div class="input-group">
+                    <label for="whatsapp" class="block text-sm font-medium text-gray-700 mb-2 required-field">رقم الواتساب</label>
+                    <input type="tel" id="whatsapp" class="input-field" placeholder="+20 123 456 7890" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="facebook" class="block text-sm font-medium text-gray-700 mb-2 optional-field">رابط حساب فيسبوك</label>
+                    <input type="url" id="facebook" class="input-field" placeholder="https://facebook.com/username">
+                </div>
+                
+                <div class="input-group">
+                    <label for="instagram" class="block text-sm font-medium text-gray-700 mb-2 optional-field">رابط حساب إنستجرام</label>
+                    <input type="text" id="instagram" class="input-field" placeholder="https://instagram.com/username أو @username">
+                    <p class="text-xs text-gray-500 mt-1">يمكنك كتابة الرابط كاملاً أو اسم المستخدم فقط (مثل: @username)</p>
+                </div>
+            </div>
+
+            <!-- Image Upload Section -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <div class="section-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    صور المنتج
+                </h3>
+                
+                <div class="upload-area" id="upload-area">
+                    <input type="file" id="image-upload" multiple accept="image/*" class="hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="text-lg font-medium text-gray-700 mb-2">اسحب الصور هنا أو اضغط للاختيار</p>
+                    <p class="text-sm text-gray-500">يمكنك رفع عدة صور دفعة واحدة (JPG, PNG, GIF)</p>
+                </div>
+                
+                <div class="image-preview" id="image-preview">
+                    <div class="image-sort-instructions mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-center text-blue-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                            </svg>
+                            <span class="text-sm font-medium">اسحب الصور لترتيبها - الصورة الأولى ستكون الصورة الرئيسية</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                <button type="submit" class="btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    إضافة المنتج
+                </button>
+                <button type="button" class="btn-secondary" onclick="window.location.href='index.html'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    إلغاء
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-20 p-8 max-w-md w-full mx-4 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">تم إضافة المنتج بنجاح</h3>
+            <button onclick="closeSuccessModal()" class="btn-primary">حسناً</button>
+        </div>
+    </div>
+
+    <script>
+        let governorateFilter;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize governorate filter
+            governorateFilter = new GovernorateFilter('product-governorate-container', {
+                placeholder: 'اختر المحافظات المتوفرة',
+                multiple: true
+            });
+            
+            // Add styles for governorate display
+            GovernorateDisplay.addStyles();
+            
+            // Initialize cities filter
+            initializeCitiesFilter();
+        });
+
+        // Mobile menu functionality
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Image upload functionality
+        const uploadArea = document.getElementById('upload-area');
+        const imageUpload = document.getElementById('image-upload');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadedImages = [];
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => {
+            imageUpload.click();
+        });
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        });
+
+        // File input change
+        imageUpload.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        // Drag and drop variables
+        let draggedElement = null;
+        let draggedIndex = null;
+
+        // Drag and drop functions for image sorting
+        function handleDragStart(e) {
+            draggedElement = this;
+            draggedIndex = parseInt(this.getAttribute('data-index'));
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            
+            if (draggedElement !== this) {
+                const dropIndex = parseInt(this.getAttribute('data-index'));
+                
+                // Reorder the uploadedImages array
+                const draggedImage = uploadedImages[draggedIndex];
+                uploadedImages.splice(draggedIndex, 1);
+                uploadedImages.splice(dropIndex, 0, draggedImage);
+                
+                // Reorder the DOM elements
+                const allImages = Array.from(imagePreview.querySelectorAll('.sortable-image'));
+                const draggedDOM = allImages[draggedIndex];
+                
+                if (draggedIndex < dropIndex) {
+                    imagePreview.insertBefore(draggedDOM, allImages[dropIndex].nextSibling);
+                } else {
+                    imagePreview.insertBefore(draggedDOM, allImages[dropIndex]);
+                }
+                
+                // Update order
+                updateImageOrder();
+                
+                // Show success message
+                showSortSuccess();
+            }
+            
+            draggedElement.classList.remove('dragging');
+            draggedElement = null;
+            draggedIndex = null;
+        }
+
+        function showSortSuccess() {
+            const message = document.createElement('div');
+            message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center';
+            message.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                تم تغيير ترتيب الصور بنجاح
+            `;
+            
+            document.body.appendChild(message);
+            
+            // Remove message after 3 seconds
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+        }
+
+        function updateImageOrder() {
+            const imageItems = imagePreview.querySelectorAll('.sortable-image');
+            imageItems.forEach((item, index) => {
+                item.setAttribute('data-index', index);
+                const numberElement = item.querySelector('.image-number');
+                if (numberElement) {
+                    numberElement.textContent = index + 1;
+                }
+            });
+        }
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        addImagePreview(e.target.result, file.name);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function addImagePreview(src, name) {
+            const imageItem = document.createElement('div');
+            imageItem.className = 'image-item sortable-image';
+            imageItem.draggable = true;
+            imageItem.setAttribute('data-index', uploadedImages.length);
+            
+            imageItem.innerHTML = `
+                <div class="image-drag-handle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                    </svg>
+                </div>
+                <img src="${src}" alt="${name}">
+                <div class="image-number">${uploadedImages.length + 1}</div>
+                <button type="button" class="image-remove" onclick="removeImage(this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            `;
+            
+            // Add drag and drop event listeners
+            imageItem.addEventListener('dragstart', handleDragStart);
+            imageItem.addEventListener('dragover', handleDragOver);
+            imageItem.addEventListener('drop', handleDrop);
+            imageItem.addEventListener('dragenter', handleDragEnter);
+            imageItem.addEventListener('dragleave', handleDragLeave);
+            
+            imagePreview.appendChild(imageItem);
+            uploadedImages.push({ src, name });
+            
+            // Hide instructions after first image
+            const instructions = document.querySelector('.image-sort-instructions');
+            if (instructions) {
+                instructions.style.display = 'none';
+            }
+        }
+
+        function removeImage(button) {
+            const imageItem = button.parentElement;
+            const index = Array.from(imagePreview.children).indexOf(imageItem);
+            uploadedImages.splice(index, 1);
+            imageItem.remove();
+            
+            // Update image numbers and data-index attributes
+            updateImageOrder();
+            
+            // Show instructions if no images left
+            if (uploadedImages.length === 0) {
+                const instructions = document.querySelector('.image-sort-instructions');
+                if (instructions) {
+                    instructions.style.display = 'block';
+                }
+            }
+        }
+
+        // Form submission
+        document.getElementById('add-product-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Check if ProductService is available before proceeding
+            if (!window.ProductService) {
+                console.error('❌ ProductService not available');
+                showError('خطأ في تحميل خدمات النظام. يرجى تحديث الصفحة والمحاولة مرة أخرى.');
+                return;
+            }
+            
+            // Check if Supabase is available
+            if (!window.supabaseClient) {
+                console.error('❌ Supabase not available');
+                showError('خطأ في تحميل قاعدة البيانات. يرجى تحديث الصفحة والمحاولة مرة أخرى.');
+                return;
+            }
+            
+            // Validate required fields
+            const description = document.getElementById('product-description').value.trim();
+            const price = document.getElementById('product-price').value;
+            const category = document.getElementById('product-category').value;
+            
+            // Get selected subcategories
+            const selectedSubcategories = [];
+            const subcategoryCheckboxes = document.querySelectorAll('#subcategory-options input[type="checkbox"]:checked');
+            subcategoryCheckboxes.forEach(checkbox => {
+                selectedSubcategories.push(checkbox.value);
+            });
+            
+            const selectedGovernorates = governorateFilter.getSelected();
+            const whatsapp = document.getElementById('whatsapp').value;
+            const facebook = document.getElementById('facebook').value;
+            const instagram = document.getElementById('instagram').value;
+            
+            // Validation
+            if (!description) {
+                showError('يرجى إدخال وصف المنتج');
+                return;
+            }
+            
+            if (!category) {
+                showError('يرجى اختيار التصنيف الرئيسي');
+                return;
+            }
+            
+            // Check if subcategory is required for "other" category
+            if (category === 'other' && selectedSubcategories.length === 0) {
+                showError('يرجى اختيار تصنيف فرعي واحد على الأقل');
+                return;
+            }
+            
+            if (selectedGovernorates.length === 0) {
+                showError('يرجى اختيار محافظة واحدة على الأقل');
+                return;
+            }
+            
+            if (!whatsapp) {
+                showError('يرجى إدخال رقم الواتساب');
+                return;
+            }
+            
+            if (uploadedImages.length === 0) {
+                showError('يرجى رفع صورة واحدة على الأقل');
+                return;
+            }
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            showLoading(submitBtn);
+            
+                         try {
+                 // Check authentication first
+                 const { data: { session } } = await window.supabaseClient.auth.getSession();
+                 if (!session) {
+                     throw new Error('يجب تسجيل الدخول لإضافة منتج. الرجاء تسجيل الدخول أولاً.');
+                 }
+                 console.log('✅ User authenticated:', session.user.email);
+                 
+                 // Get selected cities
+                 const selectedCitiesArray = getSelectedCities();
+                 
+                 // Prepare product data
+                 const productData = {
+                     title: description, // Use description as title
+                     description: description,
+                     price: price || null,
+                     category: category,
+                     subcategory: selectedSubcategories.length > 0 ? selectedSubcategories : null,
+                     governorate: selectedGovernorates.join(', '),
+                     cities: selectedCitiesArray.length > 0 ? selectedCitiesArray.join(', ') : null,
+                     whatsapp: whatsapp,
+                     facebook: facebook || null,
+                     instagram: instagram || null,
+                     user_id: session.user.id
+                 };
+                 
+                 // Convert uploaded images to File objects
+                 const imageFiles = [];
+                 for (let i = 0; i < uploadedImages.length; i++) {
+                     const response = await fetch(uploadedImages[i].src);
+                     const blob = await response.blob();
+                     const file = new File([blob], uploadedImages[i].name, { type: blob.type });
+                     imageFiles.push(file);
+                 }
+                
+                // Wait for ProductService to be available
+                const productService = await waitForProductService();
+                if (!productService) {
+                    throw new Error('ProductService غير متاح');
+                }
+                
+                // Add product to database
+                const result = await productService.addProduct(productData, imageFiles);
+                
+                if (result.success) {
+                    document.getElementById('success-modal').classList.remove('hidden');
+                    
+                    // Clear form
+                    document.getElementById('add-product-form').reset();
+                    document.getElementById('subcategory-group').style.display = 'none';
+                    document.getElementById('cities-group').style.display = 'none';
+                    uploadedImages.length = 0;
+                    document.getElementById('image-preview').innerHTML = '';
+                    
+                    // Clear cities filter
+                    selectedCities.clear();
+                    updateCitiesDisplay();
+                } else {
+                    submitBtn.innerHTML = originalText;
+                    showError(result.error || 'حدث خطأ أثناء إضافة المنتج');
+                }
+            } catch (error) {
+                submitBtn.innerHTML = originalText;
+                showError('حدث خطأ أثناء إضافة المنتج');
+                console.error('Error:', error);
+            }
+        });
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+            
+            // إظهار رسالة تأكيد
+            const confirmMessage = document.createElement('div');
+            confirmMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            confirmMessage.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    تم إضافة المنتج بنجاح! يمكنك إضافة منتج آخر
+                </div>
+            `;
+            document.body.appendChild(confirmMessage);
+            
+            // إزالة الرسالة بعد 3 ثوان
+            setTimeout(() => {
+                confirmMessage.remove();
+            }, 3000);
+            
+            // إعادة تعيين النموذج ليكون جاهزاً لإضافة منتج جديد
+            document.getElementById('add-product-form').reset();
+            document.getElementById('subcategory-group').style.display = 'none';
+            document.getElementById('cities-group').style.display = 'none';
+            uploadedImages.length = 0;
+            document.getElementById('image-preview').innerHTML = '';
+            
+            // Clear cities filter
+            selectedCities.clear();
+            updateCitiesDisplay();
+            
+            // إعادة تعيين شريط التقدم
+            updateProgress(1);
+            
+            // إعادة تفعيل زر الإرسال
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'إضافة المنتج';
+            }
+        }
+
+        // Progress bar update
+        function updateProgress(currentStep) {
+            const progress = (currentStep / 3) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = currentStep + ' من 3';
+        }
+
+        // Subcategory management - Updated to match category page filters
+        const subcategories = {
+            'koshat': [
+                { value: 'koshat-wedding', label: 'كوشات زفاف' },
+                { value: 'koshat-engagement', label: 'كوشات خطوبة' }
+            ],
+            'mirr': [
+                { value: 'mirror-wedding', label: 'مرآة زفاف' },
+                { value: 'mirror-engagement', label: 'مرآة خطوبة' },
+                { value: 'mirror-decorative', label: 'مرآة ديكور' }
+            ],
+            'cake': [
+                { value: 'cake-wedding', label: 'تورتة زفاف' },
+                { value: 'cake-engagement', label: 'تورتة خطوبة' },
+                { value: 'cake-birthday', label: 'تورتة عيد ميلاد' },
+                { value: 'cake-chocolate', label: 'تورتة شوكولاتة' },
+                { value: 'cake-fruit', label: 'تورتة فواكه' },
+                { value: 'cake-chocolate-tray', label: 'صينية شكولاتات' }
+            ],
+            'other': [
+                { value: 'other-birthday', label: 'ديكور عيد ميلاد' },
+                { value: 'other-hospital', label: 'استقبال المولود بالمستشفى' },
+                { value: 'other-bride', label: 'ديكور استقبال عروسة' },
+                { value: 'other-party', label: 'ديكور حفلات بسيطة' }
+            ],
+            'invitations': [
+                { value: 'invitation-wedding', label: 'دعوة زفاف' },
+                { value: 'invitation-engagement', label: 'دعوة خطوبة' },
+                { value: 'invitation-chocolate', label: 'توزيعات بالشوكولاتة' },
+                { value: 'invitation-perfumed', label: 'توزيعات بالبرفان' },
+                { value: 'invitation-gift', label: 'توزيعات مع هدية صغيرة' },
+                { value: 'invitation-digital', label: 'دعوة رقمية' },
+                { value: 'invitation-innovative', label: 'دعوة مبتكرة' }
+            ]
+        };
+
+        // Handle category change
+        document.getElementById('product-category').addEventListener('change', function() {
+            console.log('🔄 Category changed to:', this.value);
+            
+            const selectedCategory = this.value;
+            const subcategoryGroup = document.getElementById('subcategory-group');
+            const subcategoryOptions = document.getElementById('subcategory-options');
+            
+            console.log('🔍 Found elements:', {
+                subcategoryGroup: !!subcategoryGroup,
+                subcategoryOptions: !!subcategoryOptions
+            });
+            
+            // Clear subcategory options
+            subcategoryOptions.innerHTML = '';
+            
+            if (selectedCategory && subcategories[selectedCategory]) {
+                console.log('✅ Adding subcategories for:', selectedCategory);
+                console.log('📋 Available subcategories:', subcategories[selectedCategory]);
+                
+                // Add subcategory options as checkboxes
+                subcategories[selectedCategory].forEach(sub => {
+                    console.log('➕ Adding subcategory:', sub.label);
+                    
+                    const checkboxDiv = document.createElement('div');
+                    checkboxDiv.className = 'flex items-center';
+                    checkboxDiv.innerHTML = `
+                        <input type="checkbox" 
+                               id="sub-${sub.value}" 
+                               value="${sub.value}" 
+                               class="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500 focus:ring-2">
+                        <label for="sub-${sub.value}" class="mr-2 text-sm text-gray-700 cursor-pointer">
+                            ${sub.label}
+                        </label>
+                    `;
+                    subcategoryOptions.appendChild(checkboxDiv);
+                });
+                
+                // Show subcategory group
+                subcategoryGroup.style.display = 'block';
+                console.log('👁️ Subcategory group is now visible');
+            } else {
+                // Hide subcategory group
+                subcategoryGroup.style.display = 'none';
+                console.log('🙈 Subcategory group is now hidden');
+            }
+        });
+
+        // Helper functions for UI
+        function showError(message) {
+            // Create error notification
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            errorDiv.textContent = message;
+            document.body.appendChild(errorDiv);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 3000);
+        }
+
+        function showLoading(button) {
+            button.innerHTML = `
+                <svg class="animate-spin h-5 w-5 inline ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                جاري الإضافة...
+            `;
+            button.disabled = true;
+        }
+
+        // Update progress on form interaction
+        document.querySelectorAll('input, textarea, select').forEach(element => {
+            element.addEventListener('input', () => {
+                const filledFields = document.querySelectorAll('input[required]:not([value=""]), textarea[required]:not([value=""]), select[required]:not([value=""])').length;
+                updateProgress(Math.min(filledFields, 3));
+            });
+        });
+        
+        // Final check when page is fully loaded
+        window.addEventListener('load', function() {
+            console.log('🚀 Page fully loaded');
+            console.log('🔍 Final service check:', {
+                'Supabase': typeof window.supabaseClient !== 'undefined',
+                'ProductService': typeof window.ProductService !== 'undefined',
+                'ProductService.addProduct': typeof window.ProductService?.addProduct,
+                'ProductService.supabase': typeof window.ProductService?.supabase
+            });
+            
+            // Run comprehensive service check
+            const servicesStatus = checkRequiredServices();
+            console.log('📊 Comprehensive service status:', servicesStatus);
+        });
+
+        // Cities Filter Variables
+        let citiesService;
+        let selectedCities = new Set();
+        let currentGovernorates = [];
+
+        // Initialize Cities Filter
+        function initializeCitiesFilter() {
+            // Initialize CitiesService
+            citiesService = new CitiesService();
+            
+            // Setup cities filter functionality
+            setupCitiesFilter();
+            
+            // Listen for governorate changes
+            listenForGovernorateChanges();
+        }
+
+        // Setup Cities Filter
+        function setupCitiesFilter() {
+            const citiesTrigger = document.getElementById('cities-trigger');
+            const citiesDropdown = document.getElementById('cities-dropdown');
+            const citiesSearch = document.getElementById('cities-search');
+            const selectAllCitiesBtn = document.getElementById('select-all-cities-btn');
+            const clearAllCitiesBtn = document.getElementById('clear-all-cities-btn');
+            const applyCitiesFilterBtn = document.getElementById('apply-cities-filter');
+
+            // Toggle dropdown
+            citiesTrigger.addEventListener('click', function() {
+                citiesDropdown.classList.toggle('show');
+                citiesTrigger.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!citiesTrigger.contains(event.target) && !citiesDropdown.contains(event.target)) {
+                    citiesDropdown.classList.remove('show');
+                    citiesTrigger.classList.remove('active');
+                }
+            });
+
+            // Search functionality
+            citiesSearch.addEventListener('input', function() {
+                filterCities(this.value);
+            });
+
+            // Select all cities
+            selectAllCitiesBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.city-input');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                    selectedCities.add(checkbox.value);
+                });
+                updateCitiesDisplay();
+            });
+
+            // Clear all cities
+            clearAllCitiesBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.city-input');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                selectedCities.clear();
+                updateCitiesDisplay();
+            });
+
+            // Apply filter
+            applyCitiesFilterBtn.addEventListener('click', function() {
+                citiesDropdown.classList.remove('show');
+                citiesTrigger.classList.remove('active');
+            });
+        }
+
+        // Listen for Governorate Changes
+        function listenForGovernorateChanges() {
+            // Create a MutationObserver to watch for changes in the governorate filter
+            const governorateContainer = document.getElementById('product-governorate-container');
+            
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                        // Check if governorates have changed
+                        const selectedGovernorates = governorateFilter.getSelected();
+                        if (JSON.stringify(selectedGovernorates) !== JSON.stringify(currentGovernorates)) {
+                            currentGovernorates = [...selectedGovernorates];
+                            updateCitiesFilter(selectedGovernorates);
+                        }
+                    }
+                });
+            });
+
+            observer.observe(governorateContainer, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['class']
+            });
+
+            // Also listen for the governorate filter's onChange event
+            governorateFilter.onChange = function(selectedGovernorates) {
+                currentGovernorates = [...selectedGovernorates];
+                updateCitiesFilter(selectedGovernorates);
+            };
+        }
+
+        // Update Cities Filter based on selected governorates
+        function updateCitiesFilter(selectedGovernorates) {
+            const citiesGroup = document.getElementById('cities-group');
+            const citiesList = document.getElementById('cities-list');
+            const citiesTrigger = document.getElementById('cities-trigger');
+            const citiesSearch = document.getElementById('cities-search');
+
+            if (selectedGovernorates.length === 0) {
+                // Hide cities filter if no governorates selected
+                citiesGroup.style.display = 'none';
+                selectedCities.clear();
+                updateCitiesDisplay();
+                return;
+            }
+
+            // Show cities filter
+            citiesGroup.style.display = 'block';
+
+            // Get all cities for selected governorates
+            let allCities = [];
+            selectedGovernorates.forEach(governorate => {
+                const cities = citiesService.getCitiesForGovernorate(governorate);
+                allCities = allCities.concat(cities);
+            });
+
+            // Remove duplicates
+            allCities = [...new Set(allCities)];
+
+            // Populate cities list
+            citiesList.innerHTML = allCities.map(city => `
+                <div class="city-item">
+                    <label class="city-checkbox">
+                        <input type="checkbox" value="${city}" class="city-input">
+                        <span class="city-name">${city}</span>
+                    </label>
+                </div>
+            `).join('');
+
+            // Add event listeners to new checkboxes
+            const cityCheckboxes = document.querySelectorAll('.city-input');
+            cityCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        selectedCities.add(this.value);
+                    } else {
+                        selectedCities.delete(this.value);
+                    }
+                    updateCitiesDisplay();
+                });
+            });
+
+            // Clear search
+            citiesSearch.value = '';
+            
+            // Update display
+            updateCitiesDisplay();
+        }
+
+        // Filter cities based on search term
+        function filterCities(searchTerm) {
+            const cityItems = document.querySelectorAll('.city-item');
+            
+            cityItems.forEach(item => {
+                const cityName = item.querySelector('.city-name').textContent.toLowerCase();
+                const matches = cityName.includes(searchTerm.toLowerCase());
+                item.style.display = matches ? 'block' : 'none';
+            });
+        }
+
+        // Update cities display
+        function updateCitiesDisplay() {
+            const selectedCount = document.getElementById('cities-selected-count');
+            const selectedCitiesContainer = document.getElementById('selected-cities');
+            const triggerText = document.querySelector('#cities-trigger .trigger-text');
+
+            // Update count
+            if (selectedCities.size === 0) {
+                selectedCount.style.display = 'none';
+                triggerText.textContent = 'اختر المناطق/المدن (اختياري)';
+            } else {
+                selectedCount.style.display = 'inline-block';
+                selectedCount.textContent = selectedCities.size;
+                triggerText.textContent = `${selectedCities.size} منطقة مختارة`;
+            }
+
+            // Update selected cities tags
+            if (selectedCities.size === 0) {
+                selectedCitiesContainer.innerHTML = '';
+            } else {
+                selectedCitiesContainer.innerHTML = Array.from(selectedCities).map(city => `
+                    <div class="selected-city-tag">
+                        ${city}
+                        <button class="remove-city" onclick="removeCity('${city}')">×</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Remove specific city
+        function removeCity(city) {
+            selectedCities.delete(city);
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`.city-input[value="${city}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+            
+            updateCitiesDisplay();
+        }
+
+        // Get selected cities for form submission
+        function getSelectedCities() {
+            return Array.from(selectedCities);
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - زِينَة</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" as="script">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/auth-service.js"></script>
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            min-height: 100vh;
+        }
+        
+        .gold-text {
+            color: #d4af37;
+            font-weight: bold;
+        }
+        
+        .gold-border {
+            border-color: #d4af37;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-md">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-gradient-to-br from-pink-400 to-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-white text-2xl font-bold">منصة<br>الخطوبة</span>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">تسجيل الدخول</h1>
+            <p class="text-gray-600">أدخل بياناتك للوصول إلى حسابك</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-container rounded-2xl shadow-2xl p-8">
+            <form id="login-form" class="space-y-6">
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">البريد الإلكتروني</label>
+                    <input type="email" 
+                           id="email" 
+                           name="email" 
+                           required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all"
+                           placeholder="أدخل بريدك الإلكتروني">
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all"
+                           placeholder="أدخل كلمة المرور">
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-yellow-600 focus:ring-yellow-400">
+                        <span class="mr-2 text-sm text-gray-600">تذكرني</span>
+                    </label>
+                    <a href="#" class="text-sm text-yellow-600 hover:text-yellow-700">نسيت كلمة المرور؟</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 px-6 rounded-lg font-medium hover:from-yellow-600 hover:to-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 transition-all transform hover:scale-105">
+                    تسجيل الدخول
+                </button>
+
+                <!-- Loading Indicator -->
+                <div id="loading" class="hidden text-center">
+                    <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-yellow-600"></div>
+                    <span class="mr-2 text-gray-600">جاري تسجيل الدخول...</span>
+                </div>
+
+                <!-- Error Message -->
+                <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"></div>
+
+                <!-- Success Message -->
+                <div id="success-message" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg"></div>
+            </form>
+
+            <!-- Divider -->
+            <div class="my-6 flex items-center">
+                <div class="flex-1 border-t border-gray-300"></div>
+                <span class="px-4 text-gray-500 text-sm">أو</span>
+                <div class="flex-1 border-t border-gray-300"></div>
+            </div>
+
+            <!-- Register Link -->
+            <div class="text-center">
+                <p class="text-gray-600">ليس لديك حساب؟ 
+                    <a href="register.html" class="text-yellow-600 hover:text-yellow-700 font-medium">إنشاء حساب جديد</a>
+                </p>
+            </div>
+
+            <!-- Back to Home -->
+            <div class="text-center mt-6">
+                <a href="../index.html" class="text-gray-500 hover:text-gray-700 text-sm">
+                    ← العودة للصفحة الرئيسية
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+
+            // Show message function
+            function showMessage(element, message, isError = false) {
+                element.textContent = message;
+                element.classList.remove('hidden');
+                if (isError) {
+                    element.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+                    element.classList.remove('bg-green-100', 'border-green-400', 'text-green-700');
+                } else {
+                    element.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
+                    element.classList.remove('bg-red-100', 'border-red-400', 'text-red-700');
+                }
+            }
+
+            // Hide message function
+            function hideMessages() {
+                errorMessage.classList.add('hidden');
+                successMessage.classList.add('hidden');
+            }
+
+            // Handle form submission
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                // Validate inputs
+                if (!email || !password) {
+                    showMessage(errorMessage, 'يرجى ملء جميع الحقول المطلوبة', true);
+                    return;
+                }
+
+                // Show loading
+                loading.classList.remove('hidden');
+                hideMessages();
+
+                try {
+                    // Wait for AuthService to be available
+                    if (!window.AuthService) {
+                        await new Promise((resolve) => {
+                            const checkInterval = setInterval(() => {
+                                if (window.AuthService) {
+                                    clearInterval(checkInterval);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
+
+                    // Attempt login
+                    const result = await window.AuthService.signIn(email, password);
+                    
+                    if (result.success) {
+                        showMessage(successMessage, 'تم تسجيل الدخول بنجاح! جاري التوجيه...');
+                        
+                        // Redirect to home page after 2 seconds
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                    } else {
+                        showMessage(errorMessage, result.error || 'حدث خطأ أثناء تسجيل الدخول', true);
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showMessage(errorMessage, 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.', true);
+                } finally {
+                    loading.classList.add('hidden');
+                }
+            });
+
+            // Hide messages when user starts typing
+            document.getElementById('email').addEventListener('input', hideMessages);
+            document.getElementById('password').addEventListener('input', hideMessages);
+        });
+    </script>
+</body>
+</html> 

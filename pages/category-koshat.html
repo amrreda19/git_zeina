@@ -1,0 +1,2613 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كوشات - زِينَة</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" as="script">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/product-service.js"></script>
+    <script src="../js/auth-service.js"></script>
+    <script src="../js/cities-service.js"></script>
+    <script src="../js/advertising-service.js"></script>
+
+    <style>
+        :root {
+            --primary-pink: #f8d7e4;
+            --primary-green: #d8e9d6;
+            --primary-beige: #f5f0e6;
+            --gold: #d4af37;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f9f9f9;
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .product-card img {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            object-fit: cover;
+            object-position: center;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s ease;
+            transform: scale(1.0);
+        }
+
+        .product-card .image-container {
+            position: relative;
+            width: 100%;
+            height: 384px;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        
+        @media (max-width: 640px) {
+            .product-card .image-container {
+                height: 280px; /* ارتفاع أطول للشاشات الصغيرة مع عمودين */
+            }
+            
+            .product-card {
+                font-size: 0.875rem; /* حجم خط أصغر للشاشات الصغيرة */
+            }
+            
+            .product-card h3 {
+                font-size: 1rem; /* حجم عنوان أصغر */
+                line-height: 1.2;
+            }
+            
+            .product-card .price {
+                font-size: 0.9rem; /* حجم السعر أصغر */
+            }
+            
+            .product-card .location {
+                font-size: 0.8rem; /* حجم الموقع أصغر */
+            }
+            
+            .product-card .p-4 {
+                padding: 0.75rem; /* تباعد أقل للشاشات الصغيرة */
+            }
+        }
+        
+        @media (min-width: 641px) and (max-width: 768px) {
+            .product-card .image-container {
+                height: 280px; /* ارتفاع للشاشات المتوسطة */
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .product-card .image-container {
+                height: 320px; /* ارتفاع للشاشات الكبيرة */
+            }
+        }
+        
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+        
+        .gold-border {
+            border: 1px solid var(--gold);
+        }
+        
+        .gold-text {
+            color: var(--gold);
+            font-weight: bold;
+        }
+        
+        .category-badge {
+            background: linear-gradient(135deg, var(--gold) 0%, #b8941f 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, #b8941f 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #666;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #999;
+            color: #333;
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .filter-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .filter-section {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .filter-title {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+        }
+
+        .clear-filters-btn {
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-filters-btn:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .active-filter-tag {
+            background: #3b82f6;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .remove-filter {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+        }
+
+        /* Simple Filter Buttons Styles */
+        .multi-filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 10px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .filter-btn:hover {
+            border-color: #d4af37;
+            background: #fefbf0;
+            transform: translateY(-1px);
+        }
+
+        .filter-btn.active {
+            background: #d4af37;
+            border-color: #d4af37;
+            color: white;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .filter-btn.active:hover {
+            background: #b8941f;
+            border-color: #b8941f;
+        }
+
+        @media (max-width: 640px) {
+            .filter-btn {
+                min-width: 100px;
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .btn-primary, .btn-secondary {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+            
+            .text-4xl {
+                font-size: 1.875rem;
+            }
+            
+            .text-lg {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn-primary, .btn-secondary {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+            
+            .text-4xl {
+                font-size: 1.5rem;
+            }
+            
+            .text-lg {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Toggle button styles */
+        .toggle-filters-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .toggle-filters-btn:hover {
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* Simple Governorate Filter Styles */
+        .simple-governorate-filter,
+        .simple-cities-filter {
+            position: relative;
+            width: 100%;
+        }
+
+        .filter-dropdown {
+            position: relative;
+        }
+
+        .dropdown-btn {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .dropdown-btn:hover {
+            border-color: #d4af37;
+            background: #fefbf0;
+        }
+
+        .dropdown-arrow {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-btn.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .governorate-options,
+        .cities-options {
+            padding: 8px;
+        }
+
+        .governorate-option,
+        .city-option {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .governorate-option:hover,
+        .city-option:hover {
+            background-color: #f3f4f6;
+        }
+
+        .governorate-checkbox,
+        .city-checkbox {
+            margin-left: 8px;
+            width: 16px;
+            height: 16px;
+            accent-color: #d4af37;
+        }
+
+        .dropdown-actions {
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 6px 12px;
+            border: 1px solid #d4af37;
+            border-radius: 6px;
+            background: white;
+            color: #d4af37;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #d4af37;
+            color: white;
+        }
+
+        .selected-governorates,
+        .selected-cities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .selected-governorate-tag,
+        .selected-city-tag {
+            background: #d4af37;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 16px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .remove-governorate,
+        .remove-city {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        /* إخفاء شريط التمرير للإعلانات المميزة */
+        .scrollbar-hide {
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;  /* Safari and Chrome */
+        }
+
+        /* تحسين عرض الإعلانات المميزة */
+        #featured-ads-container {
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+        }
+
+        #featured-ads-container > div {
+            transition: all 0.3s ease;
+            scroll-snap-align: start;
+        }
+
+        #featured-ads-container > div:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        /* أنماط المفضلة - مطابق لصفحة الدعوات */
+        .favorite-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="../index.html" class="text-xl sm:text-2xl font-bold gold-text">زِينَة</a>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex space-x-6 space-x-reverse">
+                    <a href="../index.html" class="text-gray-600 hover:text-gray-900 transition-colors">الرئيسية</a>
+                    <a href="category-koshat.html" class="text-gray-900 font-semibold">كوشات</a>
+                    <a href="category-cake.html" class="text-gray-600 hover:text-gray-900 transition-colors">تورتات وشكولاتات</a>
+                    <a href="category-mirr.html" class="text-gray-600 hover:text-gray-900 transition-colors">مرايا</a>
+                    <a href="category-other.html" class="text-gray-600 hover:text-gray-900 transition-colors">ديكورات</a>
+                    <a href="category-invitations.html" class="text-gray-600 hover:text-gray-900 transition-colors">دعوات وتوزيعات</a>
+                    <a href="about-us.html" class="text-gray-600 hover:text-gray-900 transition-colors">من نحن</a>
+                    <a href="contact-us.html" class="text-gray-600 hover:text-gray-900 transition-colors">اتصل بنا</a>
+                </nav>
+                
+                <!-- Desktop Buttons -->
+                <div class="hidden md:flex items-center space-x-4 space-x-reverse">
+                    <a href="favorites.html" class="text-pink-500 hover:text-pink-600 transition-colors flex items-center space-x-2 space-x-reverse relative">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span>المفضلة</span>
+                        <span id="favorites-count-badge" class="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold hidden">0</span>
+                    </a>
+
+                    <!-- Desktop Add Product Request Button -->
+                    <a href="javascript:void(0)" onclick="scrollToProductRequestSection()" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200" id="add-product-request-btn-desktop">
+                        <span class="flex items-center space-x-1 space-x-reverse">
+                            <span>➕</span>
+                            <span>أضف منتجك</span>
+                        </span>
+                    </a>
+
+
+                </div>
+                
+
+                
+                <!-- Mobile Menu Button -->
+                <div class="lg:hidden flex items-center space-x-3 space-x-reverse">
+                    <!-- Mobile Favorites Button -->
+                    <a href="favorites.html" class="text-pink-500 hover:text-pink-600 transition-colors flex items-center space-x-2 space-x-reverse relative">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span id="favorites-count-badge-mobile" class="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold hidden">0</span>
+                    </a>
+                    
+
+                    
+                    <!-- زر أضف منتجك -->
+                    <a href="javascript:void(0)" onclick="scrollToProductRequestSection()" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 text-center">
+                        <span class="flex items-center justify-center space-x-1 space-x-reverse">
+                            <span>➕</span>
+                            <span>أضف منتجك</span>
+                        </span>
+                    </a>
+                    
+                    <button id="mobile-menu-btn" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation Menu -->
+            <div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-gray-200">
+                <div class="px-4 py-2 space-y-2">
+                    
+                    <!-- التصنيفات -->
+                    <div class="border-b border-gray-200 pb-3">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">التصنيفات</h3>
+                        <div class="space-y-2">
+                            <a href="category-koshat.html" class="block py-2 px-3 text-gray-900 font-semibold bg-gray-50 rounded-lg">كوشات</a>
+                            <a href="category-cake.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">تورتات وشكولاتات</a>
+                            <a href="category-mirr.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">مرايا</a>
+                            <a href="category-other.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">ديكورات متنوعة</a>
+                            <a href="category-invitations.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">دعوات وتوزيعات</a>
+                        </div>
+                    </div>
+                    
+                    <!-- إضافة منتج -->
+                    <div class="border-b border-gray-200 pb-3">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">إضافة منتج</h3>
+                        <div class="space-y-2">
+                            <a href="javascript:void(0)" onclick="scrollToProductRequestSection()" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">➕</span>
+                                أضف منتجك
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- روابط مهمة -->
+                    <div class="border-b border-gray-200 pb-3">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">روابط مهمة</h3>
+                        <div class="space-y-2">
+                            <a href="about-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">من نحن</a>
+                            <a href="contact-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">اتصل بنا</a>
+                            <a href="../index.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">الرئيسية</a>
+                        </div>
+                    </div>
+                    
+                    <!-- تواصل معنا -->
+                    <div class="border-b border-gray-200 pb-3">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">تواصل معنا</h3>
+                        
+                        <!-- التواصل الاجتماعي -->
+                        <div class="mb-3">
+                            <h4 class="text-xs font-medium text-gray-500 mb-2">التواصل الاجتماعي</h4>
+                            <div class="space-y-2">
+                                <a href="https://facebook.com" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                    <span class="mr-2">📘</span>
+                                    فيسبوك
+                                </a>
+                                <a href="https://instagram.com" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                    <span class="mr-2">📷</span>
+                                    إنستغرام
+                                </a>
+                                <a href="https://wa.me/201234567890" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                    <span class="mr-2">📱</span>
+                                    واتساب
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- التواصل المباشر -->
+                        <div>
+                            <h4 class="text-xs font-medium text-gray-500 mb-2">التواصل المباشر</h4>
+                            <div class="space-y-2">
+                                <a href="tel:+201234567890" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                    <span class="mr-2">📞</span>
+                                    اتصل بنا
+                                </a>
+                                <a href="contact-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                    <span class="mr-2">📧</span>
+                                    راسلنا
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mobile Auth Buttons -->
+                    <div class="auth-buttons-mobile border-t border-gray-200 pt-2 mt-2">
+                        <!-- Auth buttons will be dynamically updated -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Category Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">كوشات</h1>
+            <p class="text-gray-600 text-lg">اكتشف أجمل كوشات الخطوبة والمناسبات</p>
+        </div>
+
+        <!-- Advanced Filters -->
+        <div class="filter-section">
+            <div class="flex justify-between items-center mb-4">
+                <button id="toggle-filters-btn" class="toggle-filters-btn">
+                    <svg id="toggle-icon" class="toggle-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                    <span id="toggle-text" class="text-sm sm:text-base">فلاتر اختيار المنتج والمحافظة</span>
+                </button>
+                <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
+            </div>
+
+            <div id="filters-content" class="filter-grid hidden transition-all duration-300 ease-in-out">
+                <!-- Simple Filter Buttons -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">التصنيف الفرعي</label>
+                    <div class="multi-filter-buttons flex flex-wrap gap-2">
+                        <button class="filter-btn active" data-category="all">الكل</button>
+                        <button class="filter-btn" data-category="koshat-wedding">كوشات زفاف</button>
+                        <button class="filter-btn" data-category="koshat-engagement">كوشات خطوبة</button>
+                    </div>
+                </div>
+
+                <!-- Simple Governorate Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">المحافظة</label>
+                    <div class="simple-governorate-filter">
+                        <div class="filter-dropdown">
+                            <button id="governorate-dropdown-btn" class="dropdown-btn">
+                                <span id="governorate-placeholder">اختر المحافظات</span>
+                                <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6,9 12,15 18,9"></polyline>
+                                </svg>
+                            </button>
+                            <div id="governorate-dropdown-content" class="dropdown-content hidden">
+                                <div class="governorate-options">
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="القاهرة" class="governorate-checkbox">
+                                        <span>القاهرة</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="الجيزة" class="governorate-checkbox">
+                                        <span>الجيزة</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="الإسكندرية" class="governorate-checkbox">
+                                        <span>الإسكندرية</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="الشرقية" class="governorate-checkbox">
+                                        <span>الشرقية</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="الغربية" class="governorate-checkbox">
+                                        <span>الغربية</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="المنوفية" class="governorate-checkbox">
+                                        <span>المنوفية</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="القليوبية" class="governorate-checkbox">
+                                        <span>القليوبية</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="البحيرة" class="governorate-checkbox">
+                                        <span>البحيرة</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="كفر الشيخ" class="governorate-checkbox">
+                                        <span>كفر الشيخ</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="دمياط" class="governorate-checkbox">
+                                        <span>دمياط</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="الدقهلية" class="governorate-checkbox">
+                                        <span>الدقهلية</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="المنيا" class="governorate-checkbox">
+                                        <span>المنيا</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="أسيوط" class="governorate-checkbox">
+                                        <span>أسيوط</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="سوهاج" class="governorate-checkbox">
+                                        <span>سوهاج</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="قنا" class="governorate-checkbox">
+                                        <span>قنا</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="الأقصر" class="governorate-checkbox">
+                                        <span>الأقصر</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="أسوان" class="governorate-checkbox">
+                                        <span>أسوان</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="بني سويف" class="governorate-checkbox">
+                                        <span>بني سويف</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="الفيوم" class="governorate-checkbox">
+                                        <span>الفيوم</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="الوادي الجديد" class="governorate-checkbox">
+                                        <span>الوادي الجديد</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="مطروح" class="governorate-checkbox">
+                                        <span>مطروح</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="شمال سيناء" class="governorate-checkbox">
+                                        <span>شمال سيناء</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="جنوب سيناء" class="governorate-checkbox">
+                                        <span>جنوب سيناء</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="البحر الأحمر" class="governorate-checkbox">
+                                        <span>البحر الأحمر</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="بورسعيد" class="governorate-checkbox">
+                                        <span>بورسعيد</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="الإسماعيلية" class="governorate-checkbox">
+                                        <span>الإسماعيلية</span>
+                                    </label>
+                                    <label class="governorate-option">
+                                        <input type="checkbox" value="السويس" class="governorate-checkbox">
+                                        <span>السويس</span>
+                                    </label>
+                                </div>
+                                <div class="dropdown-actions">
+                                    <button id="select-all-governorates" class="action-btn">تحديد الكل</button>
+                                    <button id="clear-all-governorates" class="action-btn">إلغاء الكل</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="selected-governorates" class="selected-governorates"></div>
+                    </div>
+                </div>
+
+                <!-- Cities Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">المدينة/المنطقة</label>
+                    <div class="simple-cities-filter">
+                        <div class="filter-dropdown">
+                            <button id="cities-dropdown-btn" class="dropdown-btn">
+                                <span id="cities-placeholder">اختر المدن/المناطق</span>
+                                <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6,9 12,15 18,9"></polyline>
+                                </svg>
+                            </button>
+                            <div id="cities-dropdown-content" class="dropdown-content hidden">
+                                <div class="cities-search-container mb-3">
+                                    <input type="text" id="cities-search-input" placeholder="ابحث عن مدينة..." class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div class="cities-options">
+                                    <!-- Cities will be populated dynamically -->
+                                </div>
+                                <div class="dropdown-actions">
+                                    <button id="select-all-cities" class="action-btn">تحديد الكل</button>
+                                    <button id="clear-all-cities" class="action-btn">إلغاء الكل</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="selected-cities" class="selected-cities"></div>
+                    </div>
+                </div>
+
+                <!-- Price Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">السعر</label>
+                    <select id="price-filter" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">جميع الأسعار</option>
+                        <option value="0-500">حتى 500 ج.م</option>
+                        <option value="500-1000">500 - 1000 ج.م</option>
+                        <option value="1000-2000">1000 - 2000 ج.م</option>
+                        <option value="2000+">أكثر من 2000 ج.م</option>
+                        <option value="negotiable">السعر عند الطلب</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div id="active-filters" class="active-filters"></div>
+        </div>
+
+        <!-- Products Count -->
+        <div class="mb-6">
+            <span id="products-count" class="text-gray-600 font-medium">0 منتج</span>
+        </div>
+
+        <!-- قسم الإعلانات المميزة في التصنيف -->
+        <div id="category-featured-ads" class="mb-8">
+            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg sm:text-xl font-bold text-yellow-800 flex items-center gap-1 sm:gap-2">
+                        <span class="text-base sm:text-lg">⭐</span>
+                        <span class="text-sm sm:text-base">منتجات مميزة في هذا التصنيف</span>
+                    </h2>
+
+                </div>
+                
+                <!-- عرض الإعلانات المميزة -->
+                <div id="featured-ads-container" class="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
+                    <!-- سيتم ملء هذا القسم بواسطة JavaScript -->
+                </div>
+                
+                <!-- رسالة عدم وجود إعلانات -->
+                <div id="no-featured-ads" class="text-center py-8 hidden">
+                    <div class="text-yellow-400 text-4xl mb-3">⭐</div>
+                    <h3 class="text-lg font-medium text-yellow-700 mb-2">لا توجد منتجات مميزة حالياً</h3>
+                    <p class="text-yellow-600 text-sm">كن أول من يضع منتجه في القسم المميز</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="products-container" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+            <!-- Products will be loaded here -->
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <p class="mt-4 text-gray-600">جاري تحميل المنتجات...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="text-center py-12 hidden">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">لا توجد منتجات</h3>
+            <p class="mt-1 text-sm text-gray-500">لم يتم العثور على منتجات في هذا التصنيف.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">زِينَة</h3>
+                    <p class="text-gray-300 text-sm">منصة متخصصة في خدمات الخطوبة والمناسبات</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">روابط سريعة</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="../index.html" class="hover:text-white transition-colors">الرئيسية</a></li>
+                        <li><a href="about-us.html" class="hover:text-white transition-colors">من نحن</a></li>
+                        <li><a href="contact-us.html" class="hover:text-white transition-colors">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">السياسات</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="privacy-policy.html" class="hover:text-white transition-colors">سياسة الخصوصية</a></li>
+                        <li><a href="terms-of-use.html" class="hover:text-white transition-colors">شروط الاستخدام</a></li>
+                        <li><a href="cookies-policy.html" class="hover:text-white transition-colors">سياسة الكوكيز</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">التصنيفات</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="category-koshat.html" class="hover:text-white transition-colors">كوشات</a></li>
+                        <li><a href="category-cake.html" class="hover:text-white transition-colors">تورتة</a></li>
+                        <li><a href="category-mirr.html" class="hover:text-white transition-colors">مرايا</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-300">
+                <p>&copy; 2024 زِينَة. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let allProducts = [];
+        let currentFilter = 'all';
+        let selectedCitiesContainer = null;
+
+        let activeFilters = {
+            subcategory: [],
+            governorate: [],
+            cities: [],
+            price: ''
+        };
+
+        // Global functions for cities filter
+        function updateSelectedCities() {
+            const selected = [];
+            const checkboxes = document.querySelectorAll('.city-checkbox');
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selected.push(checkbox.value);
+                }
+            });
+            activeFilters.cities = selected;
+            displaySelectedCities();
+        }
+
+        function updateCitiesPlaceholder() {
+            const placeholder = document.getElementById('cities-placeholder');
+            if (activeFilters.cities.length === 0) {
+                placeholder.textContent = 'اختر المدن/المناطق';
+            } else if (activeFilters.cities.length === 1) {
+                placeholder.textContent = activeFilters.cities[0];
+            } else {
+                placeholder.textContent = `${activeFilters.cities.length} مدينة مختارة`;
+            }
+        }
+
+        function displaySelectedCities() {
+            if (!selectedCitiesContainer) {
+                selectedCitiesContainer = document.getElementById('selected-cities');
+            }
+            if (activeFilters.cities.length === 0) {
+                selectedCitiesContainer.innerHTML = '';
+                return;
+            }
+            selectedCitiesContainer.innerHTML = activeFilters.cities.map(city => `
+                <div class="selected-city-tag">
+                    ${city}
+                    <button class="remove-city" onclick="removeCity('${city}')">×</button>
+                </div>
+            `).join('');
+        }
+
+        function filterCities(searchTerm) {
+            const cityOptions = document.querySelectorAll('.city-option');
+            cityOptions.forEach(option => {
+                const cityName = option.querySelector('span').textContent.toLowerCase();
+                const matches = cityName.includes(searchTerm.toLowerCase());
+                option.style.display = matches ? 'block' : 'none';
+            });
+        }
+
+
+
+        // Load products on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize simple filter buttons
+            setupSimpleFilterButtons();
+            
+            // Initialize simple governorate filter
+            setupSimpleGovernorateFilter();
+            
+            // Initialize simple cities filter
+            setupSimpleCitiesFilter();
+            
+            await loadCategoryProducts();
+            setupAdvancedFilters();
+            setupToggleFilters();
+        });
+
+        // Load products by category
+        async function loadCategoryProducts() {
+            try {
+                // Wait for ProductService to load
+                if (!window.ProductService) {
+                    await new Promise((resolve) => {
+                        const checkInterval = setInterval(() => {
+                            if (window.ProductService) {
+                                clearInterval(checkInterval);
+                                resolve();
+                            }
+                        }, 100);
+                        
+                        setTimeout(() => {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }, 5000);
+                    });
+                }
+                
+                if (!window.ProductService) {
+                    throw new Error('ProductService not available');
+                }
+                
+                const result = await window.ProductService.getProductsByCategory('koshat');
+                
+                if (result.success) {
+                    allProducts = result.data;
+                    
+                    // Shuffle products randomly
+                    shuffleProducts();
+                    applyFilters();
+                } else {
+                    showError('حدث خطأ في تحميل المنتجات: ' + result.error);
+                }
+                
+            } catch (error) {
+                showError('حدث خطأ في تحميل المنتجات');
+            }
+        }
+
+        // Shuffle products randomly
+        function shuffleProducts() {
+            if (allProducts && allProducts.length > 0) {
+                for (let i = allProducts.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [allProducts[i], allProducts[j]] = [allProducts[j], allProducts[i]];
+                }
+            }
+        }
+
+        // Setup toggle filters functionality
+        function setupToggleFilters() {
+            const toggleBtn = document.getElementById('toggle-filters-btn');
+            const filtersContent = document.getElementById('filters-content');
+            const toggleIcon = document.getElementById('toggle-icon');
+            const toggleText = document.getElementById('toggle-text');
+            
+            let isOpen = false;
+            
+            toggleBtn.addEventListener('click', function() {
+                isOpen = !isOpen;
+                
+                if (isOpen) {
+                    // Open filters
+                    filtersContent.classList.remove('hidden');
+                    toggleIcon.classList.add('rotated');
+                    toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
+                } else {
+                    // Close filters
+                    filtersContent.classList.add('hidden');
+                    toggleIcon.classList.remove('rotated');
+                    toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
+                }
+            });
+        }
+
+        // Setup simple filter buttons functionality
+        function setupSimpleFilterButtons() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    
+                    if (category === 'all') {
+                        // Reset all buttons
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        activeFilters.subcategory = [];
+                    } else {
+                        // Handle multiple selection
+                        if (this.classList.contains('active')) {
+                            this.classList.remove('active');
+                            // Remove from active filters
+                            const index = activeFilters.subcategory.indexOf(category);
+                            if (index > -1) {
+                                activeFilters.subcategory.splice(index, 1);
+                            }
+                        } else {
+                            this.classList.add('active');
+                            // Add to active filters
+                            if (!activeFilters.subcategory.includes(category)) {
+                                activeFilters.subcategory.push(category);
+                            }
+                        }
+                        
+                        // If no subcategory is selected, show all
+                        if (activeFilters.subcategory.length === 0) {
+                            filterButtons.forEach(btn => {
+                                if (btn.getAttribute('data-category') === 'all') {
+                                    btn.classList.add('active');
+                                } else {
+                                    btn.classList.remove('active');
+                                }
+                            });
+                        } else {
+                            // Remove active from "all" button
+                            const allButton = document.querySelector('[data-category="all"]');
+                            if (allButton) {
+                                allButton.classList.remove('active');
+                            }
+                        }
+                    }
+                    
+                    // Apply filters immediately
+                    applyFilters();
+                });
+            });
+        }
+
+        // Setup simple governorate filter
+        function setupSimpleGovernorateFilter() {
+            const dropdownBtn = document.getElementById('governorate-dropdown-btn');
+            const dropdownContent = document.getElementById('governorate-dropdown-content');
+            const checkboxes = document.querySelectorAll('.governorate-checkbox');
+            const selectAllBtn = document.getElementById('select-all-governorates');
+            const clearAllBtn = document.getElementById('clear-all-governorates');
+            const selectedContainer = document.getElementById('selected-governorates');
+
+            // Toggle dropdown
+            dropdownBtn.addEventListener('click', function() {
+                dropdownContent.classList.toggle('hidden');
+                dropdownBtn.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!dropdownBtn.contains(event.target) && !dropdownContent.contains(event.target)) {
+                    dropdownContent.classList.add('hidden');
+                    dropdownBtn.classList.remove('active');
+                }
+            });
+
+            // Handle checkbox changes
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateSelectedGovernorates();
+                    updatePlaceholder();
+                    // Update cities options when governorates change
+                    updateCitiesOptions();
+                    applyFilters();
+                });
+            });
+
+            // Select all
+            selectAllBtn.addEventListener('click', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+                updateSelectedGovernorates();
+                updatePlaceholder();
+                applyFilters();
+            });
+
+            // Clear all
+            clearAllBtn.addEventListener('click', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateSelectedGovernorates();
+                updatePlaceholder();
+                applyFilters();
+            });
+
+            function updateSelectedGovernorates() {
+                const selected = [];
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        selected.push(checkbox.value);
+                    }
+                });
+                activeFilters.governorate = selected;
+                displaySelectedGovernorates();
+            }
+
+            function updatePlaceholder() {
+                const placeholder = document.getElementById('governorate-placeholder');
+                if (activeFilters.governorate.length === 0) {
+                    placeholder.textContent = 'اختر المحافظات';
+                } else if (activeFilters.governorate.length === 1) {
+                    placeholder.textContent = activeFilters.governorate[0];
+                } else {
+                    placeholder.textContent = `${activeFilters.governorate.length} محافظة مختارة`;
+                }
+            }
+
+            function displaySelectedGovernorates() {
+                if (activeFilters.governorate.length === 0) {
+                    selectedContainer.innerHTML = '';
+                    return;
+                }
+
+                selectedContainer.innerHTML = activeFilters.governorate.map(gov => `
+                    <div class="selected-governorate-tag">
+                        ${gov}
+                        <button class="remove-governorate" onclick="removeGovernorate('${gov}')">×</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Remove specific governorate
+        function removeGovernorate(governorate) {
+            const checkbox = document.querySelector(`.governorate-checkbox[value="${governorate}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+                activeFilters.governorate = activeFilters.governorate.filter(g => g !== governorate);
+                document.getElementById('governorate-placeholder').textContent = 
+                    activeFilters.governorate.length === 0 ? 'اختر المحافظات' : 
+                    activeFilters.governorate.length === 1 ? activeFilters.governorate[0] :
+                    `${activeFilters.governorate.length} محافظة مختارة`;
+                
+                // Update selected display
+                const selectedContainer = document.getElementById('selected-governorates');
+                if (activeFilters.governorate.length === 0) {
+                    selectedContainer.innerHTML = '';
+                } else {
+                    selectedContainer.innerHTML = activeFilters.governorate.map(gov => `
+                        <div class="selected-governorate-tag">
+                            ${gov}
+                            <button class="remove-governorate" onclick="removeGovernorate('${gov}')">×</button>
+                        </div>
+                    `).join('');
+                }
+                
+                applyFilters();
+            }
+        }
+
+        // Setup simple cities filter
+        function setupSimpleCitiesFilter() {
+            const dropdownBtn = document.getElementById('cities-dropdown-btn');
+            const dropdownContent = document.getElementById('cities-dropdown-content');
+            const searchInput = document.getElementById('cities-search-input');
+            const selectAllBtn = document.getElementById('select-all-cities');
+            const clearAllBtn = document.getElementById('clear-all-cities');
+            const selectedContainer = document.getElementById('selected-cities');
+
+            // Toggle dropdown
+            dropdownBtn.addEventListener('click', function() {
+                dropdownContent.classList.toggle('hidden');
+                dropdownBtn.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!dropdownBtn.contains(event.target) && !dropdownContent.contains(event.target)) {
+                    dropdownContent.classList.add('hidden');
+                    dropdownBtn.classList.remove('active');
+                }
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                filterCities(this.value);
+            });
+
+            // Select all
+            selectAllBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.city-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+                updateSelectedCities();
+                updateCitiesPlaceholder();
+                applyFilters();
+            });
+
+            // Clear all
+            clearAllBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.city-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateSelectedCities();
+                updateCitiesPlaceholder();
+                applyFilters();
+            });
+
+            function updateSelectedCities() {
+                const selected = [];
+                const checkboxes = document.querySelectorAll('.city-checkbox');
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        selected.push(checkbox.value);
+                    }
+                });
+                activeFilters.cities = selected;
+                console.log('🏙️ Selected cities updated:', activeFilters.cities);
+                displaySelectedCities();
+            }
+
+            function updateCitiesPlaceholder() {
+                const placeholder = document.getElementById('cities-placeholder');
+                if (activeFilters.cities.length === 0) {
+                    placeholder.textContent = 'اختر المدن/المناطق';
+                } else if (activeFilters.cities.length === 1) {
+                    placeholder.textContent = activeFilters.cities[0];
+                } else {
+                    placeholder.textContent = `${activeFilters.cities.length} مدينة مختارة`;
+                }
+                console.log('🏷️ Updated cities placeholder:', placeholder.textContent);
+            }
+
+            function displaySelectedCities() {
+                console.log('🏷️ Displaying selected cities:', activeFilters.cities);
+                if (activeFilters.cities.length === 0) {
+                    selectedContainer.innerHTML = '';
+                    return;
+                }
+
+                selectedContainer.innerHTML = activeFilters.cities.map(city => `
+                    <div class="selected-city-tag">
+                        ${city}
+                        <button class="remove-city" onclick="removeCity('${city}')">×</button>
+                    </div>
+                `).join('');
+            }
+
+            function filterCities(searchTerm) {
+                const cityOptions = document.querySelectorAll('.city-option');
+                cityOptions.forEach(option => {
+                    const cityName = option.querySelector('span').textContent.toLowerCase();
+                    const matches = cityName.includes(searchTerm.toLowerCase());
+                    option.style.display = matches ? 'block' : 'none';
+                });
+            }
+
+            // Populate cities based on selected governorates
+            updateCitiesOptions();
+        }
+
+        // Update cities options based on selected governorates
+        function updateCitiesOptions() {
+            const citiesOptions = document.querySelector('.cities-options');
+            const selectedGovernorates = activeFilters.governorate;
+            
+            if (selectedGovernorates.length === 0) {
+                citiesOptions.innerHTML = '<div class="p-3 text-gray-500 text-sm">اختر المحافظات أولاً</div>';
+                return;
+            }
+
+            // Get all cities for selected governorates
+            const allCities = [];
+            selectedGovernorates.forEach(governorate => {
+                const cities = getCitiesForGovernorate(governorate);
+                allCities.push(...cities);
+            });
+
+            // Remove duplicates
+            const uniqueCities = [...new Set(allCities)];
+
+            // Populate cities options
+            citiesOptions.innerHTML = uniqueCities.map(city => `
+                <label class="city-option">
+                    <input type="checkbox" value="${city}" class="city-checkbox">
+                    <span>${city}</span>
+                </label>
+            `).join('');
+
+            // Add event listeners to new checkboxes
+            const cityCheckboxes = document.querySelectorAll('.city-checkbox');
+            cityCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateSelectedCities();
+                    updateCitiesPlaceholder();
+                    applyFilters();
+                });
+            });
+        }
+
+        // Get cities for a specific governorate
+        function getCitiesForGovernorate(governorate) {
+            // Use CitiesService if available, otherwise fallback to hardcoded data
+            if (window.CitiesService) {
+                const citiesService = new CitiesService();
+                return citiesService.getCitiesForGovernorate(governorate);
+            }
+            
+            // Fallback data
+            const citiesData = {
+                'القاهرة': ['مدينة نصر', 'مصر الجديدة', 'المعادي', 'المقطم', 'الزمالك', 'جاردن سيتي', 'وسط البلد', 'باب اللوق', 'السيدة زينب', 'السيدة عائشة', 'الخليفة', 'المرج', 'شبرا', 'روض الفرج', 'الزاوية الحمراء', 'الشرابية', 'بولاق', 'العباسية', 'الظاهر', 'مصر القديمة', 'التبين', 'حلوان', '15 مايو', 'القطامية', 'التجمع الخامس', 'التجمع الأول', 'التجمع الثالث'],
+                'الجيزة': ['المهندسين', 'الدقي', '6 أكتوبر', 'الشيخ زايد', 'الهرم', 'البدرشين', 'الصف', 'أطفيح', 'العياط', 'الواحات البحرية', 'الواحات الداخلة', 'الواحات الخارجة', 'الفيوم', 'بني سويف', 'المنيا', 'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'البحر الأحمر', 'الوادي الجديد'],
+                'الإسكندرية': ['سموحة', 'سيدي جابر', 'الإبراهيمية', 'ميامي', 'ستانلي', 'سيدي بشر', 'العجمي', 'المعمورة', 'العصافرة', 'باكوس', 'كامب شيزار', 'رمل', 'محرم بك', 'المنتزه', 'شرق', 'غرب', 'وسط', 'الجمرك', 'الأنفوشي', 'العطارين'],
+                'الشرقية': ['الزقازيق', 'العاشر من رمضان', 'بلبيس', 'أبو كبير', 'فاقوس', 'ههيا', 'أبو حماد', 'القرين', 'كفر صقر', 'الإبراهيمية', 'ديرب نجم', 'السنبلاوين', 'منيا القمح'],
+                'الغربية': ['طنطا', 'المحلة الكبرى', 'زفتى', 'سمنود', 'كفر الزيات', 'بسيون', 'قطور'],
+                'المنوفية': ['شبين الكوم', 'منوف', 'أشمون', 'الباجور', 'قويسنا', 'بركة السبع', 'تلا', 'الشهداء', 'سرس الليان'],
+                'القليوبية': ['بنها', 'قليوب', 'شبرا الخيمة', 'الخانكة', 'كفر شكر', 'طوخ', 'القناطر الخيرية'],
+                'البحيرة': ['دمنهور', 'كفر الدوار', 'رشيد', 'إدكو', 'أبو المطامير', 'أبو حمص', 'الدلنجات', 'المحمودية', 'الرحمانية', 'حوش عيسى', 'شبراخيت', 'وادي النطرون', 'النوبارية الجديدة', 'برج العرب', 'العلمين'],
+                'كفر الشيخ': ['كفر الشيخ', 'دسوق', 'فوه', 'مطوبس', 'البرلس', 'سيدي سالم', 'الرياض', 'سيدي غازي', 'قلين', 'الحامول', 'بيلا'],
+                'دمياط': ['دمياط', 'فارسكور', 'الزرقا', 'كفر البطيخ', 'رأس البر', 'عزبة البرج', 'دمياط الجديدة', 'الروضة', 'السرو', 'السنانية', 'شطا'],
+                'الدقهلية': ['المنصورة', 'طلخا', 'ميت غمر', 'دكرنس', 'أجا', 'السنبلاوين', 'المنزلة', 'الجمالية', 'شربين', 'المطرية', 'بلقاس', 'تمي الأمديد', 'المنصورة الجديدة', 'جمصة', 'نبروه'],
+                'المنيا': ['المنيا', 'ملوي', 'دير مواس', 'مغاغة', 'بني مزار', 'مطاي', 'سمالوط', 'أبو قرقاص', 'العدوة'],
+                'أسيوط': ['أسيوط', 'ديروط', 'منفلوط', 'القوصية', 'أبنوب', 'البداري', 'ساحل سليم', 'الغنايم', 'أبو تيج', 'الفتح', 'أسيوط الجديدة'],
+                'سوهاج': ['سوهاج', 'أخميم', 'البلينا', 'المراغة', 'المنشأة', 'دار السلام', 'جرجا', 'جهينة', 'ساقلتة', 'طما', 'طهطا'],
+                'قنا': ['قنا', 'قوص', 'نقادة', 'دشنا', 'الوقف', 'أبو تشت', 'فرشوط', 'نجع حمادي', 'قفط'],
+                'الأقصر': ['الأقصر', 'إسنا', 'الطود', 'البياضية', 'الزينية', 'أرمنت', 'القرنة', 'الكوم الأحمر'],
+                'أسوان': ['أسوان', 'كوم أمبو', 'دراو', 'إدفو', 'نصر النوبة', 'كلابشة', 'إسنا', 'الرديسية', 'السباعية', 'العلاقي', 'أبو سمبل'],
+                'بني سويف': ['بني سويف', 'الواسطي', 'ناصر', 'إهناسيا', 'ببا', 'الفشن', 'سمسطا'],
+                'الفيوم': ['الفيوم', 'سنورس', 'طامية', 'إطسا', 'يوسف الصديق', 'إبشواي', 'فيون', 'طامية', 'إطسا', 'يوسف الصديق', 'إبشواي'],
+                'الوادي الجديد': ['الخارجة', 'الداخلة', 'الفرافرة', 'باريس', 'بلاط', 'الخارجة', 'الداخلة', 'الفرافرة'],
+                'مطروح': ['مرسى مطروح', 'الحمام', 'العلمين', 'الضبعة', 'النجيلة', 'سيدي براني', 'سلوم', 'السلوم'],
+                'شمال سيناء': ['العريش', 'الشيخ زويد', 'رفح', 'بئر العبد', 'الحسنة', 'نخل', 'العريش', 'الشيخ زويد', 'رفح'],
+                'جنوب سيناء': ['الطور', 'سانت كاترين', 'نويبع', 'دهب', 'شرم الشيخ', 'طابا', 'نويبع', 'دهب', 'شرم الشيخ', 'طابا'],
+                'البحر الأحمر': ['الغردقة', 'رأس غارب', 'سفاجا', 'القصير', 'مرسى علم', 'الغردقة', 'رأس غارب', 'سفاجا', 'القصير', 'مرسى علم'],
+                'بورسعيد': ['بورسعيد', 'بورفؤاد', 'العرب', 'المناخ', 'الضواحي', 'بورسعيد', 'بورفؤاد', 'العرب'],
+                'الإسماعيلية': ['الإسماعيلية', 'فايد', 'القنطرة شرق', 'القنطرة غرب', 'التل الكبير', 'أبو صوير', 'الإسماعيلية', 'فايد', 'القنطرة شرق'],
+                'السويس': ['السويس', 'الأربعين', 'فايد', 'عتاقة', 'السويس', 'الأربعين', 'فايد', 'عتاقة']
+            };
+
+            return citiesData[governorate] || [];
+        }
+
+        // Remove specific city
+        function removeCity(city) {
+            const checkbox = document.querySelector(`.city-checkbox[value="${city}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+                activeFilters.cities = activeFilters.cities.filter(c => c !== city);
+                document.getElementById('cities-placeholder').textContent = 
+                    activeFilters.cities.length === 0 ? 'اختر المدن/المناطق' : 
+                    activeFilters.cities.length === 1 ? activeFilters.cities[0] :
+                    `${activeFilters.cities.length} مدينة مختارة`;
+                
+                // Update selected display
+                const selectedContainer = document.getElementById('selected-cities');
+                if (activeFilters.cities.length === 0) {
+                    selectedContainer.innerHTML = '';
+                } else {
+                    selectedContainer.innerHTML = activeFilters.cities.map(city => `
+                        <div class="selected-city-tag">
+                            ${city}
+                            <button class="remove-city" onclick="removeCity('${city}')">×</button>
+                        </div>
+                    `).join('');
+                }
+                
+                applyFilters();
+            }
+        }
+
+        // Setup advanced filters
+        function setupAdvancedFilters() {
+            // Price filter
+            document.getElementById('price-filter').addEventListener('change', function() {
+                activeFilters.price = this.value;
+                applyFilters();
+            });
+
+            // Clear filters button
+            document.getElementById('clear-filters-btn').addEventListener('click', function() {
+                clearAllFilters();
+            });
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            let filteredProducts = allProducts;
+
+            // Apply subcategory filter
+            if (activeFilters.subcategory.length > 0) {
+                filteredProducts = filteredProducts.filter(product => {
+                    // Handle different subcategory formats
+                    let productSubcategories = [];
+                    
+                    if (product.subcategory) {
+                        if (Array.isArray(product.subcategory)) {
+                            productSubcategories = product.subcategory;
+                        } else if (typeof product.subcategory === 'string') {
+                            try {
+                                const parsed = JSON.parse(product.subcategory);
+                                if (Array.isArray(parsed)) {
+                                    productSubcategories = parsed;
+                                }
+                            } catch (error) {
+                                // If it's not JSON, treat as single value
+                                productSubcategories = [product.subcategory];
+                            }
+                        }
+                    }
+                    
+                    // Check if any of the selected subcategories match the product's subcategories
+                    return activeFilters.subcategory.some(selected => 
+                        productSubcategories.includes(selected)
+                    );
+                });
+            }
+
+            // Apply governorate filter
+            if (activeFilters.governorate.length > 0) {
+                filteredProducts = filteredProducts.filter(product => {
+                    if (product.governorate) {
+                        const productGovernorates = product.governorate.split(',').map(g => g.trim());
+                        return activeFilters.governorate.some(selected => 
+                            productGovernorates.some(productGov => 
+                                productGov.includes(selected)
+                            )
+                        );
+                    }
+                    return false;
+                });
+            }
+
+            // Apply cities filter
+            if (activeFilters.cities.length > 0) {
+                filteredProducts = filteredProducts.filter(product => {
+                    if (product.cities) {
+                        const productCities = product.cities.split(',').map(c => c.trim());
+                        return activeFilters.cities.some(selected => 
+                            productCities.some(productCity => 
+                                productCity.includes(selected)
+                            )
+                        );
+                    }
+                    return false;
+                });
+            }
+
+            // Apply price filter
+            if (activeFilters.price) {
+                filteredProducts = filteredProducts.filter(product => {
+                    const price = parseFloat(product.price) || 0;
+                    
+                    switch (activeFilters.price) {
+                        case '0-500':
+                            return price > 0 && price <= 500;
+                        case '500-1000':
+                            return price > 500 && price <= 1000;
+                        case '1000-2000':
+                            return price > 1000 && price <= 2000;
+                        case '2000+':
+                            return price > 2000;
+                        case 'negotiable':
+                            return price === 0 || !product.price;
+                        default:
+                            return true;
+                    }
+                });
+            }
+
+            displayProducts(filteredProducts);
+            displayProducts(filteredProducts);
+            updateActiveFiltersDisplay();
+        }
+
+        // Clear all filters
+        function clearAllFilters() {
+            // Reset simple filter buttons
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Activate "all" button
+            const allButton = document.querySelector('[data-category="all"]');
+            if (allButton) {
+                allButton.classList.add('active');
+            }
+
+            
+            // Reset price filter
+            document.getElementById('price-filter').value = '';
+
+            
+            // Reset governorate filter
+            const checkboxes = document.querySelectorAll('.governorate-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Reset active filters object
+            activeFilters = {
+                subcategory: [],
+                governorate: [],
+                cities: [],
+                price: ''
+            };
+
+            // Update governorate display
+            document.getElementById('governorate-placeholder').textContent = 'اختر المحافظات';
+            document.getElementById('selected-governorates').innerHTML = '';
+
+            // Update cities display
+            document.getElementById('cities-placeholder').textContent = 'اختر المدن/المناطق';
+            document.getElementById('selected-cities').innerHTML = '';
+            updateCitiesOptions();
+
+            // Apply filters
+            applyFilters();
+        }
+
+        // Update active filters display
+        function updateActiveFiltersDisplay() {
+            const activeFiltersContainer = document.getElementById('active-filters');
+            const filters = [];
+
+            // Add subcategory filters
+            activeFilters.subcategory.forEach(sub => {
+                const subcategoryLabels = {
+                            'koshat-wedding': 'كوشات زفاف',
+        'koshat-engagement': 'كوشات خطوبة'
+                };
+                filters.push({
+                    type: 'subcategory',
+                    text: subcategoryLabels[sub] || sub,
+                    value: sub
+                });
+            });
+
+            // Add governorate filters
+            activeFilters.governorate.forEach(gov => {
+                filters.push({
+                    type: 'governorate',
+                    text: gov,
+                    value: gov
+                });
+            });
+
+            // Add cities filters
+            activeFilters.cities.forEach(city => {
+                filters.push({
+                    type: 'cities',
+                    text: city,
+                    value: city
+                });
+            });
+
+            // Add price filter
+            if (activeFilters.price) {
+                const priceText = document.getElementById('price-filter').options[
+                    document.getElementById('price-filter').selectedIndex
+                ].text;
+                filters.push({
+                    type: 'price',
+                    text: priceText,
+                    value: activeFilters.price
+                });
+            }
+
+            // Display active filters
+            if (filters.length > 0) {
+                activeFiltersContainer.innerHTML = filters.map(filter => `
+                    <div class="active-filter-tag">
+                        ${filter.text}
+                        <button class="remove-filter" onclick="removeFilter('${filter.type}', '${filter.value}')">
+                            ×
+                        </button>
+                    </div>
+                `).join('');
+                activeFiltersContainer.style.display = 'flex';
+            } else {
+                activeFiltersContainer.style.display = 'none';
+            }
+        }
+
+        // Remove specific filter
+        function removeFilter(type, value) {
+            switch (type) {
+                case 'subcategory':
+                    activeFilters.subcategory = activeFilters.subcategory.filter(s => s !== value);
+                    // Update button states
+                    const filterButtons = document.querySelectorAll('.filter-btn');
+                    filterButtons.forEach(btn => {
+                        const category = btn.getAttribute('data-category');
+                        if (category === value) {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    
+                    // If no subcategory is selected, activate "all" button
+                    if (activeFilters.subcategory.length === 0) {
+                        const allButton = document.querySelector('[data-category="all"]');
+                        if (allButton) {
+                            allButton.classList.add('active');
+                        }
+                    }
+                    break;
+                case 'governorate':
+                    removeGovernorate(value);
+                    return; // removeGovernorate already calls applyFilters
+                    break;
+                case 'cities':
+                    removeCity(value);
+                    return; // removeCity already calls applyFilters
+                    break;
+                case 'price':
+                    document.getElementById('price-filter').value = '';
+                    activeFilters.price = '';
+                    break;
+            }
+            applyFilters();
+        }
+
+        // Display products
+        function displayProducts(products) {
+            const container = document.getElementById('products-container');
+            const loadingState = document.getElementById('loading-state');
+            const emptyState = document.getElementById('empty-state');
+            const productsCount = document.getElementById('products-count');
+            
+            // Hide loading state
+            loadingState.classList.add('hidden');
+            
+            // Update products count
+            productsCount.textContent = `${products.length} منتج`;
+            
+            if (!products || products.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            container.innerHTML = products.map(product => {
+                const imageUrl = product.image_urls && product.image_urls.length > 0 
+                    ? product.image_urls[0] 
+                    : 'https://placehold.co/400x300/EEE/31343C?text=لا+توجد+صورة';
+                
+                // Get subcategory display name
+                let subcategoryName = '';
+                let subcategoryColor = 'bg-blue-500';
+                
+                // Debug: Log the subcategory data
+                console.log('🔍 Product subcategory data:', {
+                    productId: product.id,
+                    subcategory: product.subcategory,
+                    subcategoryType: typeof product.subcategory,
+                    isArray: Array.isArray(product.subcategory),
+                    length: product.subcategory ? product.subcategory.length : 'N/A'
+                });
+                
+                let subcategoryNames = [];
+                let subcategoryColors = [];
+                
+                if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
+                    const subcategoryMap = {
+                        'koshat-wedding': { name: 'كوشة زفاف', color: 'bg-pink-500' },
+                        'koshat-engagement': { name: 'كوشة خطوبة', color: 'bg-purple-500' },
+                        'koshat-birthday': { name: 'كوشة عيد ميلاد', color: 'bg-yellow-500' },
+                        'koshat-party': { name: 'كوشة حفلات', color: 'bg-green-500' },
+                        'koshat-corporate': { name: 'كوشة شركات', color: 'bg-indigo-500' },
+                        'koshat-graduation': { name: 'كوشة تخرج', color: 'bg-red-500' },
+                        'koshat-baby': { name: 'كوشة مولود', color: 'bg-teal-500' },
+                        'koshat-anniversary': { name: 'كوشة ذكرى', color: 'bg-orange-500' }
+                    };
+                    
+                    // معالجة جميع التصنيفات الفرعية
+                    product.subcategory.forEach(subcat => {
+                        const subcategoryInfo = subcategoryMap[subcat];
+                        if (subcategoryInfo) {
+                            subcategoryNames.push(subcategoryInfo.name);
+                            subcategoryColors.push(subcategoryInfo.color);
+                        }
+                    });
+                    
+                    console.log('🔍 All subcategories:', subcategoryNames);
+                } else if (product.subcategory && typeof product.subcategory === 'string') {
+                    try {
+                        const subcategoryArray = JSON.parse(product.subcategory);
+                        console.log('🔍 Parsed subcategory array:', subcategoryArray);
+                        
+                        if (Array.isArray(subcategoryArray) && subcategoryArray.length > 0) {
+                            const subcategoryMap = {
+                                'koshat-wedding': { name: 'كوشة زفاف', color: 'bg-pink-500' },
+                                'koshat-engagement': { name: 'كوشة خطوبة', color: 'bg-purple-500' },
+                                'koshat-birthday': { name: 'كوشة عيد ميلاد', color: 'bg-yellow-500' },
+                                'koshat-party': { name: 'كوشة حفلات', color: 'bg-green-500' },
+                                'koshat-corporate': { name: 'كوشة شركات', color: 'bg-indigo-500' },
+                                'koshat-graduation': { name: 'كوشة تخرج', color: 'bg-red-500' },
+                                'koshat-baby': { name: 'كوشة مولود', color: 'bg-teal-500' },
+                                'koshat-anniversary': { name: 'كوشة ذكرى', color: 'bg-orange-500' }
+                            };
+                            
+                            // معالجة جميع التصنيفات الفرعية
+                            subcategoryArray.forEach(subcat => {
+                                const subcategoryInfo = subcategoryMap[subcat];
+                                if (subcategoryInfo) {
+                                    subcategoryNames.push(subcategoryInfo.name);
+                                    subcategoryColors.push(subcategoryInfo.color);
+                                }
+                            });
+                            
+                            console.log('🔍 All subcategories from parsed array:', subcategoryNames);
+                        }
+                    } catch (error) {
+                        console.error('🔍 Error parsing subcategory JSON:', error);
+                    }
+                }
+                
+                // إذا لم توجد تصنيفات فرعية، استخدم قيم افتراضية
+                if (subcategoryNames.length === 0) {
+                    subcategoryNames = ['منتج'];
+                    subcategoryColors = ['bg-gray-500'];
+                }
+                
+                console.log('🔍 Final subcategory result:', {
+                    productId: product.id,
+                    subcategoryNames: subcategoryNames,
+                    subcategoryColors: subcategoryColors
+                });
+                
+
+                
+                return `
+                    <div class="product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300" data-product-id="${product.id}">
+                        <div class="image-container">
+                            <img src="${imageUrl}" alt="${product.title || 'منتج'}" class="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105 cursor-pointer" loading="lazy" onclick="viewProduct('${product.id}')">
+                            <!-- أيقونة المفضلة -->
+                            <div class="absolute top-3 left-3">
+                                <button class="favorite-btn bg-white rounded-full p-2 shadow-lg hover:bg-pink-50 transition-all duration-200" onclick="toggleFavorite(event, '${product.id}', '${product.title || 'منتج'}', '${imageUrl}', '${product.price || 0}', '${product.governorate || ''}', '${product.cities || ''}', '${subcategoryNames.join(',')}')">
+                                    <svg class="w-5 h-5 ${isFavorite(product.id) ? 'text-pink-500 fill-current' : 'text-gray-400'}" viewBox="0 0 24 24">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-3 sm:p-4">
+                            <div class="mb-2 flex flex-wrap gap-1">
+                                ${subcategoryNames.map((name, index) => {
+                                    const color = subcategoryColors[index];
+                                    const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
+                                    const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
+                                    return `
+                                        <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                                            ${name}
+                                        </span>
+                                    `;
+                                }).join('')}
+                            </div>
+
+                            <div class="flex justify-between items-center">
+                                <span class="gold-text font-bold text-sm sm:text-lg">
+                                    ${product.price > 0 ? product.price + ' ج.م' : 'السعر عند الطلب'}
+                                </span>
+                                <div class="flex flex-col items-end gap-1">
+                                    ${product.governorate ? `<span class="text-xs sm:text-sm bg-gray-100 text-gray-600 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">${product.governorate}</span>` : ''}
+                                    ${product.cities ? `<span class="text-xs sm:text-sm bg-blue-100 text-blue-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">${product.cities.split(',')[0].trim()}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // View product details
+        function viewProduct(productId) {
+            window.location.href = `product-details.html?id=${productId}`;
+        }
+
+        // عرض تفاصيل المنتج
+        function viewProductDetails(productId) {
+            console.log('🔍 محاولة عرض تفاصيل المنتج:', productId);
+            
+            // البحث عن المنتج في القائمة
+            let product = allProducts.find(p => p.id === productId);
+            
+            // إذا لم يتم العثور على المنتج، قد يكون منتج مميز
+            if (!product) {
+                // البحث في المنتجات المميزة
+                const featuredAdsContainer = document.getElementById('featured-ads-container');
+                if (featuredAdsContainer) {
+                    const featuredAd = featuredAdsContainer.querySelector(`[data-ad-id="${productId}"]`);
+                    if (featuredAd) {
+                        // استخراج بيانات المنتج المميز من العنصر
+                        const adData = JSON.parse(featuredAd.getAttribute('data-ad-info') || '{}');
+                        if (adData.id) {
+                            product = adData;
+                            console.log('✅ تم العثور على المنتج المميز:', product);
+                            
+                            // تسجيل النقر على الإعلان إذا كان موجوداً
+                            if (product.ad_id && window.advertisingService) {
+                                console.log('📢 تسجيل النقر على الإعلان المميز:', product.ad_id);
+                                try {
+                                    window.advertisingService.recordClick(product.ad_id);
+                                    console.log('✅ تم تسجيل النقر بنجاح!');
+                                } catch (error) {
+                                    console.error('❌ خطأ في تسجيل النقر:', error);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (!product) {
+                console.error('❌ المنتج غير موجود:', productId);
+                return;
+            }
+
+            // إنشاء نافذة منبثقة لعرض التفاصيل
+            showProductDetailsModal(product);
+        }
+
+        // عرض نافذة تفاصيل المنتج
+        function showProductDetailsModal(product) {
+            // إزالة النوافذ المنبثقة السابقة
+            const existingModal = document.querySelector('.product-details-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // إنشاء النافذة المنبثقة
+            const modal = document.createElement('div');
+            modal.className = 'product-details-modal fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            
+            // الحصول على الصورة الأولى
+            const imageUrl = product.image_urls && product.image_urls.length > 0 
+                ? product.image_urls[0] 
+                : '../assets/images/placeholder.jpg';
+
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center p-6 border-b">
+                        <h2 class="text-xl font-bold text-gray-800">تفاصيل المنتج</h2>
+                        <button onclick="closeProductDetailsModal()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                            ×
+                        </button>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="p-6">
+                        <!-- Main Image -->
+                        <div class="mb-4">
+                            <img id="modal-main-image" src="${imageUrl}" alt="${product.name || 'منتج'}" 
+                                 class="w-full h-64 object-cover rounded-lg">
+                        </div>
+                        
+                        <!-- Image Gallery -->
+                        ${product.image_urls && product.image_urls.length > 1 ? `
+                            <div class="mb-6">
+                                <h4 class="text-sm font-medium text-gray-700 mb-3">معرض الصور</h4>
+                                <div class="flex space-x-2 space-x-reverse overflow-x-auto pb-2">
+                                    ${product.image_urls.map((url, index) => `
+                                        <img src="${url}" 
+                                             alt="صورة ${index + 1}" 
+                                             class="w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-yellow-400 transition-colors"
+                                             onclick="changeModalMainImage('${url}')"
+                                             loading="lazy">
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Product Info -->
+                        <div class="space-y-4">
+                            <!-- Name -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">اسم المنتج</h3>
+                                <p class="text-gray-600">${product.name || product.description || 'غير محدد'}</p>
+                            </div>
+                            
+                            <!-- Price -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">السعر</h3>
+                                <p class="text-2xl font-bold text-yellow-600">
+                                    ${product.price > 0 ? product.price + ' ج.م' : 'السعر عند الطلب'}
+                                </p>
+                            </div>
+                            
+                            <!-- Description -->
+                            ${product.description ? `
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2">الوصف</h3>
+                                    <p class="text-gray-600">${product.description}</p>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Location -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">الموقع</h3>
+                                <div class="space-y-2">
+                                    ${product.governorate ? `<p class="text-gray-600">المحافظة: ${product.governorate}</p>` : ''}
+                                    ${product.cities ? `<p class="text-gray-600">المدينة: ${product.cities}</p>` : ''}
+                                </div>
+                            </div>
+                            
+                            <!-- Category -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">التصنيف</h3>
+                                <p class="text-gray-600">${product.category || 'غير محدد'}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="flex gap-3 mt-6 pt-6 border-t">
+                            <!-- Favorite Button -->
+                            <button onclick="toggleFavoriteFromModal('${product.id}')" 
+                                    class="flex-1 bg-pink-500 hover:bg-pink-600 text-white py-3 px-4 rounded-lg font-medium transition-colors">
+                                ${isFavorite(product.id) ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}
+                            </button>
+                            
+                            <!-- WhatsApp Button -->
+                            ${product.whatsapp ? `
+                                <a href="https://wa.me/${product.whatsapp}" 
+                                   target="_blank" 
+                                   class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition-colors text-center">
+                                    تواصل عبر واتساب
+                                </a>
+                            ` : ''}
+                        </div>
+                        
+                        <!-- Social Media Links -->
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <h4 class="text-sm font-medium text-gray-700 mb-3">تابعنا على وسائل التواصل الاجتماعي</h4>
+                            <div class="flex gap-3">
+                                <!-- Facebook Button -->
+                                ${product.facebook ? `
+                                    <a href="${product.facebook}" 
+                                       target="_blank" 
+                                       class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                        </svg>
+                                        فيسبوك
+                                    </a>
+                                ` : ''}
+                                
+                                <!-- Instagram Button -->
+                                ${product.instagram ? `
+                                    <a href="${product.instagram}" 
+                                       target="_blank" 
+                                       class="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.746-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z"/>
+                                        </svg>
+                                        إنستقرام
+                                    </a>
+                                ` : ''}
+                                
+                                <!-- No Social Media Message -->
+                                ${!product.facebook && !product.instagram ? `
+                                    <div class="text-center text-gray-500 text-sm py-2 w-full">
+                                        لا توجد روابط وسائل التواصل الاجتماعي متاحة
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // إغلاق النافذة عند النقر خارجها
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeProductDetailsModal();
+                }
+            });
+        }
+
+        // إغلاق نافذة تفاصيل المنتج
+        function closeProductDetailsModal() {
+            const modal = document.querySelector('.product-details-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // تبديل المفضلة من النافذة المنبثقة
+        function toggleFavoriteFromModal(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            // استخدام نفس منطق toggleFavorite
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const existingIndex = favorites.findIndex(item => item.id === productId);
+            
+            if (existingIndex > -1) {
+                favorites.splice(existingIndex, 1);
+                showNotification('تم إزالة المنتج من المفضلة', 'info');
+            } else {
+                const productData = {
+                    id: productId,
+                    title: product.name || product.description || 'منتج',
+                    imageUrl: product.image_urls && product.image_urls.length > 0 ? product.image_urls[0] : '',
+                    price: product.price || 0,
+                    governorate: product.governorate || '',
+                    cities: product.cities || '',
+                    subcategories: product.subcategory || '',
+                    addedAt: new Date().toISOString()
+                };
+                favorites.push(productData);
+                showNotification('تم إضافة المنتج إلى المفضلة', 'success');
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoriteIcon(productId);
+            updateFavoritesCountBadge();
+            
+            // تحديث زر المفضلة في النافذة المنبثقة
+            const favoriteBtn = document.querySelector('.product-details-modal button:first-of-type');
+            if (favoriteBtn) {
+                favoriteBtn.textContent = isFavorite(productId) ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة';
+            }
+        }
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (mobileMenu && !mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+        
+        
+
+        // Show error message
+        function showError(message) {
+            alert(message);
+        }
+
+        // ===== وظائف إدارة المفضلة =====
+        
+        // التحقق من وجود منتج في المفضلة
+        function isFavorite(productId) {
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            return favorites.some(item => item.id === productId);
+        }
+
+        // تبديل حالة المفضلة (إضافة/إزالة)
+        function toggleFavorite(event, productId, title, imageUrl, price, governorate, cities, subcategories) {
+            event.stopPropagation(); // منع انتقال الحدث للعنصر الأب
+            
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const existingIndex = favorites.findIndex(item => item.id === productId);
+            
+            if (existingIndex > -1) {
+                // إزالة من المفضلة
+                favorites.splice(existingIndex, 1);
+                showNotification('تم إزالة المنتج من المفضلة', 'info');
+            } else {
+                // إضافة إلى المفضلة
+                const productData = {
+                    id: productId,
+                    title: title,
+                    imageUrl: imageUrl,
+                    price: price,
+                    governorate: governorate,
+                    cities: cities,
+                    subcategories: subcategories,
+                    addedAt: new Date().toISOString()
+                };
+                favorites.push(productData);
+                showNotification('تم إضافة المنتج إلى المفضلة', 'success');
+            }
+            
+            // حفظ في Local Storage
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            
+            // تحديث أيقونة القلب
+            updateFavoriteIcon(productId);
+            
+            // تحديث أيقونة القلب في بطاقات المنتجات المميزة
+            updateFeaturedAdFavoriteIcon(productId);
+            
+            // تحديث عداد المفضلة
+            console.log('🔄 Calling updateFavoritesCountBadge from toggleFavorite');
+            updateFavoritesCountBadge();
+        }
+
+        // تحديث أيقونة القلب
+        function updateFavoriteIcon(productId) {
+            const favoriteBtn = document.querySelector(`[data-product-id="${productId}"] .favorite-btn svg`);
+            if (favoriteBtn) {
+                if (isFavorite(productId)) {
+                    favoriteBtn.classList.remove('text-gray-400');
+                    favoriteBtn.classList.add('text-pink-500', 'fill-current');
+                } else {
+                    favoriteBtn.classList.remove('text-pink-500', 'fill-current');
+                    favoriteBtn.classList.add('text-gray-400');
+                }
+            }
+        }
+        
+        // تحديث أيقونة القلب في بطاقات المنتجات المميزة
+        function updateFeaturedAdFavoriteIcon(adId) {
+            const favoriteBtn = document.querySelector(`[data-ad-id="${adId}"] .favorite-btn svg`);
+            if (favoriteBtn) {
+                if (isFavorite(adId)) {
+                    favoriteBtn.classList.remove('text-gray-400');
+                    favoriteBtn.classList.add('text-pink-500', 'fill-current');
+                } else {
+                    favoriteBtn.classList.remove('text-pink-500', 'fill-current');
+                    favoriteBtn.classList.add('text-gray-400');
+                }
+            }
+        }
+
+        // عرض إشعار
+        function showNotification(message, type = 'info') {
+            // إزالة الإشعارات السابقة
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-4 left-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium transform transition-all duration-300 translate-x-0`;
+            
+            // تحديد لون الإشعار حسب النوع
+            if (type === 'success') {
+                notification.style.backgroundColor = '#10b981'; // أخضر
+            } else if (type === 'error') {
+                notification.style.backgroundColor = '#ef4444'; // أحمر
+            } else {
+                notification.style.backgroundColor = '#3b82f6'; // أزرق
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // إخفاء الإشعار بعد 3 ثوان
+            setTimeout(() => {
+                notification.style.transform = 'translateX(-100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // تحديث عداد المفضلة
+        function updateFavoritesCountBadge() {
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const count = favorites.length;
+            
+            console.log('🔄 Updating favorites count badge:', count);
+            
+            // تحديث جميع العدادات
+            const badges = [
+                'favorites-count-badge',
+                'favorites-count-badge-mobile'
+            ];
+            
+            badges.forEach(badgeId => {
+                const badge = document.getElementById(badgeId);
+                if (badge) {
+                    console.log(`✅ Found badge: ${badgeId}`);
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.classList.remove('hidden');
+                        console.log(`📊 Updated ${badgeId} to show: ${count}`);
+                    } else {
+                        badge.classList.add('hidden');
+                        console.log(`📊 Hidden ${badgeId} (count: 0)`);
+                    }
+                } else {
+                    console.log(`❌ Badge not found: ${badgeId}`);
+                }
+            });
+        }
+
+        // تحميل وعرض الإعلانات المميزة في التصنيف
+        async function loadCategoryFeaturedAds() {
+            try {
+                if (!window.advertisingService) {
+                    console.log('⏳ انتظار خدمة الإعلانات...');
+                    setTimeout(loadCategoryFeaturedAds, 1000);
+                    return;
+                }
+
+                console.log('🔍 جلب الإعلانات المميزة للتصنيف: koshat');
+                const featuredAds = await window.advertisingService.getCategoryFeaturedProducts('koshat', 4);
+                
+                displayCategoryFeaturedAds(featuredAds);
+                
+                // تسجيل ظهور الإعلانات
+                featuredAds.forEach(ad => {
+                    if (ad.ad_id && window.advertisingService) {
+                        window.advertisingService.recordImpression(ad.ad_id);
+                    }
+                });
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحميل الإعلانات المميزة:', error);
+                showNoFeaturedAds();
+            }
+        }
+
+        // عرض الإعلانات المميزة في التصنيف
+        function displayCategoryFeaturedAds(ads) {
+            const container = document.getElementById('featured-ads-container');
+            const noAdsMessage = document.getElementById('no-featured-ads');
+            
+            if (!container) return;
+            
+            if (!ads || ads.length === 0) {
+                showNoFeaturedAds();
+                return;
+            }
+            
+            // إخفاء رسالة عدم وجود إعلانات
+            if (noAdsMessage) {
+                noAdsMessage.classList.add('hidden');
+            }
+            
+            const adsHTML = ads.map(ad => `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden border-2 border-yellow-200 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105 flex-shrink-0" 
+                     style="width: 280px;"
+                     data-ad-id="${ad.id}"
+                     data-product-id="${ad.id}"
+                     data-ad-info='${JSON.stringify(ad)}'>
+                    <div class="relative">
+                        <img src="${ad.image_url || '../assets/images/placeholder.jpg'}" 
+                             alt="${ad.title}" 
+                             class="w-full h-64 object-cover">
+                        
+                        <!-- علامة مميز -->
+                        <div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                            ⭐ مميز
+                        </div>
+                        
+                        <!-- زر المفضلة -->
+                        <button onclick="toggleFavorite(event, '${ad.id}', '${ad.title}', '${ad.image_url || '../assets/images/placeholder.jpg'}', ${ad.price || 0}, '${ad.governorate || ''}', '${ad.cities || ''}', '${ad.subcategories ? ad.subcategories.join(',') : ''}')" 
+                                class="absolute top-2 left-2 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-200 favorite-btn border-2 border-white">
+                            <svg class="w-5 h-5 ${isFavorite('${ad.id}') ? 'text-pink-500 fill-current' : 'text-gray-400'}" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-base sm:text-lg font-bold text-yellow-600">
+                                ${ad.price > 0 ? ad.price + ' ج.م' : 'السعر عند الطلب'}
+                            </span>
+                            <span class="text-xs sm:text-sm text-gray-500">${ad.governorate}</span>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button onclick="viewProductDetails('${ad.id}')" 
+                                    class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-1.5 px-2 rounded-lg text-xs font-medium transition-colors">
+                                عرض التفاصيل
+                            </button>
+                            
+                            ${ad.whatsapp ? `
+                                <button onclick="openWhatsAppChat('${ad.id}', '${ad.title}', '${ad.image_url || '../assets/images/placeholder.jpg'}', ${ad.price || 0}, '${ad.governorate || ''}', '${ad.cities || ''}', '${ad.subcategories ? ad.subcategories.join(',') : ''}', '${ad.whatsapp}')" 
+                                        class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg transition-colors relative group">
+                                    <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.464 3.488"/>
+                                    </svg>
+                                    <!-- مؤشر الرسالة التلقائية -->
+                                    <div class="absolute -top-1 -right-1 bg-green-400 text-white text-xs px-1 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                        تلقائي
+                                    </div>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = adsHTML;
+            console.log(`✅ تم عرض ${ads.length} إعلان مميز في التصنيف`);
+        }
+
+        // إظهار رسالة عدم وجود إعلانات مميزة
+        function showNoFeaturedAds() {
+            const container = document.getElementById('featured-ads-container');
+            const noAdsMessage = document.getElementById('no-featured-ads');
+            
+            if (container) {
+                container.innerHTML = '';
+            }
+            
+            if (noAdsMessage) {
+                noAdsMessage.classList.remove('hidden');
+            }
+        }
+        
+        // تغيير الصورة الرئيسية في النافذة المنبثقة
+        function changeModalMainImage(imageUrl) {
+            const mainImage = document.getElementById('modal-main-image');
+            if (mainImage) {
+                mainImage.src = imageUrl;
+            }
+        }
+
+        // دالة فتح محادثة الواتساب مع رسالة تلقائية
+        function openWhatsAppChat(productId, title, imageUrl, price, governorate, cities, subcategories, whatsappNumber) {
+            // تنظيف رقم الهاتف من جميع الأحرف غير الرقمية
+            let phoneNumber = whatsappNumber.replace(/[^0-9]/g, '');
+            
+            // إزالة الرمز الدولي إذا كان موجوداً في البداية
+            if (phoneNumber.startsWith('20')) {
+                phoneNumber = phoneNumber.substring(2);
+            }
+            
+            // إضافة الرمز الدولي لمصر إذا لم يكن موجوداً
+            if (!phoneNumber.startsWith('20') && !phoneNumber.startsWith('+20')) {
+                phoneNumber = '20' + phoneNumber;
+            }
+            
+            // إنشاء رسالة واتساب محسنة
+            let message = ``;
+            
+            // إضافة السعر أولاً
+            if (price && price > 0) {
+                message += `💰 السعر: ${price} ج.م\n`;
+            }
+            
+            // إضافة رابط الصورة ثانياً
+            if (imageUrl && imageUrl !== '../assets/images/placeholder.jpg') {
+                message += `🖼️ رابط الصورة: ${imageUrl}\n`;
+            }
+            
+            // إضافة رابط المنتج ثالثاً
+            message += `🔗 رابط المنتج: ${window.location.origin}/pages/product-details.html?id=${productId}\n\n`;
+            
+            // إضافة التحية والاستفسار في النهاية
+            message += `مرحباً، أريد الاستفسار عن هذا المنتج`;
+            
+            // إنشاء رابط الواتساب
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            
+            // التحقق من أن المستخدم على جهاز محمول
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // محاولة فتح تطبيق الواتساب مباشرة
+                window.location.href = whatsappUrl;
+            } else {
+                // على الكمبيوتر، فتح في تبويب جديد
+                window.open(whatsappUrl, '_blank');
+            }
+        }
+
+        // تحديث جميع أيقونات المفضلة عند تحميل الصفحة
+        function updateAllFavoriteIcons() {
+            const productCards = document.querySelectorAll('.product-card');
+            if (productCards.length > 0) {
+                console.log('🔄 تحديث أيقونات المفضلة لـ', productCards.length, 'منتج');
+                productCards.forEach(card => {
+                    const productId = card.getAttribute('data-product-id');
+                    if (productId) {
+                        updateFavoriteIcon(productId);
+                    }
+                });
+            } else {
+                console.log('⏳ لم يتم العثور على بطاقات المنتجات بعد، إعادة المحاولة...');
+                // إعادة المحاولة بعد نصف ثانية
+                setTimeout(updateAllFavoriteIcons, 500);
+            }
+        }
+
+        // مراقبة التغييرات في DOM للتأكد من تحميل المنتجات
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    // التحقق من إضافة بطاقات منتجات جديدة
+                    const hasNewProducts = Array.from(mutation.addedNodes).some(node => 
+                        node.nodeType === 1 && node.classList && node.classList.contains('product-card')
+                    );
+                    
+                    if (hasNewProducts) {
+                        console.log('✅ تم العثور على منتجات جديدة، تحديث أيقونات المفضلة...');
+                        setTimeout(updateAllFavoriteIcons, 100);
+                    }
+                }
+            });
+        });
+
+        // بدء المراقبة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // تحميل الإعلانات المميزة في التصنيف
+            loadCategoryFeaturedAds();
+            
+            // مراقبة التغييرات في حاوية المنتجات
+            const productsContainer = document.getElementById('products-container');
+            if (productsContainer) {
+                observer.observe(productsContainer, {
+                    childList: true,
+                    subtree: true
+                });
+                console.log('👁️ بدء مراقبة التغييرات في المنتجات');
+            }
+            
+            // محاولة تحديث أيقونات المفضلة بعد تحميل الصفحة
+            setTimeout(updateAllFavoriteIcons, 500);
+            
+            // تحديث أيقونات المفضلة في بطاقات المنتجات المميزة
+            setTimeout(() => {
+                const featuredAds = document.querySelectorAll('[data-ad-id]');
+                featuredAds.forEach(ad => {
+                    const adId = ad.getAttribute('data-ad-id');
+                    if (adId) {
+                        updateFeaturedAdFavoriteIcon(adId);
+                    }
+                });
+            }, 1000);
+            
+            // تحديث عداد المفضلة عند تحميل الصفحة
+            updateFavoritesCountBadge();
+            
+            // مراقبة التغييرات في localStorage (المفضلة)
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'favorites') {
+                    updateFavoritesCountBadge();
+                }
+            });
+        });
+    </script>
+    
+    <!-- ملف التمرير السلس -->
+    <script src="../js/smooth-scroll.js" defer></script>
+</body>
+</html> 
+</html> 

@@ -1,0 +1,2408 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المنتجات - لوحة الإدارة</title>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" as="script">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/admin-security.js"></script>
+    <script src="../js/product-service.js"></script>
+    <script src="../js/cities-service.js"></script>
+    <style>
+        /* Cities Filter Styles */
+        .cities-dropdown {
+            display: none;
+        }
+        
+        .cities-dropdown.show {
+            display: block !important;
+        }
+        
+        .cities-trigger.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+        
+        .cities-trigger.active {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            direction: rtl;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .page-description {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .filter-btn .count {
+            background: rgba(255,255,255,0.2);
+            color: inherit;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-right: 8px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            border: 1px solid #e5e7eb;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .product-image-container {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.1);
+        }
+
+        .product-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .product-card:hover .product-overlay {
+            opacity: 1;
+        }
+
+        .product-badges {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .product-category-badge {
+            background: rgba(255,255,255,0.9);
+            color: #374151;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .product-status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .product-status-badge.active {
+            background: rgba(16, 185, 129, 0.9);
+        }
+
+        .product-status-badge.inactive {
+            background: rgba(156, 163, 175, 0.9);
+        }
+
+        .product-hover-info {
+            text-align: center;
+            color: white;
+        }
+
+        .hover-text {
+            background: rgba(0,0,0,0.7);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .product-info {
+            padding: 25px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .product-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 12px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-description {
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 0.95rem;
+        }
+
+        .product-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 12px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+        }
+
+        .meta-icon {
+            font-size: 1rem;
+            color: #3b82f6;
+        }
+
+        .meta-text {
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .product-price {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #059669;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 12px;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-radius: 12px;
+            border: 2px solid #10b981;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.875rem;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        /* تحسين عرض البطاقات */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        /* رسالة عدم وجود منتجات */
+        .no-products-message {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin: 40px 0;
+        }
+
+        .no-products-icon {
+            font-size: 5rem;
+            margin-bottom: 25px;
+            opacity: 0.7;
+        }
+
+        .no-products-message h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .no-products-message p {
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .add-product-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .add-product-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 15px;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .page-header {
+                padding: 20px;
+            }
+            
+            .page-title {
+                font-size: 2em;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-icon {
+                font-size: 2.5em;
+            }
+            
+            .stat-number {
+                font-size: 2em;
+            }
+            
+            .filter-bar {
+                padding: 15px;
+            }
+            
+            .filter-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .filter-btn {
+                width: 100%;
+                max-width: 300px;
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .product-card {
+                margin: 0 5px;
+            }
+            
+            .product-info {
+                padding: 15px;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            /* Modal Responsive */
+            .modal-content {
+                margin: 10% auto;
+                padding: 20px;
+                width: 95%;
+                max-width: none;
+            }
+            
+            /* Edit Modal Specific */
+            #editModal .modal-content {
+                max-width: 95%;
+                max-height: 85vh;
+            }
+            
+            #editModal form {
+                gap: 15px;
+            }
+            
+            #editModal form > div {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3em;
+            }
+            
+            .nav-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            .page-title {
+                font-size: 1.5em;
+            }
+            
+            .page-description {
+                font-size: 1em;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-icon {
+                font-size: 2em;
+            }
+            
+            .stat-number {
+                font-size: 1.5em;
+            }
+            
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .product-image {
+                height: 180px;
+            }
+            
+            .product-info {
+                padding: 12px;
+            }
+            
+            .product-title {
+                font-size: 1.1em;
+            }
+            
+            .product-description {
+                font-size: 14px;
+            }
+            
+            .product-price {
+                font-size: 1.2em;
+            }
+            
+            .btn {
+                padding: 8px;
+                font-size: 13px;
+            }
+            
+            /* Modal adjustments for very small screens */
+            .modal-content {
+                margin: 5% auto;
+                padding: 15px;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .modal-buttons .btn {
+                width: 100%;
+            }
+        }
+
+        /* Landscape orientation for mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .header-content {
+                flex-direction: row;
+                gap: 20px;
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .filter-buttons {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .filter-btn {
+                width: auto;
+                max-width: none;
+            }
+        }
+
+        /* Tablet specific adjustments */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .nav-buttons {
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+
+        /* Large screens optimization */
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Edit Modal Image Sorting Styles */
+        .edit-image-item {
+            transition: all 0.3s ease;
+        }
+
+        .edit-image-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .edit-image-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+            z-index: 1000;
+            cursor: grabbing;
+        }
+
+        .edit-image-item.drag-over {
+            border: 2px dashed #d4af37 !important;
+            background: rgba(212, 175, 55, 0.1) !important;
+        }
+
+        .edit-drag-handle {
+            transition: all 0.3s ease;
+        }
+
+        .edit-drag-handle:hover {
+            background: rgba(0, 0, 0, 0.9) !important;
+            transform: scale(1.1);
+        }
+
+        .edit-image-number {
+            transition: all 0.3s ease;
+        }
+
+        .image-sort-instructions-edit {
+            animation: pulse-edit 2s infinite;
+        }
+
+        @keyframes pulse-edit {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1>إدارة المنتجات</h1>
+            <div class="nav-buttons">
+                <a href="admin-dashboard.html" class="nav-btn">لوحة التحكم</a>
+                <a href="admin-users.html" class="nav-btn">إدارة المستخدمين</a>
+                <a href="add-product.html" class="nav-btn">إضافة منتج</a>
+                <button onclick="handleLogout()" class="nav-btn">تسجيل الخروج</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2 class="page-title">إدارة جميع المنتجات</h2>
+            <p class="page-description">عرض وتعديل وحذف جميع المنتجات في النظام</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-number" id="totalProducts">0</div>
+                <div class="stat-label">إجمالي المنتجات</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">إجمالي المستخدمين</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-number" id="activeProducts">0</div>
+                <div class="stat-label">المنتجات النشطة</div>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">
+                    <span class="count" id="count-all">0</span>
+                    جميع المنتجات
+                </button>
+                <button class="filter-btn" data-category="koshat">
+                    <span class="count" id="count-koshat">0</span>
+                    كوشات
+                </button>
+                <button class="filter-btn" data-category="cake">
+                    <span class="count" id="count-cake">0</span>
+                    تورتة
+                </button>
+                <button class="filter-btn" data-category="mirr">
+                    <span class="count" id="count-mirr">0</span>
+                    مرايا
+                </button>
+                <button class="filter-btn" data-category="other">
+                    <span class="count" id="count-other">0</span>
+                    أخرى
+                </button>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="loading-state" class="loading">
+            <div style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">⏳</div>
+                <h3 style="color: #374151; margin-bottom: 15px;">جاري تحميل المنتجات...</h3>
+                <p style="color: #6b7280;">يرجى الانتظار قليلاً</p>
+            </div>
+        </div>
+
+        <div id="empty-state" class="no-products-message" style="display: none;">
+            <div class="no-products-icon">📦</div>
+            <h3>لا توجد منتجات لعرضها</h3>
+            <p>لم يتم العثور على منتجات في هذه الفئة. يمكنك إضافة منتج جديد أو تغيير الفلتر المحدد.</p>
+            <a href="add-product.html" class="add-product-btn">
+                <span>➕</span>
+                إضافة منتج جديد
+            </a>
+        </div>
+
+        <div id="products-container" style="display: none;">
+            <div id="products-grid" class="products-grid">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0; font-size: 1.5em;">تعديل المنتج</h3>
+                <button onclick="closeEditModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 5px; min-width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
+            </div>
+            
+            <form id="editForm" style="display: grid; gap: 20px;">
+                <input type="hidden" id="edit-product-id">
+                <input type="hidden" id="edit-product-table">
+                
+                <!-- Product Details -->
+                <div style="display: grid; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">وصف المنتج</label>
+                        <textarea id="edit-description" rows="3" required style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;"></textarea>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">السعر (ج.م)</label>
+                            <input type="number" id="edit-price" step="0.01" style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">الفئة</label>
+                            <select id="edit-category" required style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                                <option value="koshat">كوشات</option>
+                                <option value="mirr">مرايا</option>
+                                <option value="cake">تورتة</option>
+                                <option value="other">ديكورات متنوعة</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Governorates and Subcategories -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">المحافظات</label>
+                        <div id="edit-governorate-checkboxes" style="max-height: 150px; overflow-y: auto; border: 2px solid #e1e5e9; border-radius: 8px; padding: 10px; background: white;">
+                            <!-- سيتم توليد المحافظات هنا -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">التصنيف الفرعي</label>
+                        <div id="edit-subcategory-checkboxes" style="max-height: 150px; overflow-y: auto; border: 2px solid #e1e5e9; border-radius: 8px; padding: 10px; background: white;">
+                            <!-- سيتم توليد التصنيفات الفرعية هنا -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cities -->
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">المناطق/المدن المتوفرة (اختياري)</label>
+                    <div id="edit-cities-container">
+                        <div class="cities-filter-container" style="position: relative; width: 100%; max-width: 400px; font-family: 'Tajawal', sans-serif;">
+                            <div class="cities-header" style="position: relative;">
+                                <div class="cities-trigger" id="edit-cities-trigger" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: white; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; min-height: 48px;">
+                                    <div class="trigger-content" style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                                        <svg class="location-icon" style="width: 20px; height: 20px; color: #6b7280; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        <span class="trigger-text" style="color: #374151; font-weight: 500; flex: 1;">اختر المناطق/المدن (اختياري)</span>
+                                        <span class="selected-count" id="edit-cities-selected-count" style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; min-width: 20px; text-align: center; display: none;"></span>
+                                    </div>
+                                    <svg class="chevron-icon" style="width: 16px; height: 16px; color: #6b7280; transition: transform 0.3s ease; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6,9 12,15 18,9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <div class="cities-dropdown" id="edit-cities-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e5e7eb; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); z-index: 1000; margin-top: 4px; max-height: 400px; overflow: hidden;">
+                                <div class="dropdown-header" style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                    <div class="search-container" style="position: relative; margin-bottom: 12px;">
+                                        <svg class="search-icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #9ca3af;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <path d="m21 21-4.35-4.35"></path>
+                                        </svg>
+                                        <input type="text" id="edit-cities-search" placeholder="ابحث عن منطقة..." style="width: 100%; padding: 8px 12px 8px 36px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.3s ease;">
+                                    </div>
+                                    <div class="actions" style="display: flex; gap: 8px;">
+                                        <button type="button" id="edit-select-all-cities-btn" style="padding: 6px 12px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; color: #374151; cursor: pointer; transition: all 0.3s ease;">تحديد الكل</button>
+                                        <button type="button" id="edit-clear-all-cities-btn" style="padding: 6px 12px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; color: #374151; cursor: pointer; transition: all 0.3s ease;">إلغاء الكل</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="cities-list" id="edit-cities-list" style="max-height: 250px; overflow-y: auto; padding: 8px 0;">
+                                    <!-- Cities will be populated here -->
+                                </div>
+                                
+                                <div class="dropdown-footer" style="padding: 12px 16px; border-top: 1px solid #e5e7eb; background: #f9fafb;">
+                                    <button type="button" id="edit-apply-cities-filter" style="width: 100%; padding: 10px 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20,6 9,17 4,12"></polyline>
+                                        </svg>
+                                        تطبيق الفلتر
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="edit-selected-cities" class="selected-cities" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;"></div>
+                    </div>
+                    <p style="text-xs text-gray-500 mt-1;">اختر المناطق أو المدن المتوفرة داخل المحافظات المختارة (اختياري - يمكنك تخطي هذا الحقل)</p>
+                </div>
+                
+                <!-- Contact Information -->
+                <div style="display: grid; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">رقم الواتساب</label>
+                        <input type="tel" id="edit-whatsapp" style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">رابط الفيسبوك (اختياري)</label>
+                        <input type="url" id="edit-facebook" placeholder="https://facebook.com/..." style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">رابط الإنستقرام (اختياري)</label>
+                        <input type="text" id="edit-instagram" placeholder="https://instagram.com/username أو @username" style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                    </div>
+                </div>
+                
+                <!-- Current Images -->
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">الصور الحالية</label>
+                    <div class="image-sort-instructions-edit" style="margin-bottom: 15px; padding: 10px; background: #dbeafe; border: 1px solid #3b82f6; border-radius: 8px; display: flex; align-items: center; color: #1e40af; font-size: 14px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px; margin-left: 8px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                        </svg>
+                        اسحب الصور لترتيبها - الصورة الأولى ستكون الصورة الرئيسية
+                    </div>
+                    <div id="current-images" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; background: #f8f9fa; border-radius: 8px; min-height: 60px;">
+                        <!-- الصور الحالية ستظهر هنا -->
+                    </div>
+                </div>
+                
+                                 <!-- Add New Images -->
+                 <div>
+                     <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">إضافة صور جديدة</label>
+                     <div id="image-upload-area" style="border: 2px dashed #d1d5db; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                         <div style="font-size: 24px; color: #9ca3af; margin-bottom: 10px;">📷</div>
+                         <p style="color: #6b7280; margin-bottom: 5px; font-size: 14px;">اسحب الصور هنا أو اضغط للاختيار</p>
+                         <p style="font-size: 12px; color: #9ca3af; text-align: center;">يمكنك اختيار أكثر من صورة في نفس الوقت</p>
+                         <input type="file" id="new-images" multiple accept="image/*" style="display: none;">
+                     </div>
+                 </div>
+                
+                <!-- Buttons -->
+                <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" onclick="closeEditModal()" class="btn btn-edit">إلغاء</button>
+                    <button type="submit" class="btn btn-view">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h3>تأكيد الحذف</h3>
+            <p>هل أنت متأكد من حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            <div class="modal-buttons">
+                <button class="btn btn-delete" onclick="confirmDelete()">حذف</button>
+                <button class="btn btn-edit" onclick="closeDeleteModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allProducts = [];
+        let currentFilter = 'all';
+        let productToDelete = null;
+
+        // Check admin authentication
+        let adminSecurityCheckStarted = false;
+        
+        function checkAdminSecurity() {
+            if (adminSecurityCheckStarted) {
+                return;
+            }
+            
+            if (!window.adminSecurity) {
+                console.log('⏳ Waiting for adminSecurity to load...');
+                adminSecurityCheckStarted = true;
+                setTimeout(checkAdminSecurity, 100);
+                return;
+            }
+            console.log('✅ adminSecurity loaded successfully');
+        }
+        
+        setTimeout(checkAdminSecurity, 100);
+
+        // Load page data
+        window.onload = async function() {
+            console.log('🔄 Admin products page loading...');
+            
+            // Wait for adminSecurity
+            while (!window.adminSecurity) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            console.log('✅ AdminSecurity loaded');
+            
+            // Wait for ProductService
+            while (!window.ProductService) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            console.log('✅ ProductService loaded');
+            
+            await loadAllProducts();
+            await loadStatistics();
+        };
+
+        // Load all products from all tables
+        async function loadAllProducts() {
+            try {
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other'];
+                allProducts = [];
+
+                for (const table of tables) {
+                    try {
+                        const { data: products, error } = await window.supabaseClient
+                            .from(table)
+                            .select('*');
+                        
+                        if (!error && products) {
+                            // Add table name to each product for identification
+                            products.forEach(product => {
+                                product.sourceTable = table;
+                                
+                                // معالجة البيانات الفارغة
+                                if (product.subcategory === null || product.subcategory === undefined) {
+                                    product.subcategory = '';
+                                }
+                                
+                                // التأكد من أن البيانات ليست نص "null"
+                                if (product.subcategory === 'null') {
+                                    product.subcategory = '';
+                                }
+                                
+                                // فحص جميع الحقول للبحث عن التصنيف الفرعي
+                                console.log(`🔍 Product ${product.id} from ${table}:`, {
+                                    id: product.id,
+                                    category: product.category,
+                                    subcategory: product.subcategory,
+                                    sub_category: product.sub_category,
+                                    subcategory_id: product.subcategory_id,
+                                    allFields: Object.keys(product)
+                                });
+                            });
+                            allProducts = allProducts.concat(products);
+                        }
+                    } catch (tableError) {
+                        console.error(`Error loading ${table}:`, tableError);
+                    }
+                }
+
+                updateProductCounts();
+                applyFilter(currentFilter);
+                displayProducts(allProducts);
+
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        // Load statistics
+        async function loadStatistics() {
+            try {
+                // Total products
+                document.getElementById('totalProducts').textContent = allProducts.length;
+
+                // Total users
+                const { data: users, error: usersError } = await window.supabaseClient
+                    .from('users')
+                    .select('*');
+
+                if (!usersError && users) {
+                    document.getElementById('totalUsers').textContent = users.length;
+                }
+
+                // Active products (products with status or recent)
+                const activeProducts = allProducts.filter(product => 
+                    !product.deleted_at && product.status !== 'deleted'
+                );
+                document.getElementById('activeProducts').textContent = activeProducts.length;
+
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        // Update product counts
+        function updateProductCounts() {
+            const categories = ['all', 'koshat', 'cake', 'mirr', 'other'];
+            
+            categories.forEach(category => {
+                const countElement = document.getElementById(`count-${category}`);
+                if (countElement) {
+                    const count = category === 'all' ? allProducts.length : 
+                                 allProducts.filter(product => product.category === category).length;
+                    countElement.textContent = count;
+                }
+            });
+        }
+
+        // Apply filter
+        function applyFilter(category) {
+            currentFilter = category;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            
+            // Filter products
+            const filteredProducts = category === 'all' ? 
+                allProducts : 
+                allProducts.filter(product => product.category === category);
+            
+            displayProducts(filteredProducts);
+        }
+
+        // Display products
+        function displayProducts(products) {
+            const loadingState = document.getElementById('loading-state');
+            const emptyState = document.getElementById('empty-state');
+            const productsContainer = document.getElementById('products-container');
+            const productsGrid = document.getElementById('products-grid');
+
+            loadingState.style.display = 'none';
+
+            if (products.length === 0) {
+                emptyState.style.display = 'block';
+                productsContainer.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            productsContainer.style.display = 'block';
+
+            productsGrid.innerHTML = products.map(product => {
+                const imageUrl = product.image_urls && product.image_urls.length > 0 
+                    ? product.image_urls[0] 
+                    : 'https://placehold.co/400x280/EEE/31343C?text=لا+توجد+صورة';
+
+                const categoryName = getCategoryName(product.category);
+                const price = product.price ? `${product.price} جنيه` : 'غير محدد';
+                const description = product.description || 'لا يوجد وصف';
+                const shortDescription = description.length > 100 ? description.substring(0, 100) + '...' : description;
+
+                return `
+                    <div class="product-card" onclick="viewProduct('${product.id}', '${product.sourceTable}')">
+                        <div class="product-image-container">
+                            <img src="${imageUrl}" alt="${categoryName}" class="product-image">
+                            <div class="product-overlay">
+                                <div class="product-badges">
+                                    <span class="product-category-badge">${categoryName}</span>
+                                    <span class="product-status-badge active">نشط</span>
+                                </div>
+                                <div class="product-hover-info">
+                                    <div class="hover-text">اضغط لعرض التفاصيل الكاملة</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-title">${categoryName}</div>
+                            <div class="product-description">${shortDescription}</div>
+                            <div class="product-meta">
+                                <div class="meta-item">
+                                    <span class="meta-icon">📍</span>
+                                    <span class="meta-text">${product.governorate || 'غير محدد'}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-icon">📅</span>
+                                    <span class="meta-text">${product.created_at ? new Date(product.created_at).toLocaleDateString('ar-EG') : 'غير محدد'}</span>
+                                </div>
+                            </div>
+                            <div class="product-price">${price}</div>
+                            <div class="product-actions">
+                                <button class="btn btn-view" onclick="event.stopPropagation(); viewProduct('${product.id}', '${product.sourceTable}')">
+                                    👁️ عرض
+                                </button>
+                                <button class="btn btn-edit" onclick="event.stopPropagation(); editProduct('${product.id}', '${product.sourceTable}')">
+                                    ✏️ تعديل
+                                </button>
+                                <button class="btn btn-delete" onclick="event.stopPropagation(); deleteProduct('${product.id}', '${product.sourceTable}')">
+                                    🗑️ حذف
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Get category name
+        function getCategoryName(category) {
+            const categories = {
+                'koshat': 'كوشات',
+                'cake': 'تورتة',
+                'mirr': 'مرايا',
+                'other': 'أخرى'
+            };
+            return categories[category] || category;
+        }
+
+        // View product
+        function viewProduct(productId, tableName) {
+            // Redirect to product details page
+                            window.open(`../pages/product-details.html?id=${productId}&table=${tableName}`, '_blank');
+        }
+
+        // Edit product
+        function editProduct(productId, tableName) {
+            // Find the product in allProducts array
+            const product = allProducts.find(p => p.id === productId && p.sourceTable === tableName);
+            if (!product) {
+                alert('لم يتم العثور على المنتج');
+                return;
+            }
+
+            console.log('🔍 Product data for editing:', product);
+            console.log('🔍 All product fields:', Object.keys(product));
+            console.log('🔍 Product values:', {
+                id: product.id,
+                category: product.category,
+                subcategory: product.subcategory,
+                sub_category: product.sub_category,
+                subcategory_id: product.subcategory_id,
+                description: product.description,
+                price: product.price,
+                governorate: product.governorate,
+                cities: product.cities,
+                image_urls: product.image_urls
+            });
+
+            // Fill form with product data
+            document.getElementById('edit-product-id').value = product.id;
+            document.getElementById('edit-product-table').value = product.sourceTable;
+            document.getElementById('edit-description').value = product.description || '';
+            document.getElementById('edit-price').value = product.price || '';
+            document.getElementById('edit-category').value = product.category || '';
+            document.getElementById('edit-whatsapp').value = product.whatsapp || '';
+            document.getElementById('edit-facebook').value = product.facebook || '';
+            document.getElementById('edit-instagram').value = product.instagram || '';
+
+            // Populate governorates with better data handling
+            let governorates = [];
+            if (product.governorate) {
+                if (Array.isArray(product.governorate)) {
+                    governorates = product.governorate;
+                } else if (typeof product.governorate === 'string') {
+                    // محاولة تحليل JSON string أولاً
+                    try {
+                        if (product.governorate.startsWith('[') && product.governorate.endsWith(']')) {
+                            const parsed = JSON.parse(product.governorate);
+                            if (Array.isArray(parsed)) {
+                                governorates = parsed;
+                            }
+                        }
+                    } catch (e) {
+                        console.log('🔍 JSON parsing failed for governorate, treating as regular string');
+                    }
+                    
+                    // إذا لم يكن JSON، استخدم المعالجة العادية
+                    if (governorates.length === 0) {
+                        if (product.governorate.includes(',')) {
+                            governorates = product.governorate.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else if (product.governorate !== 'null' && product.governorate !== '') {
+                            governorates = [product.governorate];
+                        }
+                    }
+                }
+            }
+            populateEditGovernorates(governorates);
+            
+            // Populate subcategories with better data handling
+            let subcategories = [];
+            if (product.subcategory) {
+                if (Array.isArray(product.subcategory)) {
+                    subcategories = product.subcategory;
+                } else if (typeof product.subcategory === 'string') {
+                    // محاولة تحليل JSON string أولاً
+                    try {
+                        if (product.subcategory.startsWith('[') && product.subcategory.endsWith(']')) {
+                            const parsed = JSON.parse(product.subcategory);
+                            if (Array.isArray(parsed)) {
+                                subcategories = parsed;
+                            }
+                        }
+                    } catch (e) {
+                        console.log('🔍 JSON parsing failed for subcategory, treating as regular string');
+                    }
+                    
+                    // إذا لم يكن JSON، استخدم المعالجة العادية
+                    if (subcategories.length === 0) {
+                        if (product.subcategory.includes(',')) {
+                            subcategories = product.subcategory.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else if (product.subcategory !== 'null' && product.subcategory !== '') {
+                            subcategories = [product.subcategory];
+                        }
+                    }
+                }
+            }
+            populateEditSubcategories(product.category, subcategories);
+            
+            // Populate cities with better data handling
+            let cities = [];
+            if (product.cities) {
+                if (Array.isArray(product.cities)) {
+                    cities = product.cities;
+                } else if (typeof product.cities === 'string') {
+                    // محاولة تحليل JSON string أولاً
+                    try {
+                        if (product.cities.startsWith('[') && product.cities.endsWith(']')) {
+                            const parsed = JSON.parse(product.cities);
+                            if (Array.isArray(parsed)) {
+                                cities = parsed;
+                            }
+                        }
+                    } catch (e) {
+                        console.log('🔍 JSON parsing failed for cities, treating as regular string');
+                    }
+                    
+                    // إذا لم يكن JSON، استخدم المعالجة العادية
+                    if (cities.length === 0) {
+                        if (product.cities.includes(',')) {
+                            cities = product.cities.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else if (product.cities !== 'null' && product.cities !== '') {
+                            cities = [product.cities];
+                        }
+                    }
+                }
+            }
+            console.log('🔍 Populating cities for product:', cities);
+            populateEditCities(governorates, cities);
+            
+            // Display current images with better data handling
+            let imageUrls = [];
+            if (product.image_urls) {
+                if (Array.isArray(product.image_urls)) {
+                    imageUrls = product.image_urls;
+                } else if (typeof product.image_urls === 'string') {
+                    // محاولة تحليل JSON string أولاً
+                    try {
+                        if (product.image_urls.startsWith('[') && product.image_urls.endsWith(']')) {
+                            const parsed = JSON.parse(product.image_urls);
+                            if (Array.isArray(parsed)) {
+                                imageUrls = parsed;
+                            }
+                        }
+                    } catch (e) {
+                        console.log('🔍 JSON parsing failed for image_urls, treating as regular string');
+                    }
+                    
+                    // إذا لم يكن JSON، استخدم المعالجة العادية
+                    if (imageUrls.length === 0) {
+                        if (product.image_urls.includes(',')) {
+                            imageUrls = product.image_urls.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else if (product.image_urls !== 'null' && product.image_urls !== '') {
+                            imageUrls = [product.image_urls];
+                        }
+                    }
+                }
+            }
+            displayEditCurrentImages(imageUrls);
+
+            // Show modal
+            document.getElementById('editModal').style.display = 'block';
+            
+            // Initialize cities filter when modal opens
+            setTimeout(() => {
+                initializeEditCitiesFilter();
+            }, 100);
+        }
+
+        // Populate governorates checkboxes
+        function populateEditGovernorates(selectedGovernorates) {
+            const governorates = [
+                "القاهرة","الجيزة","الإسكندرية","الشرقية","الغربية","المنوفية","القليوبية","البحيرة","كفر الشيخ","دمياط","الدقهلية","المنيا","أسيوط","سوهاج","قنا","الأقصر","أسوان","بني سويف","الفيوم","الوادي الجديد","شمال سيناء","جنوب سيناء","البحر الأحمر","مطروح","بورسعيد","الإسماعيلية","السويس"
+            ];
+            
+            // تحسين معالجة البيانات
+            let selected = [];
+            if (selectedGovernorates && Array.isArray(selectedGovernorates)) {
+                selected = selectedGovernorates;
+            } else if (selectedGovernorates && typeof selectedGovernorates === 'string') {
+                // محاولة تحليل JSON string أولاً
+                try {
+                    if (selectedGovernorates.startsWith('[') && selectedGovernorates.endsWith(']')) {
+                        const parsed = JSON.parse(selectedGovernorates);
+                        if (Array.isArray(parsed)) {
+                            selected = parsed;
+                        }
+                    }
+                } catch (e) {
+                    console.log('🔍 JSON parsing failed for governorates, treating as regular string');
+                }
+                
+                // إذا لم يكن JSON، استخدم المعالجة العادية
+                if (selected.length === 0) {
+                    if (selectedGovernorates.includes(',')) {
+                        selected = selectedGovernorates.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                    } else if (selectedGovernorates !== 'null' && selectedGovernorates !== '') {
+                        selected = [selectedGovernorates];
+                    }
+                }
+            }
+            
+            console.log('🔍 Processed selected governorates:', selected);
+            
+            const container = document.getElementById('edit-governorate-checkboxes');
+            if (container) {
+                container.innerHTML = governorates.map(gov => `
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 5px; cursor: pointer;">
+                        <input type="checkbox" value="${gov}" ${selected.includes(gov) ? 'checked' : ''} style="width: 16px; height: 16px;">
+                        <span style="font-size: 14px;">${gov}</span>
+                    </label>
+                `).join('');
+
+                // Add event listeners to governorate checkboxes to update cities
+                const governorateCheckboxes = container.querySelectorAll('input[type="checkbox"]');
+                governorateCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const selectedGovernorates = [];
+                        governorateCheckboxes.forEach(cb => {
+                            if (cb.checked) {
+                                selectedGovernorates.push(cb.value);
+                            }
+                        });
+                        
+                        // Get current cities to preserve them
+                        const currentProduct = allProducts.find(p => p.id === document.getElementById('edit-product-id').value);
+                        const currentCities = currentProduct ? currentProduct.cities : null;
+                        
+                        // Update cities based on selected governorates
+                        populateEditCities(selectedGovernorates, currentCities);
+                    });
+                });
+            } else {
+                console.error('❌ edit-governorate-checkboxes container not found');
+            }
+        }
+
+        // Populate subcategories checkboxes
+        function populateEditSubcategories(category, selectedSubcategory) {
+            console.log('🔍 Populating subcategories for category:', category);
+            console.log('🔍 Selected subcategory data:', selectedSubcategory);
+            
+            const subcategories = {
+                'koshat': [
+                    { value: 'koshat-wedding', label: 'كوشات زفاف' },
+                    { value: 'koshat-engagement', label: 'كوشات خطوبة' },
+                    { value: 'koshat-birthday', label: 'كوشات عيد ميلاد' },
+                    { value: 'koshat-party', label: 'كوشات حفلات' },
+                    { value: 'koshat-corporate', label: 'كوشات شركات' }
+                ],
+                'mirr': [
+                    { value: 'mirr-wedding', label: 'مرايا زفاف' },
+                    { value: 'mirr-engagement', label: 'مرايا خطوبة' },
+                    { value: 'mirr-birthday', label: 'مرايا عيد ميلاد' },
+                    { value: 'mirr-decorative', label: 'مرايا ديكور' },
+                    { value: 'mirr-custom', label: 'مرايا مخصصة' }
+                ],
+                'cake': [
+                    { value: 'cake-wedding', label: 'تورتة زفاف' },
+                    { value: 'cake-engagement', label: 'تورتة خطوبة' },
+                    { value: 'cake-birthday', label: 'تورتة عيد ميلاد' },
+                    { value: 'cake-chocolate', label: 'تورتة شوكولاتة' },
+                    { value: 'cake-fruit', label: 'تورتة فواكه' },
+                    { value: 'cake-custom', label: 'تورتة مخصصة' }
+                ],
+                'other': [
+                    { value: 'other-birthday', label: 'ديكور عيد ميلاد' },
+                    { value: 'other-hospital', label: 'ديكور استقبال مستشفى' },
+                    { value: 'other-bride', label: 'ديكور استقبال عروسة' },
+                    { value: 'other-party', label: 'ديكور حفلات بسيطة' },
+                    { value: 'other-balloons', label: 'بالونات وهدايا' },
+                    { value: 'other-flowers', label: 'زهور وأزهار' },
+                    { value: 'other-lights', label: 'إضاءات ديكور' }
+                ]
+            };
+            
+            const categorySubs = subcategories[category] || [];
+            
+            // تحسين معالجة البيانات
+            let selected = [];
+            if (selectedSubcategory && Array.isArray(selectedSubcategory)) {
+                selected = selectedSubcategory;
+            } else if (selectedSubcategory && typeof selectedSubcategory === 'string') {
+                // محاولة تحليل JSON string أولاً
+                try {
+                    if (selectedSubcategory.startsWith('[') && selectedSubcategory.endsWith(']')) {
+                        const parsed = JSON.parse(selectedSubcategory);
+                        if (Array.isArray(parsed)) {
+                            selected = parsed;
+                        }
+                    }
+                } catch (e) {
+                    console.log('🔍 JSON parsing failed, treating as regular string');
+                }
+                
+                // إذا لم يكن JSON، استخدم المعالجة العادية
+                if (selected.length === 0) {
+                    if (selectedSubcategory.includes(',')) {
+                        selected = selectedSubcategory.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                    } else if (selectedSubcategory !== 'null' && selectedSubcategory !== '') {
+                        selected = [selectedSubcategory];
+                    }
+                }
+            }
+            
+            console.log('🔍 Processed selected subcategories:', selected);
+            
+            const container = document.getElementById('edit-subcategory-checkboxes');
+            if (container) {
+                container.innerHTML = categorySubs.map(sub => `
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 5px; cursor: pointer;">
+                        <input type="checkbox" value="${sub.value}" ${selected.includes(sub.value) ? 'checked' : ''} style="width: 16px; height: 16px;">
+                        <span style="font-size: 14px;">${sub.label}</span>
+                    </label>
+                `).join('');
+            } else {
+                console.error('❌ edit-subcategory-checkboxes container not found');
+            }
+        }
+
+        // Display current images in edit modal
+        function displayEditCurrentImages(imageUrls) {
+            const container = document.getElementById('current-images');
+            
+            if (imageUrls.length === 0) {
+                container.innerHTML = '<p style="color: #666; font-size: 14px;">لا توجد صور</p>';
+                // Show instructions when no images
+                const instructions = document.querySelector('.image-sort-instructions-edit');
+                if (instructions) {
+                    instructions.style.display = 'block';
+                }
+                return;
+            }
+
+            container.innerHTML = imageUrls.map((url, index) => `
+                <div class="edit-image-item" data-index="${index}" draggable="true" style="position: relative; display: inline-block; margin: 5px; cursor: grab; transition: all 0.3s ease;">
+                    <div class="edit-drag-handle" style="position: absolute; top: 2px; left: 2px; background: rgba(0, 0, 0, 0.7); color: white; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; cursor: grab; z-index: 10; font-size: 10px;">
+                        ⋮⋮
+                    </div>
+                    <img src="${url}" alt="صورة ${index + 1}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #e1e5e9; cursor: pointer;" onclick="previewImage('${url}')">
+                    <div class="edit-image-number" style="position: absolute; bottom: 2px; left: 2px; background: #d4af37; color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; z-index: 10;">
+                        ${index + 1}
+                    </div>
+                    <button onclick="removeEditImage(${index})" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center;">×</button>
+                </div>
+            `).join('');
+
+            // Add drag and drop event listeners
+            const imageItems = container.querySelectorAll('.edit-image-item');
+            imageItems.forEach(item => {
+                item.addEventListener('dragstart', handleEditDragStart);
+                item.addEventListener('dragover', handleEditDragOver);
+                item.addEventListener('drop', handleEditDrop);
+                item.addEventListener('dragenter', handleEditDragEnter);
+                item.addEventListener('dragleave', handleEditDragLeave);
+            });
+
+            // Hide instructions when images are present
+            const instructions = document.querySelector('.image-sort-instructions-edit');
+            if (instructions) {
+                instructions.style.display = 'none';
+            }
+        }
+
+        // Preview image function
+        function previewImage(url) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+                cursor: pointer;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                border-radius: 8px;
+            `;
+            
+            modal.appendChild(img);
+            document.body.appendChild(modal);
+            
+            modal.onclick = () => {
+                document.body.removeChild(modal);
+            };
+        }
+
+        // Remove image from edit modal
+        function removeEditImage(index) {
+            if (confirm('هل أنت متأكد من حذف هذه الصورة؟')) {
+                const productId = document.getElementById('edit-product-id').value;
+                const product = allProducts.find(p => p.id === productId);
+                
+                if (product && product.image_urls) {
+                    product.image_urls.splice(index, 1);
+                    displayEditCurrentImages(product.image_urls);
+                    alert('تم حذف الصورة');
+                }
+            }
+        }
+
+        // Drag and drop variables for edit modal
+        let editDraggedElement = null;
+        let editDraggedIndex = null;
+
+        // Drag and drop functions for edit modal image sorting
+        function handleEditDragStart(e) {
+            editDraggedElement = this;
+            editDraggedIndex = parseInt(this.getAttribute('data-index'));
+            this.classList.add('dragging');
+            this.style.opacity = '0.5';
+            this.style.transform = 'rotate(5deg)';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleEditDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleEditDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+            this.style.border = '2px dashed #d4af37';
+            this.style.background = 'rgba(212, 175, 55, 0.1)';
+        }
+
+        function handleEditDragLeave(e) {
+            this.classList.remove('drag-over');
+            this.style.border = '';
+            this.style.background = '';
+        }
+
+        function handleEditDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            this.style.border = '';
+            this.style.background = '';
+            
+            if (editDraggedElement !== this) {
+                const dropIndex = parseInt(this.getAttribute('data-index'));
+                const productId = document.getElementById('edit-product-id').value;
+                const product = allProducts.find(p => p.id === productId);
+                
+                if (product && product.image_urls) {
+                    // Reorder the image_urls array
+                    const draggedImage = product.image_urls[editDraggedIndex];
+                    product.image_urls.splice(editDraggedIndex, 1);
+                    product.image_urls.splice(dropIndex, 0, draggedImage);
+                    
+                    // Redisplay images with new order
+                    displayEditCurrentImages(product.image_urls);
+                    
+                    // Show success message
+                    showEditSortSuccess();
+                }
+            }
+            
+            editDraggedElement.classList.remove('dragging');
+            editDraggedElement.style.opacity = '';
+            editDraggedElement.style.transform = '';
+            editDraggedElement = null;
+            editDraggedIndex = null;
+        }
+
+        function showEditSortSuccess() {
+            const message = document.createElement('div');
+            message.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 12px 16px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 3000;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+            `;
+            message.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px; margin-left: 8px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                تم تغيير ترتيب الصور بنجاح
+            `;
+            
+            document.body.appendChild(message);
+            
+            // Remove message after 3 seconds
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 3000);
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Delete product
+        function deleteProduct(productId, tableName) {
+            console.log('🗑️ Delete button clicked for product:', productId, 'from table:', tableName);
+            productToDelete = { id: productId, table: tableName };
+            const deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.style.display = 'block';
+                console.log('✅ Delete modal opened successfully');
+            } else {
+                console.error('❌ Delete modal not found');
+                alert('خطأ في فتح نافذة التأكيد');
+            }
+        }
+
+        // Confirm delete
+        async function confirmDelete() {
+            if (!productToDelete) {
+                console.error('❌ No product selected for deletion');
+                alert('لم يتم تحديد منتج للحذف');
+                return;
+            }
+
+            console.log('🗑️ Confirming deletion for product:', productToDelete);
+
+            try {
+                // Wait for ProductService to be available
+                let attempts = 0;
+                const maxAttempts = 50; // 5 seconds
+                
+                while (!window.ProductService && attempts < maxAttempts) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+
+                if (!window.ProductService) {
+                    throw new Error('ProductService غير متاح. يرجى تحديث الصفحة والمحاولة مرة أخرى.');
+                }
+
+                console.log('✅ ProductService available, proceeding with deletion');
+
+                // Use ProductService to delete product (this will also delete images from storage)
+                const result = await window.ProductService.deleteProduct(productToDelete.id, productToDelete.table);
+
+                if (!result.success) {
+                    throw new Error(result.error);
+                }
+
+                console.log('✅ Product deleted successfully');
+                alert('تم حذف المنتج والصور بنجاح');
+                
+                // Refresh the page data
+                await loadAllProducts();
+                await loadStatistics();
+
+            } catch (error) {
+                console.error('❌ Error deleting product:', error);
+                alert('حدث خطأ في حذف المنتج: ' + error.message);
+            }
+
+            closeDeleteModal();
+        }
+
+        // Close delete modal
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            productToDelete = null;
+        }
+
+        // Handle logout
+        async function handleLogout() {
+            try {
+                while (!window.adminSecurity) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                await adminSecurity.logout();
+            } catch (error) {
+                console.error('Error logging out:', error);
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        // Setup event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter button clicks
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    applyFilter(category);
+                });
+            });
+
+            // Edit form submission
+            document.getElementById('editForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await saveEditChanges();
+            });
+
+            // Category change in edit modal
+            document.getElementById('edit-category').addEventListener('change', function() {
+                populateEditSubcategories(this.value, []);
+            });
+
+            // Image upload in edit modal
+            const imageUploadArea = document.getElementById('image-upload-area');
+            const newImagesInput = document.getElementById('new-images');
+            
+            if (imageUploadArea && newImagesInput) {
+                imageUploadArea.addEventListener('click', () => newImagesInput.click());
+                
+                newImagesInput.addEventListener('change', function(e) {
+                    handleNewImages(e.target.files);
+                });
+            }
+
+            // Close modals when clicking outside
+            window.onclick = function(event) {
+                const deleteModal = document.getElementById('deleteModal');
+                const editModal = document.getElementById('editModal');
+                
+                if (event.target === deleteModal) {
+                    closeDeleteModal();
+                }
+                if (event.target === editModal) {
+                    closeEditModal();
+                }
+            }
+        });
+
+        // Handle new images in edit modal
+        function handleNewImages(files) {
+            const container = document.getElementById('current-images');
+            
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imgDiv = document.createElement('div');
+                        imgDiv.style.cssText = `
+                            position: relative;
+                            display: inline-block;
+                            margin: 5px;
+                        `;
+                        imgDiv.innerHTML = `
+                            <img src="${e.target.result}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #e1e5e9; cursor: pointer;" onclick="previewImage('${e.target.result}')">
+                            <button onclick="this.parentElement.remove()" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center;">×</button>
+                        `;
+                        container.appendChild(imgDiv);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Save edit changes
+        async function saveEditChanges() {
+            const productId = document.getElementById('edit-product-id').value;
+            const tableName = document.getElementById('edit-product-table').value;
+            
+            if (!productId || !tableName) {
+                alert('خطأ في بيانات المنتج');
+                return;
+            }
+
+            // Get form data
+            const description = document.getElementById('edit-description').value;
+            const price = document.getElementById('edit-price').value;
+            const category = document.getElementById('edit-category').value;
+            const whatsapp = document.getElementById('edit-whatsapp').value;
+            const facebook = document.getElementById('edit-facebook').value;
+            const instagram = document.getElementById('edit-instagram').value;
+
+            // Get selected governorates
+            const selectedGovernorates = [];
+            document.querySelectorAll('#edit-governorate-checkboxes input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedGovernorates.push(checkbox.value);
+            });
+
+            // Get selected subcategories
+            const selectedSubcategories = [];
+            document.querySelectorAll('#edit-subcategory-checkboxes input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedSubcategories.push(checkbox.value);
+            });
+            
+            console.log('🔍 Saving selected subcategories:', selectedSubcategories);
+
+            // Get selected cities
+            const selectedCitiesArray = getEditSelectedCities();
+
+            // Validation
+            if (!description.trim()) {
+                alert('يرجى إدخال وصف المنتج');
+                return;
+            }
+
+            if (selectedGovernorates.length === 0) {
+                alert('يرجى اختيار محافظة واحدة على الأقل');
+                return;
+            }
+
+            try {
+                // Get current product to preserve image order
+                const currentProduct = allProducts.find(p => p.id === productId && p.sourceTable === tableName);
+                
+                // Prepare update data
+                const updateData = {
+                    description: description,
+                    price: price || null,
+                    category: category,
+                    subcategory: selectedSubcategories.length > 0 ? selectedSubcategories : null,
+                    governorate: selectedGovernorates.join(', '),
+                    cities: selectedCitiesArray.length > 0 ? selectedCitiesArray.join(', ') : null,
+                    whatsapp: whatsapp,
+                    facebook: facebook || null,
+                    instagram: instagram || null,
+                    // Preserve the reordered image_urls if they exist
+                    image_urls: currentProduct && currentProduct.image_urls ? currentProduct.image_urls : null
+                };
+
+                // Update in database
+                const { error } = await window.supabaseClient
+                    .from(tableName)
+                    .update(updateData)
+                    .eq('id', productId);
+
+                if (error) {
+                    throw error;
+                }
+
+                // Update local array
+                const productIndex = allProducts.findIndex(p => p.id === productId && p.sourceTable === tableName);
+                if (productIndex !== -1) {
+                    allProducts[productIndex] = { ...allProducts[productIndex], ...updateData };
+                }
+
+                alert('تم تحديث المنتج بنجاح');
+                closeEditModal();
+                
+                // Refresh display
+                applyFilter(currentFilter);
+
+            } catch (error) {
+                console.error('Error updating product:', error);
+                alert('حدث خطأ في تحديث المنتج: ' + error.message);
+            }
+        }
+
+        // Cities Filter Variables for Edit Modal
+        let editCitiesService;
+        let editSelectedCities = new Set();
+        let editCurrentGovernorates = [];
+
+        // Initialize Cities Filter for Edit Modal
+        function initializeEditCitiesFilter() {
+            console.log('🔍 Initializing Edit Cities Filter');
+            
+            // Check if CitiesService is available
+            if (typeof CitiesService === 'undefined') {
+                console.error('❌ CitiesService not available');
+                return;
+            }
+            
+            // Initialize CitiesService
+            editCitiesService = new CitiesService();
+            console.log('✅ CitiesService initialized');
+            
+            // Setup cities filter functionality
+            setupEditCitiesFilter();
+        }
+
+        // Setup Cities Filter for Edit Modal
+        function setupEditCitiesFilter() {
+            const citiesTrigger = document.getElementById('edit-cities-trigger');
+            const citiesDropdown = document.getElementById('edit-cities-dropdown');
+            const citiesSearch = document.getElementById('edit-cities-search');
+            const selectAllCitiesBtn = document.getElementById('edit-select-all-cities-btn');
+            const clearAllCitiesBtn = document.getElementById('edit-clear-all-cities-btn');
+            const applyCitiesFilterBtn = document.getElementById('edit-apply-cities-filter');
+
+            // Check if elements exist
+            if (!citiesTrigger || !citiesDropdown || !citiesSearch || !selectAllCitiesBtn || !clearAllCitiesBtn || !applyCitiesFilterBtn) {
+                console.error('❌ Cities filter elements not found');
+                console.log('🔍 Elements check:', {
+                    citiesTrigger: !!citiesTrigger,
+                    citiesDropdown: !!citiesDropdown,
+                    citiesSearch: !!citiesSearch,
+                    selectAllCitiesBtn: !!selectAllCitiesBtn,
+                    clearAllCitiesBtn: !!clearAllCitiesBtn,
+                    applyCitiesFilterBtn: !!applyCitiesFilterBtn
+                });
+                return;
+            }
+            
+            console.log('✅ All cities filter elements found');
+
+            // Toggle dropdown
+            citiesTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔍 Cities trigger clicked');
+                citiesDropdown.classList.toggle('show');
+                citiesTrigger.classList.toggle('active');
+                console.log('🔍 Dropdown classes:', citiesDropdown.classList.toString());
+                console.log('🔍 Trigger classes:', citiesTrigger.classList.toString());
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!citiesTrigger.contains(event.target) && !citiesDropdown.contains(event.target)) {
+                    citiesDropdown.classList.remove('show');
+                    citiesTrigger.classList.remove('active');
+                }
+            });
+
+            // Search functionality
+            citiesSearch.addEventListener('input', function() {
+                filterEditCities(this.value);
+            });
+
+            // Select all cities
+            selectAllCitiesBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('#edit-cities-list .city-input');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                    editSelectedCities.add(checkbox.value);
+                });
+                updateEditCitiesDisplay();
+            });
+
+            // Clear all cities
+            clearAllCitiesBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('#edit-cities-list .city-input');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                editSelectedCities.clear();
+                updateEditCitiesDisplay();
+            });
+
+            // Apply filter
+            applyCitiesFilterBtn.addEventListener('click', function() {
+                citiesDropdown.classList.remove('show');
+                citiesTrigger.classList.remove('active');
+            });
+        }
+
+        // Populate Cities for Edit Modal
+        function populateEditCities(selectedGovernorates, currentCities) {
+            console.log('🔍 PopulateEditCities called with:', { selectedGovernorates, currentCities });
+            
+            const citiesList = document.getElementById('edit-cities-list');
+            const citiesTrigger = document.getElementById('edit-cities-trigger');
+            const citiesSearch = document.getElementById('edit-cities-search');
+
+            if (!citiesList || !citiesTrigger || !citiesSearch) {
+                console.error('❌ Cities elements not found in populateEditCities');
+                return;
+            }
+
+            // Clear previous selections
+            if (typeof editSelectedCities !== 'undefined') {
+                editSelectedCities.clear();
+            }
+
+            if (!selectedGovernorates || selectedGovernorates.length === 0) {
+                // Hide cities filter if no governorates selected
+                citiesList.innerHTML = '<div style="padding: 16px; text-align: center; color: #666;">اختر المحافظات أولاً</div>';
+                updateEditCitiesDisplay();
+                return;
+            }
+
+            // Parse governorates
+            let governorates = [];
+            if (selectedGovernorates && Array.isArray(selectedGovernorates)) {
+                governorates = selectedGovernorates;
+            } else if (selectedGovernorates && typeof selectedGovernorates === 'string') {
+                // محاولة تحليل JSON string أولاً
+                try {
+                    if (selectedGovernorates.startsWith('[') && selectedGovernorates.endsWith(']')) {
+                        const parsed = JSON.parse(selectedGovernorates);
+                        if (Array.isArray(parsed)) {
+                            governorates = parsed;
+                        }
+                    }
+                } catch (e) {
+                    console.log('🔍 JSON parsing failed for governorates in cities, treating as regular string');
+                }
+                
+                // إذا لم يكن JSON، استخدم المعالجة العادية
+                if (governorates.length === 0) {
+                    if (selectedGovernorates.includes(',')) {
+                        governorates = selectedGovernorates.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                    } else if (selectedGovernorates !== 'null' && selectedGovernorates !== '') {
+                        governorates = [selectedGovernorates];
+                    }
+                }
+            }
+
+            // Get all cities for selected governorates
+            let allCities = [];
+            governorates.forEach(governorate => {
+                if (typeof editCitiesService !== 'undefined' && editCitiesService.getCitiesForGovernorate) {
+                    const cities = editCitiesService.getCitiesForGovernorate(governorate);
+                    allCities = allCities.concat(cities);
+                }
+            });
+
+            // Remove duplicates
+            allCities = [...new Set(allCities)];
+
+            // Parse current cities
+            let currentCitiesArray = [];
+            if (currentCities) {
+                if (Array.isArray(currentCities)) {
+                    currentCitiesArray = currentCities;
+                } else if (typeof currentCities === 'string') {
+                    // محاولة تحليل JSON string أولاً
+                    try {
+                        if (currentCities.startsWith('[') && currentCities.endsWith(']')) {
+                            const parsed = JSON.parse(currentCities);
+                            if (Array.isArray(parsed)) {
+                                currentCitiesArray = parsed;
+                                console.log('🔍 Successfully parsed JSON cities:', currentCitiesArray);
+                            }
+                        }
+                    } catch (e) {
+                        console.log('🔍 JSON parsing failed for cities, treating as regular string');
+                    }
+                    
+                    // إذا لم يكن JSON، استخدم المعالجة العادية
+                    if (currentCitiesArray.length === 0) {
+                        if (currentCities.includes(',')) {
+                            currentCitiesArray = currentCities.split(',').map(c => c.trim()).filter(c => c && c !== 'null' && c !== '');
+                        } else if (currentCities !== 'null' && currentCities !== '') {
+                            currentCitiesArray = [currentCities];
+                        }
+                    }
+                }
+            }
+
+            console.log('🔍 All cities for governorates:', allCities);
+            console.log('🔍 Current cities array:', currentCitiesArray);
+
+            // Populate cities list
+            citiesList.innerHTML = allCities.map(city => `
+                <div class="city-item" style="padding: 8px 16px; cursor: pointer; transition: background-color 0.3s ease;">
+                    <label class="city-checkbox" style="display: flex; align-items: center; gap: 8px; cursor: pointer; width: 100%;">
+                        <input type="checkbox" value="${city}" class="city-input" style="width: 16px; height: 16px; accent-color: #3b82f6;" ${currentCitiesArray.includes(city) ? 'checked' : ''}>
+                        <span class="city-name" style="color: #374151; font-size: 14px; flex: 1;">${city}</span>
+                    </label>
+                </div>
+            `).join('');
+
+            // Add event listeners to new checkboxes
+            const cityCheckboxes = document.querySelectorAll('#edit-cities-list .city-input');
+            cityCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (typeof editSelectedCities !== 'undefined') {
+                        if (this.checked) {
+                            editSelectedCities.add(this.value);
+                        } else {
+                            editSelectedCities.delete(this.value);
+                        }
+                        updateEditCitiesDisplay();
+                    }
+                });
+                
+                // Initialize selected cities
+                if (checkbox.checked && typeof editSelectedCities !== 'undefined') {
+                    editSelectedCities.add(checkbox.value);
+                }
+            });
+
+            // Clear search
+            citiesSearch.value = '';
+            
+            // Update display
+            if (typeof updateEditCitiesDisplay === 'function') {
+                updateEditCitiesDisplay();
+            }
+        }
+
+        // Filter cities based on search term
+        function filterEditCities(searchTerm) {
+            const cityItems = document.querySelectorAll('#edit-cities-list .city-item');
+            
+            cityItems.forEach(item => {
+                const cityName = item.querySelector('.city-name').textContent.toLowerCase();
+                const matches = cityName.includes(searchTerm.toLowerCase());
+                item.style.display = matches ? 'block' : 'none';
+            });
+        }
+
+        // Update cities display
+        function updateEditCitiesDisplay() {
+            const selectedCount = document.getElementById('edit-cities-selected-count');
+            const selectedCitiesContainer = document.getElementById('edit-selected-cities');
+            const triggerText = document.querySelector('#edit-cities-trigger .trigger-text');
+
+            // Update count
+            if (editSelectedCities.size === 0) {
+                selectedCount.style.display = 'none';
+                triggerText.textContent = 'اختر المناطق/المدن (اختياري)';
+            } else {
+                selectedCount.style.display = 'inline-block';
+                selectedCount.textContent = editSelectedCities.size;
+                triggerText.textContent = `${editSelectedCities.size} منطقة مختارة`;
+            }
+
+            // Update selected cities tags
+            if (editSelectedCities.size === 0) {
+                selectedCitiesContainer.innerHTML = '';
+            } else {
+                selectedCitiesContainer.innerHTML = Array.from(editSelectedCities).map(city => `
+                    <div class="selected-city-tag" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #dbeafe; color: #1e40af; border-radius: 20px; font-size: 12px; font-weight: 500;">
+                        ${city}
+                        <button class="remove-city" onclick="removeEditCity('${city}')" style="background: none; border: none; color: #1e40af; cursor: pointer; font-size: 14px; font-weight: bold; padding: 0; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background-color 0.3s ease;">×</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Remove specific city
+        function removeEditCity(city) {
+            editSelectedCities.delete(city);
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`#edit-cities-list .city-input[value="${city}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+            
+            updateEditCitiesDisplay();
+        }
+
+        // Get selected cities for form submission
+        function getEditSelectedCities() {
+            return Array.from(editSelectedCities);
+        }
+
+        // Initialize cities filter when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 DOM Content Loaded - Initializing cities filter');
+            setTimeout(() => {
+                initializeEditCitiesFilter();
+            }, 100);
+        });
+
+        // Also initialize when window loads
+        window.addEventListener('load', function() {
+            console.log('🔍 Window Loaded - Initializing cities filter');
+            setTimeout(() => {
+                initializeEditCitiesFilter();
+            }, 200);
+        });
+    </script>
+</body>
+</html> 
