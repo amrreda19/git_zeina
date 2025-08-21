@@ -1951,7 +1951,7 @@
                                 </span>
                                 <div class="flex flex-col items-end gap-1">
                                     ${product.governorate ? `<span class="text-xs sm:text-sm bg-gray-100 text-gray-600 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">${product.governorate}</span>` : ''}
-                                    ${product.cities ? `<span class="text-xs sm:text-sm bg-blue-100 text-blue-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">${product.cities.split(',')[0].trim()}</span>` : ''}
+                                    ${product.cities && product.cities.trim() !== '' && product.cities !== 'جميع المدن' ? `<span class="text-xs sm:text-sm bg-blue-100 text-blue-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">${product.cities.split(',')[0].trim()}</span>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -2724,6 +2724,47 @@
     
     <!-- ملف التمرير السلس -->
     <script src="../js/smooth-scroll.js" defer></script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">زِينَة</h3>
+                    <p class="text-gray-300 text-sm">منصة متخصصة في خدمات الخطوبة والمناسبات</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">روابط سريعة</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="../index.html" class="hover:text-white transition-colors">الرئيسية</a></li>
+                        <li><a href="about-us.html" class="hover:text-white transition-colors">من نحن</a></li>
+                        <li><a href="contact-us.html" class="hover:text-white transition-colors">اتصل بنا</a></li>
+                        <li><a href="advertise-with-us.html" class="text-yellow-400 hover:text-yellow-300 font-medium">⭐ أعلن معنا</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">السياسات</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="privacy-policy.html" class="hover:text-white transition-colors">سياسة الخصوصية</a></li>
+                        <li><a href="terms-of-use.html" class="hover:text-white transition-colors">شروط الاستخدام</a></li>
+                        <li><a href="cookies-policy.html" class="hover:text-white transition-colors">سياسة الكوكيز</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">تواصل معنا</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="tel:+201016436007" class="hover:text-white transition-colors">📞 01016436007</a></li>
+                        <li><a href="https://www.facebook.com/share/1BCEhAV89y/?mibextid=wwXIfr" target="_blank" class="hover:text-white transition-colors">📘 فيسبوك</a></li>
+                        <li><a href="https://www.instagram.com/zeina.eg_?igsh=MXg4bzNqd213Z3IyaQ==" target="_blank" class="hover:text-white transition-colors">📷 إنستغرام</a></li>
+                        <li><a href="https://wa.me/201016436007" target="_blank" class="hover:text-white transition-colors">📱 واتساب</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-300">
+                <p>&copy; 2024 زِينَة. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html> 
 </html> 
