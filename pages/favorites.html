@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>المفضلة - زِينَة</title>
-    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=2025-08-22-1">
+    <link rel="icon" type="image/png" href="../assets/images/zeina.jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -401,6 +401,8 @@
                 'koshat-birthday': 'كوشة عيد ميلاد',
                 'koshat-decorative': 'كوشة ديكور',
                 'koshat-custom': 'كوشة مخصصة',
+                'koshat-party': 'كوشة حفلة',
+                'koshat-corporate': 'كوشة شركة',
                 
                 // تورتات
                 'cake-wedding': 'تورتة زفاف',
@@ -408,61 +410,78 @@
                 'cake-birthday': 'تورتة عيد ميلاد',
                 'cake-decorative': 'تورتة ديكور',
                 'cake-custom': 'تورتة مخصصة',
+                'cake-chocolate': 'تورتة شوكولاتة',
+                'cake-fruit': 'تورتة فواكه',
                 
                 // ديكورات أخرى
                 'other-wedding': 'ديكور زفاف',
                 'other-engagement': 'ديكور خطوبة',
                 'other-birthday': 'ديكور عيد ميلاد',
                 'other-decorative': 'ديكور منزلي',
-                'other-custom': 'ديكور مخصص'
+                'other-custom': 'ديكور مخصص',
+                'other-hospital': 'ديكور مستشفى',
+                'other-bride': 'ديكور عروسة',
+                'other-party': 'ديكور حفلة',
+                'other-balloons': 'بالونات وهدايا',
+                'other-flowers': 'زهور وأزهار',
+                'other-lights': 'إضاءات ديكور',
+                
+                // دعوات
+                'invitation-wedding': 'دعوة زفاف',
+                'invitation-engagement': 'دعوة خطوبة',
+                'invitation-birthday': 'دعوة عيد ميلاد',
+                'invitation-party': 'دعوة حفلة',
+                'invitation-corporate': 'دعوة شركة'
             };
             
             // دالة لترجمة التصنيفات الفرعية
-            function translateSubcategories(subcategories) {
+            function translateSubcategories(subcategories, mainCategory = null) {
                 console.log('🔍 Original subcategories:', subcategories);
+                console.log('🔍 Main category:', mainCategory);
                 console.log('🔍 Type:', typeof subcategories);
                 console.log('🔍 Is Array:', Array.isArray(subcategories));
                 
-                if (!subcategories) return ['تصنيف غير محدد'];
+                if (!subcategories) {
+                    // إذا لم توجد تصنيفات فرعية، حاول إنشاء تصنيف افتراضي من التصنيف الرئيسي
+                    if (mainCategory) {
+                        return inferSubcategoriesFromMainCategory(mainCategory);
+                    }
+                    return ['تصنيف فرعي غير محدد'];
+                }
                 
                 let subcatArray;
                 
-                // محاولة معالجة البيانات بطرق مختلفة
+                // معالجة البيانات
                 if (Array.isArray(subcategories)) {
                     // إذا كانت array
                     subcatArray = subcategories;
                     console.log('🔍 Using as array:', subcatArray);
                 } else if (typeof subcategories === 'string') {
-                    // إذا كانت string، حاول تحليلها كـ JSON أولاً
-                    try {
-                        const parsed = JSON.parse(subcategories);
-                        if (Array.isArray(parsed)) {
-                            subcatArray = parsed;
-                            console.log('🔍 Parsed JSON string as array:', subcatArray);
-                        } else {
-                            subcatArray = subcategories.split(',');
-                            console.log('🔍 Split string result:', subcatArray);
-                        }
-                    } catch (e) {
-                        // إذا فشل التحليل كـ JSON، استخدم split
-                        subcatArray = subcategories.split(',');
-                        console.log('🔍 Split string result (JSON parse failed):', subcatArray);
-                    }
+                    // إذا كانت string، استخدم split
+                    subcatArray = subcategories.split(',').map(item => item.trim());
+                    console.log('🔍 Split string result:', subcatArray);
                 } else {
-                    console.log('🔍 Unknown type, using default');
-                    return ['تصنيف غير محدد'];
+                    console.log('🔍 Unknown type, trying to infer from main category');
+                    if (mainCategory) {
+                        return inferSubcategoriesFromMainCategory(mainCategory);
+                    }
+                    return ['تصنيف فرعي غير محدد'];
                 }
                 
                 // تنظيف وتصفية البيانات
                 subcatArray = subcatArray
-                    .filter(item => item && item.trim() !== '')
+                    .filter(item => item && item.trim() !== '' && item.trim() !== 'undefined' && item.trim() !== 'null')
                     .map(item => item.trim());
                 
                 console.log('🔍 Cleaned array:', subcatArray);
                 
-                // إذا لم توجد تصنيفات، حاول استنتاجها من البيانات الأخرى
+                // إذا لم توجد تصنيفات صالحة، حاول استنتاجها من التصنيف الرئيسي
                 if (subcatArray.length === 0) {
-                    return ['تصنيف غير محدد'];
+                    console.log('🔍 No valid subcategories found, trying to infer from main category');
+                    if (mainCategory) {
+                        return inferSubcategoriesFromMainCategory(mainCategory);
+                    }
+                    return ['تصنيف فرعي غير محدد'];
                 }
                 
                 const result = subcatArray.map(subcat => {
@@ -473,26 +492,108 @@
                 });
                 
                 console.log('🔍 Final result:', result);
-                return result;
+                
+                // إزالة التصنيفات غير الصالحة
+                const filteredResult = result.filter(item => 
+                    item && 
+                    item.trim() !== '' && 
+                    item !== 'تصنيف غير محدد' && 
+                    item !== 'تصنيف فرعي غير محدد' &&
+                    item !== 'undefined' &&
+                    item !== 'null'
+                );
+                
+                if (filteredResult.length > 0) {
+                    console.log('🔍 Filtered result:', filteredResult);
+                    return filteredResult;
+                }
+                
+                // كملاذ أخير، حاول استنتاج التصنيفات من التصنيف الرئيسي
+                if (mainCategory) {
+                    return inferSubcategoriesFromMainCategory(mainCategory);
+                }
+                
+                return ['تصنيف فرعي غير محدد'];
+            }
+            
+            // دالة لاستنتاج التصنيفات الفرعية من التصنيف الرئيسي
+            function inferSubcategoriesFromMainCategory(category) {
+                const categorySubcategories = {
+                    'koshat': ['كوشة زفاف', 'كوشة خطوبة'],
+                    'mirr': ['مرآة زفاف', 'مرآة ديكور'],
+                    'mirror': ['مرآة زفاف', 'مرآة ديكور'],
+                    'cake': ['تورتة زفاف', 'تورتة عيد ميلاد'],
+                    'other': ['ديكور عيد ميلاد', 'ديكور حفلة'],
+                    'invitations': ['دعوة زفاف', 'دعوة خطوبة']
+                };
+                
+                return categorySubcategories[category] || ['تصنيف فرعي عام'];
             };
             
             // عرض المنتجات
             container.innerHTML = favorites.map(product => {
-                const translatedSubcategories = translateSubcategories(product.subcategories);
-                const subcategoryColors = ['bg-blue-500', 'bg-green-500', 'bg-pink-500', 'bg-purple-500', 'bg-yellow-500', 'bg-red-500'];
+                console.log('🔍 Processing product:', product);
+                console.log('🔍 Product subcategories:', product.subcategories);
+                console.log('🔍 Product category:', product.category);
                 
-                // تحديد التصنيف الرئيسي
+                // تحديد التصنيف الرئيسي أولاً
                 let mainCategory = 'تصنيف غير محدد';
+                let originalCategory = null;
+                
                 if (product.category) {
+                    originalCategory = product.category;
                     const categoryMap = {
                         'koshat': 'كوشات',
                         'mirr': 'مرايا',
+                        'mirror': 'مرايا', // إضافة دعم لـ mirror أيضاً
                         'cake': 'تورتات',
                         'other': 'ديكورات متنوعة',
                         'invitations': 'دعوات وتوزيعات'
                     };
                     mainCategory = categoryMap[product.category] || product.category;
+                    console.log(`🔍 Main category from product.category: "${mainCategory}"`);
                 }
+                
+                // إذا لم يكن هناك تصنيف رئيسي، حاول استنتاجه من التصنيفات الفرعية
+                if (mainCategory === 'تصنيف غير محدد' && product.subcategories) {
+                    let firstSubcat = null;
+                    
+                    if (Array.isArray(product.subcategories) && product.subcategories.length > 0) {
+                        firstSubcat = product.subcategories[0];
+                    } else if (typeof product.subcategories === 'string' && product.subcategories.trim() !== '') {
+                        firstSubcat = product.subcategories.split(',')[0];
+                    }
+                    
+                    if (firstSubcat) {
+                        const subcatKey = firstSubcat.trim();
+                        console.log(`🔍 Inferring main category from subcategory: "${subcatKey}"`);
+                        if (subcatKey.startsWith('koshat-')) {
+                            mainCategory = 'كوشات';
+                            originalCategory = 'koshat';
+                        } else if (subcatKey.startsWith('mirr-') || subcatKey.startsWith('mirror-')) {
+                            mainCategory = 'مرايا';
+                            originalCategory = 'mirr';
+                        } else if (subcatKey.startsWith('cake-')) {
+                            mainCategory = 'تورتات';
+                            originalCategory = 'cake';
+                        } else if (subcatKey.startsWith('other-')) {
+                            mainCategory = 'ديكورات متنوعة';
+                            originalCategory = 'other';
+                        } else if (subcatKey.startsWith('invitation-')) {
+                            mainCategory = 'دعوات وتوزيعات';
+                            originalCategory = 'invitations';
+                        }
+                        console.log(`🔍 Inferred main category: "${mainCategory}"`);
+                    }
+                }
+                
+                // استخدام الدالة المحسنة لترجمة التصنيفات الفرعية
+                const translatedSubcategories = translateSubcategories(product.subcategories, originalCategory);
+                console.log('🔍 Translated subcategories:', translatedSubcategories);
+                const subcategoryColors = ['bg-blue-500', 'bg-green-500', 'bg-pink-500', 'bg-purple-500', 'bg-yellow-500', 'bg-red-500'];
+                
+                console.log(`🔍 Final main category: "${mainCategory}"`);
+                console.log(`🔍 Final translated subcategories:`, translatedSubcategories);
                 
                 return `
                     <div class="product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300" data-product-id="${product.id}">
@@ -504,11 +605,16 @@
                                     ${mainCategory}
                                 </span>
                                 <!-- التصنيفات الفرعية -->
-                                ${translatedSubcategories.map((name, index) => `
-                                    <span class="category-badge ${subcategoryColors[index % subcategoryColors.length]} text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-                                        ${name}
-                                    </span>
-                                `).join('')}
+                                ${translatedSubcategories.length > 0 && translatedSubcategories[0] !== 'تصنيف فرعي غير محدد' ? 
+                                    translatedSubcategories.slice(0, 2).map((name, index) => `
+                                        <span class="category-badge ${subcategoryColors[index % subcategoryColors.length]} text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
+                                            ${name}
+                                        </span>
+                                    `).join('') : 
+                                    `<span class="category-badge bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
+                                        تصنيف فرعي عام
+                                    </span>`
+                                }
                             </div>
                             <!-- أيقونة إزالة من المفضلة -->
                             <div class="absolute top-3 left-3">
@@ -526,16 +632,21 @@
                                     ${mainCategory}
                                 </span>
                                 <!-- التصنيفات الفرعية -->
-                                ${translatedSubcategories.map((name, index) => {
-                                    const color = subcategoryColors[index % subcategoryColors.length];
-                                    const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
-                                    const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
-                                    return `
-                                        <span class="inline-block ${bgColor} ${textColor} text-xs px-2 py-1 rounded-full">
-                                            ${name}
-                                        </span>
-                                    `;
-                                }).join('')}
+                                ${translatedSubcategories.length > 0 && translatedSubcategories[0] !== 'تصنيف فرعي غير محدد' && translatedSubcategories[0] !== 'تصنيف فرعي عام' ? 
+                                    translatedSubcategories.slice(0, 3).map((name, index) => {
+                                        const color = subcategoryColors[index % subcategoryColors.length];
+                                        const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
+                                        const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
+                                        return `
+                                            <span class="inline-block ${bgColor} ${textColor} text-xs px-2 py-1 rounded-full">
+                                                ${name}
+                                            </span>
+                                        `;
+                                    }).join('') : 
+                                    `<span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
+                                        تصنيف فرعي عام
+                                    </span>`
+                                }
                             </div>
                             <h3 class="text-lg font-semibold text-gray-800 mb-2">${product.title}</h3>
                             <div class="flex justify-between items-center">
@@ -609,8 +720,59 @@
             window.location.href = `product-details.html?id=${productId}`;
         }
 
+        // تحسين بيانات المفضلة المحفوظة
+        function updateFavoritesData() {
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            let updated = false;
+            
+            const updatedFavorites = favorites.map(product => {
+                let updatedProduct = { ...product };
+                
+                // التأكد من وجود التصنيف الرئيسي
+                if (!updatedProduct.category && updatedProduct.subcategories) {
+                    const subcat = Array.isArray(updatedProduct.subcategories) 
+                        ? updatedProduct.subcategories[0] 
+                        : updatedProduct.subcategories.split(',')[0];
+                    
+                    if (subcat) {
+                        const subcatKey = subcat.trim();
+                        if (subcatKey.startsWith('koshat-')) {
+                            updatedProduct.category = 'koshat';
+                            updated = true;
+                        } else if (subcatKey.startsWith('mirr-') || subcatKey.startsWith('mirror-')) {
+                            updatedProduct.category = 'mirr';
+                            updated = true;
+                        } else if (subcatKey.startsWith('cake-')) {
+                            updatedProduct.category = 'cake';
+                            updated = true;
+                        } else if (subcatKey.startsWith('other-')) {
+                            updatedProduct.category = 'other';
+                            updated = true;
+                        } else if (subcatKey.startsWith('invitation-')) {
+                            updatedProduct.category = 'invitations';
+                            updated = true;
+                        }
+                    }
+                }
+                
+                // التأكد من تنسيق التصنيفات الفرعية
+                if (updatedProduct.subcategories && typeof updatedProduct.subcategories === 'string') {
+                    updatedProduct.subcategories = updatedProduct.subcategories.split(',').map(s => s.trim());
+                    updated = true;
+                }
+                
+                return updatedProduct;
+            });
+            
+            if (updated) {
+                localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+                console.log('✅ Updated favorites data with missing categories');
+            }
+        }
+
         // عرض المفضلة عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
+            updateFavoritesData(); // تحسين البيانات أولاً
             displayFavorites();
         });
 

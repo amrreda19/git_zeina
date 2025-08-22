@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل المنتج - زِينَة</title>
-    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=2025-08-22-1">
+    <link rel="icon" type="image/png" href="../assets/images/zeina.jpeg">
     
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -496,7 +496,7 @@
                     price: currentProduct.price || 0,
                     governorate: currentProduct.governorate || '',
                     cities: currentProduct.cities || '',
-                    subcategories: currentProduct.subcategory ? (Array.isArray(currentProduct.subcategory) ? currentProduct.subcategory.join(',') : currentProduct.subcategory) : '',
+                    subcategories: currentProduct.subcategory ? (Array.isArray(currentProduct.subcategory) ? currentProduct.subcategory : [currentProduct.subcategory]) : [],
                     category: currentProduct.category || 'other', // إضافة التصنيف الرئيسي
                     addedAt: new Date().toISOString()
                 };
