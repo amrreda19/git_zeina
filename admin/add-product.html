@@ -296,6 +296,42 @@
                 max-height: 200px;
             }
         }
+        
+        /* تحسين القائمة الرئيسية للهاتف المحمول */
+        #mobile-menu {
+            /* منع التمرير في الصفحة الرئيسية عند فتح القائمة */
+            overscroll-behavior: contain;
+            /* تحسين التمرير باللمس */
+            -webkit-overflow-scrolling: touch;
+            /* إخفاء شريط التمرير */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        #mobile-menu::-webkit-scrollbar {
+            display: none;
+        }
+        
+        #mobile-menu > div {
+            /* تحديد ارتفاع أقصى للقائمة */
+            max-height: 80vh;
+            /* تفعيل التمرير العمودي */
+            overflow-y: auto;
+            /* منع التمرير الأفقي */
+            overflow-x: hidden;
+        }
+        
+        /* تحسين التمرير على الأجهزة المحمولة */
+        @media (max-width: 768px) {
+            #mobile-menu > div {
+                /* تحسين التمرير على الأجهزة المحمولة */
+                -webkit-overflow-scrolling: touch;
+                /* منع التمرير في الصفحة الرئيسية */
+                overscroll-behavior: contain;
+                /* تحسين الأداء */
+                will-change: scroll-position;
+            }
+        }
     </style>
     
     <!-- Ensure ProductService is available -->
@@ -734,10 +770,43 @@
         
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-gray-200">
-            <div class="px-4 py-2 space-y-2">
-                                    <a href="../index.html" class="block py-2 text-gray-600 hover:text-yellow-600 font-medium">الرئيسية</a>
+            <div class="px-4 py-2 space-y-2 max-h-[80vh] overflow-y-auto scrollbar-hide" style="-webkit-overflow-scrolling: touch; overscroll-behavior: contain;">
+                <a href="../index.html" class="block py-2 text-gray-600 hover:text-yellow-600 font-medium">الرئيسية</a>
                 <a href="admin-products.html" class="block py-2 text-gray-600 hover:text-yellow-600 font-medium">إدارة المنتجات</a>
                 <a href="#" class="block py-2 text-yellow-600 font-medium">إضافة منتج</a>
+                
+                <!-- تواصل معنا -->
+                <div class="border-t border-gray-200 pt-3 mt-3">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-3">تواصل معنا</h4>
+                    
+                    <!-- التواصل الاجتماعي -->
+                    <div class="mb-3">
+                        <div class="space-y-2">
+                            <a href="https://www.facebook.com/share/1BCEhAV89y/?mibextid=wwXIfr" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">📘</span>
+                                فيسبوك
+                            </a>
+                            <a href="https://www.instagram.com/zeina.eg_?igsh=MXg4bzNqd213Z3IyaQ==" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">📷</span>
+                                إنستغرام
+                            </a>
+                            <a href="https://wa.me/201016436007" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">📱</span>
+                                واتساب
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- التواصل المباشر -->
+                    <div class="mb-3">
+                        <div class="space-y-2">
+                            <a href="tel:+201016436007" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">📞</span>
+                                اتصل بنا: 01016436007
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -783,9 +852,9 @@
                         <option value="">اختر التصنيف الرئيسي</option>
                         <option value="koshat">كوشات</option>
                         <option value="mirr">مرايا</option>
-                        <option value="cake">تورتات وشكولاتات</option>
-                        <option value="other">ديكورات متنوعة</option>
-                        <option value="invitations">دعوات وتوزيعات</option>
+                                                        <option value="cake">تورتات وشكولاتات</option>
+                <option value="other">ديكورات متنوعة</option>
+                <option value="invitations">دعوات وتوزيعات</option>
                     </select>
                 </div>
                 
@@ -1379,6 +1448,11 @@
             'invitations': [
                 { value: 'invitation-wedding', label: 'دعوة زفاف' },
                 { value: 'invitation-engagement', label: 'دعوة خطوبة' },
+                { value: 'invitation-birthday', label: 'دعوة عيد ميلاد' },
+                { value: 'invitation-corporate', label: 'دعوة شركات' },
+                { value: 'invitation-graduation', label: 'دعوة تخرج' },
+                { value: 'invitation-baby', label: 'دعوة مولود' },
+                { value: 'invitation-anniversary', label: 'دعوة ذكرى' },
                 { value: 'invitation-chocolate', label: 'توزيعات بالشوكولاتة' },
                 { value: 'invitation-perfumed', label: 'توزيعات بالبرفان' },
                 { value: 'invitation-gift', label: 'توزيعات مع هدية صغيرة' },

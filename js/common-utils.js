@@ -1,101 +1,143 @@
-// Common utilities for the application
+// ملف مشترك يحتوي على دوال التصنيفات الموحدة
+// Common utilities for category management
 
-// Wait for ProductService to be loaded
-function waitForProductService() {
-    return new Promise((resolve) => {
-        if (window.ProductService && window.supabaseClient) {
-            console.log('✅ ProductService and Supabase already loaded');
-            resolve(window.ProductService);
-        } else {
-            console.log('⏳ Waiting for ProductService and Supabase to load...');
-            const checkInterval = setInterval(() => {
-                if (window.ProductService && window.supabaseClient) {
-                    clearInterval(checkInterval);
-                    console.log('✅ ProductService and Supabase loaded successfully');
-                    resolve(window.ProductService);
-                }
-            }, 100);
-            
-            // Timeout after 5 seconds
-            setTimeout(() => {
-                clearInterval(checkInterval);
-                console.error('❌ ProductService or Supabase not loaded after 5 seconds');
-                resolve(null);
-            }, 5000);
-        }
-    });
+// Get category name in Arabic
+function getCategoryName(category) {
+    const categories = {
+        'koshat': 'كوشات',
+        'mirr': 'مرايا',
+        'cake': 'تورتات',
+        'other': 'ديكورات متنوعة',
+        'invitations': 'دعوات وتوزيعات'
+    };
+    return categories[category] || category;
 }
 
-// Check if all required services are loaded
-function checkRequiredServices() {
-    const services = {
-        'Supabase': typeof window.supabaseClient !== 'undefined',
-        'ProductService': typeof window.ProductService !== 'undefined',
-        'ProductService.addProduct': typeof window.ProductService?.addProduct === 'function',
-        'ProductService.supabase': typeof window.ProductService?.supabase !== 'undefined'
+// Get subcategory name in Arabic
+function getSubcategoryName(subcategory) {
+    const subcategories = {
+        // كوشات
+        'koshat-wedding': 'كوشات زفاف',
+        'koshat-engagement': 'كوشات خطوبة',
+        'koshat-birthday': 'كوشات عيد ميلاد',
+        'koshat-party': 'كوشات حفلات',
+        'koshat-corporate': 'كوشات شركات',
+        
+        // مرايا - تصحيح المفاتيح
+        'mirr-wedding': 'مرايا زفاف',
+        'mirr-engagement': 'مرايا خطوبة',
+        'mirr-birthday': 'مرايا عيد ميلاد',
+        'mirr-decorative': 'مرايا ديكور',
+        'mirr-custom': 'مرايا مخصصة',
+        'mirr-classic': 'مرايا كلاسيكية',
+        'mirr-modern': 'مرايا عصرية',
+        'mirr-luxury': 'مرايا فاخرة',
+        
+        // مرايا - إضافة المفاتيح البديلة
+        'mirror-wedding': 'مرايا زفاف',
+        'mirror-engagement': 'مرايا خطوبة',
+        'mirror-birthday': 'مرايا عيد ميلاد',
+        'mirror-decorative': 'مرايا ديكور',
+        'mirror-custom': 'مرايا مخصصة',
+        'mirror-classic': 'مرايا كلاسيكية',
+        'mirror-modern': 'مرايا عصرية',
+        'mirror-luxury': 'مرايا فاخرة',
+        
+        // تورتة
+        'cake-wedding': 'تورتة زفاف',
+        'cake-engagement': 'تورتة خطوبة',
+        'cake-birthday': 'تورتة عيد ميلاد',
+        'cake-chocolate': 'تورتة شوكولاتة',
+        'cake-fruit': 'تورتة فواكه',
+        'cake-custom': 'تورتة مخصصة',
+        
+        // ديكورات متنوعة
+        'other-birthday': 'ديكور عيد ميلاد',
+        'other-hospital': 'ديكور استقبال مستشفى',
+        'other-bride': 'ديكور استقبال عروسة',
+        'other-party': 'ديكور حفلات بسيطة',
+        'other-balloons': 'بالونات وهدايا',
+        'other-flowers': 'زهور وأزهار',
+        'other-lights': 'إضاءات ديكور',
+        
+        // دعوات
+        'invitation-wedding': 'دعوة زفاف',
+        'invitation-engagement': 'دعوة خطوبة',
+        'invitation-birthday': 'دعوة عيد ميلاد',
+        'invitation-party': 'دعوة حفلة',
+        'invitation-corporate': 'دعوة شركة'
+    };
+    return subcategories[subcategory] || subcategory;
+}
+
+// Get subcategory display info (name and color)
+function getSubcategoryDisplayInfo(subcategory) {
+    const subcategoryMap = {
+        // مرايا
+        'mirr-wedding': { name: 'مرآة زفاف', color: 'bg-pink-500' },
+        'mirr-engagement': { name: 'مرآة خطوبة', color: 'bg-purple-500' },
+        'mirr-birthday': { name: 'مرآة عيد ميلاد', color: 'bg-green-500' },
+        'mirr-decorative': { name: 'مرآة ديكور', color: 'bg-green-500' },
+        'mirr-custom': { name: 'مرآة مخصصة', color: 'bg-indigo-500' },
+        'mirr-classic': { name: 'مرآة كلاسيكية', color: 'bg-yellow-500' },
+        'mirr-modern': { name: 'مرآة عصرية', color: 'bg-blue-500' },
+        'mirr-luxury': { name: 'مرآة فاخرة', color: 'bg-red-500' },
+        
+        // مرايا - إضافة المفاتيح البديلة
+        'mirror-wedding': { name: 'مرآة زفاف', color: 'bg-pink-500' },
+        'mirror-engagement': { name: 'مرآة خطوبة', color: 'bg-purple-500' },
+        'mirror-birthday': { name: 'مرآة عيد ميلاد', color: 'bg-green-500' },
+        'mirror-decorative': { name: 'مرآة ديكور', color: 'bg-green-500' },
+        'mirror-custom': { name: 'مرآة مخصصة', color: 'bg-indigo-500' },
+        'mirror-classic': { name: 'مرآة كلاسيكية', color: 'bg-yellow-500' },
+        'mirror-modern': { name: 'مرآة عصرية', color: 'bg-blue-500' },
+        'mirror-luxury': { name: 'مرآة فاخرة', color: 'bg-red-500' },
+        
+        // كوشات
+        'koshat-wedding': { name: 'كوشة زفاف', color: 'bg-pink-500' },
+        'koshat-engagement': { name: 'كوشة خطوبة', color: 'bg-purple-500' },
+        'koshat-birthday': { name: 'كوشة عيد ميلاد', color: 'bg-green-500' },
+        'koshat-party': { name: 'كوشة حفلة', color: 'bg-blue-500' },
+        'koshat-corporate': { name: 'كوشة شركة', color: 'bg-indigo-500' },
+        
+        // تورتات
+        'cake-wedding': { name: 'تورتة زفاف', color: 'bg-pink-500' },
+        'cake-engagement': { name: 'تورتة خطوبة', color: 'bg-purple-500' },
+        'cake-birthday': { name: 'تورتة عيد ميلاد', color: 'bg-green-500' },
+        'cake-chocolate': { name: 'تورتة شوكولاتة', color: 'bg-yellow-500' },
+        'cake-fruit': { name: 'تورتة فواكه', color: 'bg-orange-500' },
+        'cake-custom': { name: 'تورتة مخصصة', color: 'bg-indigo-500' },
+        
+        // ديكورات أخرى
+        'other-birthday': { name: 'ديكور عيد ميلاد', color: 'bg-green-500' },
+        'other-hospital': { name: 'ديكور مستشفى', color: 'bg-blue-500' },
+        'other-bride': { name: 'ديكور عروسة', color: 'bg-pink-500' },
+        'other-party': { name: 'ديكور حفلة', color: 'bg-purple-500' },
+        'other-balloons': { name: 'بالونات', color: 'bg-yellow-500' },
+        'other-flowers': { name: 'زهور', color: 'bg-red-500' },
+        'other-lights': { name: 'إضاءات', color: 'bg-indigo-500' },
+        
+        // دعوات
+        'invitation-wedding': { name: 'دعوة زفاف', color: 'bg-pink-500' },
+        'invitation-engagement': { name: 'دعوة خطوبة', color: 'bg-purple-500' },
+        'invitation-birthday': { name: 'دعوة عيد ميلاد', color: 'bg-green-500' },
+        'invitation-party': { name: 'دعوة حفلة', color: 'bg-blue-500' },
+        'invitation-corporate': { name: 'دعوة شركة', color: 'bg-indigo-500' }
     };
     
-    console.log('🔍 Checking required services:', services);
-    
-    // Check if all services are available
-    const allAvailable = Object.values(services).every(available => available);
-    if (!allAvailable) {
-        console.error('❌ Some required services are not available:', services);
-    }
-    
-    return services;
+    return subcategoryMap[subcategory] || { name: subcategory, color: 'bg-gray-500' };
 }
 
-// Show error message
-function showError(message) {
-    console.error('❌ Error:', message);
-    
-    // Create error notification
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-    errorDiv.innerHTML = `
-        <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            ${message}
-        </div>
-    `;
-    document.body.appendChild(errorDiv);
-    
-    // Remove after 5 seconds
-    setTimeout(() => {
-        errorDiv.remove();
-    }, 5000);
-}
-
-// Show success message
-function showSuccess(message) {
-    console.log('✅ Success:', message);
-    
-    // Create success notification
-    const successDiv = document.createElement('div');
-    successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-    successDiv.innerHTML = `
-        <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            ${message}
-        </div>
-    `;
-    document.body.appendChild(successDiv);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-        successDiv.remove();
-    }, 3000);
-}
-
-// Make functions globally available
-window.waitForProductService = waitForProductService;
-window.checkRequiredServices = checkRequiredServices;
-window.showError = showError;
-window.showSuccess = showSuccess;
-
-console.log('🔧 Common utilities loaded'); 
+// Export functions for use in other files
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        getCategoryName,
+        getSubcategoryName,
+        getSubcategoryDisplayInfo
+    };
+} else {
+    // Make functions globally available
+    window.getCategoryName = getCategoryName;
+    window.getSubcategoryName = getSubcategoryName;
+    window.getSubcategoryDisplayInfo = getSubcategoryDisplayInfo;
+} 

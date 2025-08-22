@@ -894,6 +894,10 @@
                     <span class="count" id="count-other">0</span>
                     أخرى
                 </button>
+                <button class="filter-btn" data-category="invitations">
+                    <span class="count" id="count-invitations">0</span>
+                    دعوات وتوزيعات
+                </button>
             </div>
         </div>
 
@@ -955,6 +959,7 @@
                                 <option value="mirr">مرايا</option>
                                 <option value="cake">تورتة</option>
                                 <option value="other">ديكورات متنوعة</option>
+                                <option value="invitations">دعوات وتوزيعات</option>
                             </select>
                         </div>
                     </div>
@@ -1143,7 +1148,7 @@
         // Load all products from all tables
         async function loadAllProducts() {
             try {
-                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other'];
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
                 allProducts = [];
 
                 for (const table of tables) {
@@ -1221,7 +1226,7 @@
 
         // Update product counts
         function updateProductCounts() {
-            const categories = ['all', 'koshat', 'cake', 'mirr', 'other'];
+            const categories = ['all', 'koshat', 'cake', 'mirr', 'other', 'invitations'];
             
             categories.forEach(category => {
                 const countElement = document.getElementById(`count-${category}`);
@@ -1330,7 +1335,8 @@
                 'koshat': 'كوشات',
                 'cake': 'تورتة',
                 'mirr': 'مرايا',
-                'other': 'أخرى'
+                'other': 'أخرى',
+                'invitations': 'دعوات وتوزيعات'
             };
             return categories[category] || category;
         }
@@ -1609,6 +1615,15 @@
                     { value: 'other-balloons', label: 'بالونات وهدايا' },
                     { value: 'other-flowers', label: 'زهور وأزهار' },
                     { value: 'other-lights', label: 'إضاءات ديكور' }
+                ],
+                'invitations': [
+                    { value: 'invitation-wedding', label: 'دعوة زفاف' },
+                    { value: 'invitation-engagement', label: 'دعوة خطوبة' },
+                    { value: 'invitation-birthday', label: 'دعوة عيد ميلاد' },
+                    { value: 'invitation-corporate', label: 'دعوة شركات' },
+                    { value: 'invitation-graduation', label: 'دعوة تخرج' },
+                    { value: 'invitation-baby', label: 'دعوة مولود' },
+                    { value: 'invitation-anniversary', label: 'دعوة ذكرى' }
                 ]
             };
             

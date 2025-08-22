@@ -81,7 +81,7 @@ class ProductService {
             'koshat': 'products_koshat', 
             'mirr': 'products_mirr',
             'other': 'products_other',
-            'invitations': 'products_invitations' // إضافة دعم لجدول دعوات وتوزيعات
+            'invitations': 'products_invitations' // استخدام جدول products_invitations الموجود
         };
         
         const tableName = tableMap[category];
@@ -978,7 +978,7 @@ class ProductService {
                     'koshat': 'products_koshat',
                     'mirr': 'products_mirr',
                     'other': 'products_other',
-                    'invitations': 'products_invitations'
+                    'invitations': 'products_other'
                 };
                 folderPath = folderMap[category] || '';
                 console.log(`🎯 Category: ${category} → Folder: ${folderPath}`);

@@ -14,8 +14,8 @@
     <script src="../js/supabase-config.js"></script>
     <script src="../js/product-service.js"></script>
     <script src="../js/auth-service.js"></script>
-    <script src="../js/cities-service.js"></script>
     <script src="../js/advertising-service.js"></script>
+    <script src="../js/common-utils.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1994970196400389"
      crossorigin="anonymous"></script>
 
@@ -109,6 +109,42 @@
         
         .gold-border {
             border: 1px solid var(--gold);
+        }
+        
+        /* تحسين القائمة الرئيسية للهاتف المحمول */
+        #mobile-menu {
+            /* منع التمرير في الصفحة الرئيسية عند فتح القائمة */
+            overscroll-behavior: contain;
+            /* تحسين التمرير باللمس */
+            -webkit-overflow-scrolling: touch;
+            /* إخفاء شريط التمرير */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        #mobile-menu::-webkit-scrollbar {
+            display: none;
+        }
+        
+        #mobile-menu > div {
+            /* تحديد ارتفاع أقصى للقائمة */
+            max-height: 80vh;
+            /* تفعيل التمرير العمودي */
+            overflow-y: auto;
+            /* منع التمرير الأفقي */
+            overflow-x: hidden;
+        }
+        
+        /* تحسين التمرير على الأجهزة المحمولة */
+        @media (max-width: 768px) {
+            #mobile-menu > div {
+                /* تحسين التمرير على الأجهزة المحمولة */
+                -webkit-overflow-scrolling: touch;
+                /* منع التمرير في الصفحة الرئيسية */
+                overscroll-behavior: contain;
+                /* تحسين الأداء */
+                will-change: scroll-position;
+            }
         }
         
         .gold-text {
@@ -615,7 +651,7 @@
             
             <!-- Mobile Navigation Menu -->
             <div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-gray-200">
-                <div class="px-4 py-2 space-y-2">
+                <div class="px-4 py-2 space-y-2 max-h-[80vh] overflow-y-auto scrollbar-hide" style="-webkit-overflow-scrolling: touch; overscroll-behavior: contain;">
                     
                     <!-- التصنيفات -->
                     <div class="border-b border-gray-200 pb-3">
@@ -658,15 +694,15 @@
                         <div class="mb-3">
                             <h4 class="text-xs font-medium text-gray-500 mb-2">التواصل الاجتماعي</h4>
                             <div class="space-y-2">
-                                <a href="https://facebook.com" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <a href="https://www.facebook.com/share/1BCEhAV89y/?mibextid=wwXIfr" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
                                     <span class="mr-2">📘</span>
                                     فيسبوك
                                 </a>
-                                <a href="https://instagram.com" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <a href="https://www.instagram.com/zeina.eg_?igsh=MXg4bzNqd213Z3IyaQ==" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 text-sm flex items-center">
                                     <span class="mr-2">📷</span>
                                     إنستغرام
                                 </a>
-                                <a href="https://wa.me/201234567890" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <a href="https://wa.me/201016436007" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
                                     <span class="mr-2">📱</span>
                                     واتساب
                                 </a>
@@ -677,9 +713,9 @@
                         <div>
                             <h4 class="text-xs font-medium text-gray-500 mb-2">التواصل المباشر</h4>
                             <div class="space-y-2">
-                                <a href="tel:+201234567890" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <a href="tel:+201016436007" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
                                     <span class="mr-2">📞</span>
-                                    اتصل بنا
+                                    اتصل بنا: 01016436007
                                 </a>
                                 <a href="contact-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm flex items-center">
                                     <span class="mr-2">📧</span>
@@ -2187,6 +2223,7 @@
                     governorate: product.governorate || '',
                     cities: product.cities || '',
                     subcategories: product.subcategory || '',
+                    category: 'koshat', // إضافة التصنيف الرئيسي
                     addedAt: new Date().toISOString()
                 };
                 favorites.push(productData);
@@ -2257,6 +2294,7 @@
                     governorate: governorate,
                     cities: cities,
                     subcategories: subcategories,
+                    category: 'koshat', // إضافة التصنيف الرئيسي
                     addedAt: new Date().toISOString()
                 };
                 favorites.push(productData);

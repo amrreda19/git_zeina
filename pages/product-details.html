@@ -20,6 +20,7 @@
     <script src="../js/supabase-config.js"></script>
     <script src="../js/product-service.js"></script>
     <script src="../js/auth-service.js"></script>
+    <script src="../js/common-utils.js"></script>
     <script src="../js/governorate-filter.js"></script>
     <script src="../js/enhanced-auto-slideshow.js" defer></script>
     <script src="../js/advertising-service.js"></script>
@@ -496,6 +497,7 @@
                     governorate: currentProduct.governorate || '',
                     cities: currentProduct.cities || '',
                     subcategories: currentProduct.subcategory ? (Array.isArray(currentProduct.subcategory) ? currentProduct.subcategory.join(',') : currentProduct.subcategory) : '',
+                    category: currentProduct.category || 'other', // إضافة التصنيف الرئيسي
                     addedAt: new Date().toISOString()
                 };
                 favorites.push(productData);
@@ -541,9 +543,10 @@
         function getCategoryName(category) {
             const categories = {
                 'koshat': 'كوشات',
-                'mirr': 'ديكور',
+                'mirr': 'مرايا',
                 'cake': 'تورتات',
-                'other': 'ديكورات متنوعة'
+                'other': 'ديكورات متنوعة',
+                'invitations': 'دعوات وتوزيعات'
             };
             return categories[category] || category;
         }
@@ -993,7 +996,7 @@
             const categories = {
                 'koshat': 'كوشات',
                 'mirr': 'مرايا',
-                'cake': 'تورتة',
+                'cake': 'تورتات',
                 'other': 'ديكورات متنوعة',
                 'invitations': 'دعوات وتوزيعات'
             };

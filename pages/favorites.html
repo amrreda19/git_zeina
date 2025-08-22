@@ -14,6 +14,7 @@
     <script src="../js/supabase-config.js"></script>
     <script src="../js/product-service.js"></script>
     <script src="../js/auth-service.js"></script>
+    <script src="../js/common-utils.js"></script>
 
     <style>
         :root {
@@ -155,6 +156,42 @@
         .favorite-btn svg {
             transition: all 0.2s ease;
         }
+        
+        /* تحسين القائمة الرئيسية للهاتف المحمول */
+        #mobile-menu {
+            /* منع التمرير في الصفحة الرئيسية عند فتح القائمة */
+            overscroll-behavior: contain;
+            /* تحسين التمرير باللمس */
+            -webkit-overflow-scrolling: touch;
+            /* إخفاء شريط التمرير */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        #mobile-menu::-webkit-scrollbar {
+            display: none;
+        }
+        
+        #mobile-menu > div {
+            /* تحديد ارتفاع أقصى للقائمة */
+            max-height: 80vh;
+            /* تفعيل التمرير العمودي */
+            overflow-y: auto;
+            /* منع التمرير الأفقي */
+            overflow-x: hidden;
+        }
+        
+        /* تحسين التمرير على الأجهزة المحمولة */
+        @media (max-width: 768px) {
+            #mobile-menu > div {
+                /* تحسين التمرير على الأجهزة المحمولة */
+                -webkit-overflow-scrolling: touch;
+                /* منع التمرير في الصفحة الرئيسية */
+                overscroll-behavior: contain;
+                /* تحسين الأداء */
+                will-change: scroll-position;
+            }
+        }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1994970196400389"
      crossorigin="anonymous"></script>
@@ -215,7 +252,8 @@
             
             <!-- Mobile Navigation Menu -->
             <div id="mobile-menu" class="lg:hidden hidden border-t border-gray-200 pt-4 pb-2">
-                                 <nav class="flex flex-col space-y-3">
+                <div class="max-h-[80vh] overflow-y-auto scrollbar-hide" style="-webkit-overflow-scrolling: touch; overscroll-behavior: contain;">
+                    <nav class="flex flex-col space-y-3 px-4 py-2">
                      <a href="../index.html" class="text-gray-600 hover:text-gray-900 transition-colors py-2 px-3 rounded-lg hover:bg-gray-50">الرئيسية</a>
                      <a href="category-koshat.html" class="text-gray-600 hover:text-gray-900 transition-colors py-2 px-3 rounded-lg hover:bg-gray-50">كوشات</a>
                      <a href="category-cake.html" class="text-gray-600 hover:text-gray-900 transition-colors py-2 px-3 rounded-lg hover:bg-gray-50">تورتات وشكولاتات</a>
@@ -225,7 +263,42 @@
                      <a href="about-us.html" class="text-gray-600 hover:text-gray-900 transition-colors py-2 px-3 rounded-lg hover:bg-gray-50">من نحن</a>
                      <a href="contact-us.html" class="text-gray-600 hover:text-gray-900 transition-colors py-2 px-3 rounded-lg hover:bg-gray-50">اتصل بنا</a>
                  </nav>
+                <!-- تواصل معنا -->
                 <div class="mt-4 pt-4 border-t border-gray-200">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-3">تواصل معنا</h4>
+                    
+                    <!-- التواصل الاجتماعي -->
+                    <div class="mb-3">
+                        <div class="space-y-2">
+                            <a href="https://www.facebook.com/share/1BCEhAV89y/?mibextid=wwXIfr" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">📘</span>
+                                فيسبوك
+                            </a>
+                            <a href="https://www.instagram.com/zeina.eg_?igsh=MXg4bzNqd213Z3IyaQ==" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">📷</span>
+                                إنستغرام
+                            </a>
+                            <a href="https://wa.me/201016436007" target="_blank" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">📱</span>
+                                واتساب
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- التواصل المباشر -->
+                    <div class="mb-3">
+                        <div class="space-y-2">
+                            <a href="tel:+201016436007" class="block py-2 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">📞</span>
+                                اتصل بنا: 01016436007
+                            </a>
+                            <a href="contact-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">📧</span>
+                                راسلنا
+                            </a>
+                        </div>
+                    </div>
+                    
                     <a href="../index.html" class="btn-secondary text-sm w-full text-center block">الصفحة الرئيسية</a>
                 </div>
             </div>
@@ -302,24 +375,40 @@
             
             // خريطة ترجمة التصنيفات الفرعية
             const subcategoryMap = {
-                // مرايا
+                // مرايا - تصحيح المفاتيح
                 'mirr-wedding': 'مرآة زفاف',
                 'mirr-engagement': 'مرآة خطوبة',
                 'mirr-birthday': 'مرآة عيد ميلاد',
                 'mirr-decorative': 'مرآة ديكور',
                 'mirr-custom': 'مرآة مخصصة',
+                'mirr-classic': 'مرآة كلاسيكية',
+                'mirr-modern': 'مرآة عصرية',
+                'mirr-luxury': 'مرآة فاخرة',
+                
+                // مرايا - إضافة المفاتيح البديلة
+                'mirror-wedding': 'مرآة زفاف',
+                'mirror-engagement': 'مرآة خطوبة',
+                'mirror-birthday': 'مرآة عيد ميلاد',
+                'mirror-decorative': 'مرآة ديكور',
+                'mirror-custom': 'مرآة مخصصة',
+                'mirror-classic': 'مرآة كلاسيكية',
+                'mirror-modern': 'مرآة عصرية',
+                'mirror-luxury': 'مرآة فاخرة',
+                
                 // كوشات
                 'koshat-wedding': 'كوشة زفاف',
                 'koshat-engagement': 'كوشة خطوبة',
                 'koshat-birthday': 'كوشة عيد ميلاد',
                 'koshat-decorative': 'كوشة ديكور',
                 'koshat-custom': 'كوشة مخصصة',
+                
                 // تورتات
                 'cake-wedding': 'تورتة زفاف',
                 'cake-engagement': 'تورتة خطوبة',
                 'cake-birthday': 'تورتة عيد ميلاد',
                 'cake-decorative': 'تورتة ديكور',
                 'cake-custom': 'تورتة مخصصة',
+                
                 // ديكورات أخرى
                 'other-wedding': 'ديكور زفاف',
                 'other-engagement': 'ديكور خطوبة',
@@ -334,7 +423,7 @@
                 console.log('🔍 Type:', typeof subcategories);
                 console.log('🔍 Is Array:', Array.isArray(subcategories));
                 
-                if (!subcategories) return ['ديكور'];
+                if (!subcategories) return ['تصنيف غير محدد'];
                 
                 let subcatArray;
                 
@@ -361,7 +450,7 @@
                     }
                 } else {
                     console.log('🔍 Unknown type, using default');
-                    return ['ديكور'];
+                    return ['تصنيف غير محدد'];
                 }
                 
                 // تنظيف وتصفية البيانات
@@ -370,6 +459,11 @@
                     .map(item => item.trim());
                 
                 console.log('🔍 Cleaned array:', subcatArray);
+                
+                // إذا لم توجد تصنيفات، حاول استنتاجها من البيانات الأخرى
+                if (subcatArray.length === 0) {
+                    return ['تصنيف غير محدد'];
+                }
                 
                 const result = subcatArray.map(subcat => {
                     const trimmed = subcat.trim();
@@ -387,11 +481,29 @@
                 const translatedSubcategories = translateSubcategories(product.subcategories);
                 const subcategoryColors = ['bg-blue-500', 'bg-green-500', 'bg-pink-500', 'bg-purple-500', 'bg-yellow-500', 'bg-red-500'];
                 
+                // تحديد التصنيف الرئيسي
+                let mainCategory = 'تصنيف غير محدد';
+                if (product.category) {
+                    const categoryMap = {
+                        'koshat': 'كوشات',
+                        'mirr': 'مرايا',
+                        'cake': 'تورتات',
+                        'other': 'ديكورات متنوعة',
+                        'invitations': 'دعوات وتوزيعات'
+                    };
+                    mainCategory = categoryMap[product.category] || product.category;
+                }
+                
                 return `
                     <div class="product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300" data-product-id="${product.id}">
                         <div class="image-container">
                             <img src="${product.imageUrl}" alt="${product.title}" class="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105 cursor-pointer" loading="lazy" onclick="viewProduct('${product.id}')">
                             <div class="absolute top-3 right-3 flex flex-wrap gap-1">
+                                <!-- التصنيف الرئيسي -->
+                                <span class="category-badge bg-gray-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
+                                    ${mainCategory}
+                                </span>
+                                <!-- التصنيفات الفرعية -->
                                 ${translatedSubcategories.map((name, index) => `
                                     <span class="category-badge ${subcategoryColors[index % subcategoryColors.length]} text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
                                         ${name}
@@ -409,6 +521,11 @@
                         </div>
                         <div class="p-4">
                             <div class="mb-2 flex flex-wrap gap-1">
+                                <!-- التصنيف الرئيسي -->
+                                <span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
+                                    ${mainCategory}
+                                </span>
+                                <!-- التصنيفات الفرعية -->
                                 ${translatedSubcategories.map((name, index) => {
                                     const color = subcategoryColors[index % subcategoryColors.length];
                                     const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');

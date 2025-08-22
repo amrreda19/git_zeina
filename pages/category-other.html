@@ -15,6 +15,7 @@
     <script src="../js/product-service.js"></script>
     <script src="../js/auth-service.js"></script>
     <script src="../js/advertising-service.js"></script>
+    <script src="../js/common-utils.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1994970196400389"
      crossorigin="anonymous"></script>
 
@@ -117,11 +118,25 @@
             .product-card .location {
                 font-size: 0.8rem; /* حجم الموقع أصغر */
             }
+            
+            /* تحسين عرض علامات الموقع على الشاشات الصغيرة */
+            .product-card .flex.flex-col.items-end.gap-1 span {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.5rem;
+                line-height: 1;
+            }
         }
         
         @media (min-width: 641px) and (max-width: 768px) {
             .product-card .image-container {
                 height: 280px; /* ارتفاع للشاشات المتوسطة */
+            }
+            
+            /* تحسين عرض علامات الموقع على الشاشات المتوسطة */
+            .product-card .flex.flex-col.items-end.gap-1 span {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.6rem;
+                line-height: 1.1;
             }
         }
         
@@ -129,9 +144,24 @@
             .product-card .image-container {
                 height: 320px; /* ارتفاع للشاشات الكبيرة */
             }
+            
+            /* تحسين عرض علامات الموقع على الشاشات الكبيرة */
+            .product-card .flex.flex-col.items-end.gap-1 span {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+                line-height: 1.2;
+            }
         }
         
         /* الشاشات الكبيرة تحتفظ بالارتفاع الأصلي 384px */
+        @media (min-width: 1025px) {
+            /* تحسين عرض علامات الموقع على الشاشات الكبيرة جداً */
+            .product-card .flex.flex-col.items-end.gap-1 span {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+                line-height: 1.3;
+            }
+        }
         
         .product-card:hover img {
             transform: scale(1.05);
@@ -446,6 +476,42 @@
             -webkit-overflow-scrolling: touch;
             overflow-y: auto;
         }
+        
+        /* تحسين القائمة الرئيسية للهاتف المحمول */
+        #mobile-menu {
+            /* منع التمرير في الصفحة الرئيسية عند فتح القائمة */
+            overscroll-behavior: contain;
+            /* تحسين التمرير باللمس */
+            -webkit-overflow-scrolling: touch;
+            /* إخفاء شريط التمرير */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        #mobile-menu::-webkit-scrollbar {
+            display: none;
+        }
+        
+        #mobile-menu > div {
+            /* تحديد ارتفاع أقصى للقائمة */
+            max-height: 80vh;
+            /* تفعيل التمرير العمودي */
+            overflow-y: auto;
+            /* منع التمرير الأفقي */
+            overflow-x: hidden;
+        }
+        
+        /* تحسين التمرير على الأجهزة المحمولة */
+        @media (max-width: 768px) {
+            #mobile-menu > div {
+                /* تحسين التمرير على الأجهزة المحمولة */
+                -webkit-overflow-scrolling: touch;
+                /* منع التمرير في الصفحة الرئيسية */
+                overscroll-behavior: contain;
+                /* تحسين الأداء */
+                will-change: scroll-position;
+            }
+        }
 
         #featured-ads-container > div {
             transition: all 0.3s ease;
@@ -750,7 +816,7 @@
             
             <!-- Mobile Navigation Menu -->
             <div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-gray-200">
-                <div class="px-4 py-2 space-y-2">
+                <div class="px-4 py-2 space-y-2 max-h-[80vh] overflow-y-auto scrollbar-hide" style="-webkit-overflow-scrolling: touch; overscroll-behavior: contain;">
                     
                     <!-- التصنيفات -->
                     <div class="border-b border-gray-200 pb-3">
@@ -1143,6 +1209,25 @@
     </footer>
 
     <script>
+        /*
+        ========================================
+        تحسين عرض المدن والمحافظات في البطاقات
+        ========================================
+        
+        المشكلة: كانت البطاقات تعرض "جميع المدن" عند عدم اختيار مدينة
+        الحل: إخفاء خانة المدينة عند عدم الاختيار أو عند وجود قيم فارغة
+        
+        التعديلات المطبقة:
+        1. إخفاء خانة المدينة عند عدم الاختيار
+        2. إخفاء خانة المحافظة عند عدم الاختيار
+        3. تنظيف البيانات من القيم الفارغة مثل 'null', 'undefined', 'جميع المدن'
+        4. دعم جميع الأجهزة (هواتف، ألواح، شاشات كبيرة)
+        5. تحسين الفلاتر لتعمل مع البيانات النظيفة فقط
+        
+        تاريخ التعديل: 2024
+        ========================================
+        */
+        
         let allProducts = [];
         let currentFilter = 'all';
         let governorateFilter;
@@ -1153,6 +1238,41 @@
             cities: [],
             price: ''
         };
+
+        // دالة مساعدة لتنظيف بيانات الموقع
+        function cleanLocationData(data) {
+            if (!data || typeof data !== 'string') return '';
+            const cleaned = data.trim();
+            return cleaned !== '' && cleaned !== 'null' && cleaned !== 'undefined' && cleaned !== 'جميع المدن' ? cleaned : '';
+        }
+
+        // دالة مساعدة لتنظيف بيانات المدن
+        function cleanCitiesData(cities) {
+            if (!cities || typeof cities !== 'string') return '';
+            const cleaned = cities.trim();
+            if (cleaned === '' || cleaned === 'null' || cleaned === 'undefined' || cleaned === 'جميع المدن') return '';
+            
+            // تنظيف كل مدينة على حدة
+            const cityArray = cities.split(',').map(city => city.trim()).filter(city => 
+                city !== '' && city !== 'null' && city !== 'undefined'
+            );
+            
+            return cityArray.length > 0 ? cityArray[0] : '';
+        }
+
+        // دالة مساعدة للتحقق من صحة البيانات
+        function validateLocationData(data) {
+            if (!data) return false;
+            if (typeof data !== 'string') return false;
+            const cleaned = data.trim();
+            return cleaned !== '' && cleaned !== 'null' && cleaned !== 'undefined' && cleaned !== 'جميع المدن';
+        }
+
+        // دالة مساعدة لتنظيف البيانات قبل العرض
+        function sanitizeDisplayData(data) {
+            if (!validateLocationData(data)) return '';
+            return data.trim();
+        }
 
         // Load products on page load
         document.addEventListener('DOMContentLoaded', async function() {
@@ -1324,11 +1444,12 @@
                 });
             }
 
-            // Apply governorate filter
+            // Apply governorate filter - فلتر المحافظات
             if (activeFilters.governorate.length > 0) {
                 filteredProducts = filteredProducts.filter(product => {
-                    if (product.governorate) {
-                        const productGovernorates = product.governorate.split(',').map(g => g.trim());
+                    // التحقق من وجود المحافظة وأنها غير فارغة
+                    if (cleanLocationData(product.governorate)) {
+                        const productGovernorates = product.governorate.split(',').map(g => g.trim()).filter(gov => gov !== '' && gov !== 'null' && gov !== 'undefined');
                         return activeFilters.governorate.some(selected => 
                             productGovernorates.some(productGov => 
                                 productGov.includes(selected)
@@ -1361,11 +1482,12 @@
                 });
             }
 
-            // Apply cities filter
+            // Apply cities filter - فلتر المدن
             if (activeFilters.cities.length > 0) {
                 filteredProducts = filteredProducts.filter(product => {
-                    if (product.cities) {
-                        const productCities = product.cities.split(',').map(c => c.trim());
+                    // التحقق من وجود المدينة وأنها غير فارغة وليست "جميع المدن"
+                    if (cleanCitiesData(product.cities)) {
+                        const productCities = product.cities.split(',').map(c => c.trim()).filter(city => city !== '' && city !== 'null' && city !== 'undefined');
                         return activeFilters.cities.some(selected => 
                             productCities.some(productCity => 
                                 productCity.includes(selected)
@@ -1661,8 +1783,10 @@
                                     ${product.price > 0 ? product.price + ' ج.م' : 'السعر عند الطلب'}
                                 </span>
                                 <div class="flex flex-col items-end gap-1">
-                                    ${product.governorate ? `<span class="text-xs sm:text-sm bg-gray-100 text-gray-600 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">${product.governorate}</span>` : ''}
-                                    ${product.cities && product.cities.trim() !== '' && product.cities !== 'جميع المدن' ? `<span class="text-xs sm:text-sm bg-blue-100 text-blue-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">${product.cities.split(',')[0].trim()}</span>` : ''}
+                                    <!-- عرض المحافظة فقط إذا كانت موجودة وغير فارغة -->
+                                    ${sanitizeDisplayData(product.governorate) ? `<span class="text-xs sm:text-sm bg-gray-100 text-gray-600 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">${sanitizeDisplayData(product.governorate)}</span>` : ''}
+                                    <!-- عرض المدينة فقط إذا كانت موجودة وغير فارغة وليست "جميع المدن" -->
+                                    ${sanitizeDisplayData(product.cities) ? `<span class="text-xs sm:text-sm bg-blue-100 text-blue-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">${sanitizeDisplayData(product.cities)}</span>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -1799,8 +1923,10 @@
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-800 mb-2">الموقع</h3>
                                 <div class="space-y-2">
-                                    ${product.governorate ? `<p class="text-gray-600">المحافظة: ${product.governorate}</p>` : ''}
-                                    ${product.cities ? `<p class="text-gray-600">المدينة: ${product.cities}</p>` : ''}
+                                    <!-- عرض المحافظة فقط إذا كانت موجودة وغير فارغة -->
+                                    ${sanitizeDisplayData(product.governorate) ? `<p class="text-gray-600">المحافظة: ${sanitizeDisplayData(product.governorate)}</p>` : ''}
+                                    <!-- عرض المدينة فقط إذا كانت موجودة وغير فارغة وليست "جميع المدن" -->
+                                    ${sanitizeDisplayData(product.cities) ? `<p class="text-gray-600">المدينة: ${sanitizeDisplayData(product.cities)}</p>` : ''}
                                 </div>
                             </div>
                             
@@ -2283,6 +2409,7 @@
                     governorate: governorate,
                     cities: cities,
                     subcategories: subcategories,
+                    category: 'other', // إضافة التصنيف الرئيسي
                     addedAt: new Date().toISOString()
                 };
                 favorites.push(productData);
@@ -2485,7 +2612,8 @@
                             <span class="text-base sm:text-lg font-bold text-yellow-600">
                                 ${ad.price > 0 ? ad.price + ' ج.م' : 'السعر عند الطلب'}
                             </span>
-                            <span class="text-xs sm:text-sm text-gray-500">${ad.governorate}</span>
+                            <!-- عرض المحافظة فقط إذا كانت موجودة وغير فارغة -->
+                            ${sanitizeDisplayData(ad.governorate) ? `<span class="text-xs sm:text-sm text-gray-500">${sanitizeDisplayData(ad.governorate)}</span>` : ''}
                         </div>
                         
                         <div class="flex gap-2">
@@ -2588,6 +2716,9 @@
 
         // بدء المراقبة عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 تم تحميل صفحة الديكورات المتنوعة بنجاح');
+            console.log('✅ تم تطبيق تحسينات عرض المدن والمحافظات');
+            
             // تحميل الإعلانات المميزة في التصنيف
             loadCategoryFeaturedAds();
             
@@ -2613,6 +2744,8 @@
                     updateFavoritesCountBadge();
                 }
             });
+            
+            console.log('🎯 الصفحة جاهزة للاستخدام مع جميع التحسينات');
         });
     </script>
     
