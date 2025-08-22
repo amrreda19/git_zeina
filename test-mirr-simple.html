@@ -1,93 +1,0 @@
-<!DOCTYPE html>
-<html dir="rtl" lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اختبار صفحة المرايا</title>
-</head>
-<body>
-    <h1>اختبار صفحة المرايا</h1>
-    <p>افتح Console (F12) لرؤية الرسائل</p>
-    
-    <div id="test-results"></div>
-    
-    <script>
-        console.log('🚨 === اختبار صفحة المرايا ===');
-        console.log('📅 الوقت:', new Date().toLocaleString());
-        
-        function log(message, type = 'info') {
-            const results = document.getElementById('test-results');
-            const div = document.createElement('div');
-            div.style.padding = '10px';
-            div.style.margin = '5px';
-            div.style.borderRadius = '5px';
-            
-            if (type === 'error') {
-                div.style.background = '#f8d7da';
-                div.style.color = '#721c24';
-            } else if (type === 'success') {
-                div.style.background = '#d4edda';
-                div.style.color = '#155724';
-            } else {
-                div.style.background = '#d1ecf1';
-                div.style.color = '#0c5460';
-            }
-            
-            div.textContent = message;
-            results.appendChild(div);
-            console.log(message);
-        }
-        
-        // اختبار JavaScript الأساسي
-        log('✅ JavaScript يعمل!', 'success');
-        
-        // اختبار DOM
-        document.addEventListener('DOMContentLoaded', function() {
-            log('✅ DOM محمل بنجاح', 'success');
-        });
-        
-        // اختبار window
-        log(`🔍 window object: ${!!window}`, 'info');
-        log(`🔍 document object: ${!!document}`, 'info');
-        
-        // اختبار تحميل الملفات
-        log('🔄 بدء اختبار تحميل الملفات...', 'info');
-        
-        // اختبار supabase-config.js
-        const script1 = document.createElement('script');
-        script1.src = 'js/supabase-config.js';
-        script1.onload = function() {
-            log('✅ تم تحميل supabase-config.js', 'success');
-            log(`🔍 window.supabase: ${!!window.supabase}`, 'info');
-            log(`🔍 window.supabaseClient: ${!!window.supabaseClient}`, 'info');
-        };
-        script1.onerror = function() {
-            log('❌ فشل في تحميل supabase-config.js', 'error');
-        };
-        document.head.appendChild(script1);
-        
-        // اختبار product-service.js
-        setTimeout(() => {
-            const script2 = document.createElement('script');
-            script2.src = 'js/product-service.js';
-            script2.onload = function() {
-                log('✅ تم تحميل product-service.js', 'success');
-                log(`🔍 window.ProductService: ${!!window.ProductService}`, 'info');
-            };
-            script2.onerror = function() {
-                log('❌ فشل في تحميل product-service.js', 'error');
-            };
-            document.head.appendChild(script2);
-        }, 1000);
-        
-        // اختبار نهائي
-        setTimeout(() => {
-            log('🏁 انتهى الاختبار', 'info');
-            log(`🔍 الحالة النهائية:`, 'info');
-            log(`  - window.supabase: ${!!window.supabase}`, 'info');
-            log(`  - window.supabaseClient: ${!!window.supabaseClient}`, 'info');
-            log(`  - window.ProductService: ${!!window.ProductService}`, 'info');
-        }, 3000);
-    </script>
-</body>
-</html>

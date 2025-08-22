@@ -1486,7 +1486,7 @@
                     </a>
                     
                     <!-- Desktop Add Product Request Button -->
-                    <a href="javascript:void(0)" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200" id="add-product-request-btn" onclick="scrollToProductRequestSection()">
+                    <a href="pages/add-product-request.html" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200" id="add-product-request-btn">
                         <span class="flex items-center space-x-1 space-x-reverse">
                             <span>➕</span>
                             <span>أضف منتجك</span>
@@ -1525,7 +1525,7 @@
                 </a>
                 
                 <!-- Mobile Add Product Request Button -->
-                <a href="javascript:void(0)" onclick="scrollToProductRequestSection()" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-2 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 text-center">
+                <a href="pages/add-product-request.html" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-2 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 text-center">
                     <span class="flex items-center justify-center space-x-1 space-x-reverse">
                         <span>➕</span>
                         <span>أضف منتجك</span>
@@ -1617,7 +1617,7 @@
                 <div class="border-b border-gray-200 pb-3">
                     <h3 class="text-sm font-semibold text-gray-700 mb-2">إضافة منتج</h3>
                     <div class="space-y-2">
-                        <a href="javascript:void(0)" onclick="scrollToProductRequestSection()" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                        <a href="pages/add-product-request.html" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
                             <span class="mr-2">➕</span>
                             أضف منتجك
                         </a>
@@ -1917,344 +1917,16 @@
         </div>
     </section>
 
-    <!-- Product Request Section -->
-    <section id="product-request-section" class="bg-gray-50 py-12">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold mb-4 gold-text">أضف منتجك</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">
-                    هل لديك منتجات جميلة تريد عرضها؟ أرسل لنا طلب إضافة منتج وسنقوم بمراجعته وإضافته للموقع
-                </p>
-            </div>
-            
-            <div class="max-w-4xl mx-auto">
-                <form id="product-request-form" class="bg-white rounded-2xl shadow-xl p-8" novalidate>
-                    <!-- تفاصيل المنتج -->
-                    <div class="mb-8">
-                        <h3 class="text-xl font-bold mb-4 text-gray-800">تفاصيل المنتج</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="request-description" class="block text-sm font-medium text-gray-700 mb-2">وصف المنتج <span class="text-red-500">*</span></label>
-                                <textarea id="request-description" name="description" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" rows="4" placeholder="اكتب وصفاً مفصلاً للمنتج..."></textarea>
-                                <div id="request-description-error" class="validation-error hidden"></div>
-                            </div>
-                            
-                            <div>
-                                <label for="request-price" class="block text-sm font-medium text-gray-700 mb-2">السعر (ج.م)</label>
-                                <input type="number" id="request-price" name="price" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="0" min="0" step="0.01">
-                                <p class="text-xs text-gray-500 mt-1">اتركه فارغاً إذا كان السعر عند الطلب</p>
-                            </div>
-                        </div>
-                        
-                                                        <!-- التصنيف الرئيسي والفرعي في صف واحد -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                            <div>
-                                <label for="request-category" class="block text-sm font-medium text-gray-700 mb-2">التصنيف الرئيسي <span class="text-red-500">*</span></label>
-                                <select id="request-category" name="category" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-                                    <option value="">اختر التصنيف</option>
-                                    <option value="koshat">كوشات</option>
-                                    <option value="mirr">مرايا</option>
-                                    <option value="cake">تورتات وأنواع الشوكولاتة</option>
-                                    <option value="other">ديكورات متنوعة</option>
-                                    <option value="invitations">دعوات وتوزيعات</option>
-                                </select>
-                                <div id="request-category-error" class="validation-error hidden"></div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">التصنيف الفرعي <span class="text-red-500">*</span></label>
-                                <div id="request-subcategory-group" class="w-full">
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="request-subcategory-options">
-                                        <!-- خيارات التصنيف الفرعي ستظهر هنا -->
-                                        <div class="text-center py-8 text-gray-500">
-                                            <p>اختر التصنيف الرئيسي أولاً</p>
-                                        </div>
-                                    </div>
-                                    <div id="request-subcategory-error" class="validation-error hidden"></div>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-1">اختر التصنيف الفرعي المناسب</p>
-                            </div>
-                        </div>
-                        
-                        <!-- المحافظات في صف منفصل -->
-                        <div class="mt-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">المحافظات المتوفرة <span class="text-red-500">*</span></label>
-                            <div class="simple-governorate-filter">
-                                <div class="filter-dropdown">
-                                    <button type="button" id="request-governorate-dropdown-btn" class="dropdown-btn">
-                                        <span id="request-governorate-placeholder">اختر المحافظات</span>
-                                        <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="6,9 12,15 18,9"></polyline>
-                                        </svg>
-                                    </button>
-                                    <div id="request-governorate-dropdown-content" class="dropdown-content hidden">
-                                        <div class="governorate-options">
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="القاهرة" class="governorate-checkbox">
-                                                <span>القاهرة</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="الجيزة" class="governorate-checkbox">
-                                                <span>الجيزة</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="الإسكندرية" class="governorate-checkbox">
-                                                <span>الإسكندرية</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="الشرقية" class="governorate-checkbox">
-                                                <span>الشرقية</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="الغربية" class="governorate-checkbox">
-                                                <span>الغربية</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="المنوفية" class="governorate-checkbox">
-                                                <span>المنوفية</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="القليوبية" class="governorate-checkbox">
-                                                <span>القليوبية</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="البحيرة" class="governorate-checkbox">
-                                                <span>البحيرة</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="كفر الشيخ" class="governorate-checkbox">
-                                                <span>كفر الشيخ</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="دمياط" class="governorate-checkbox">
-                                                <span>دمياط</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="الدقهلية" class="governorate-checkbox">
-                                                <span>الدقهلية</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="المنيا" class="governorate-checkbox">
-                                                <span>المنيا</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="أسيوط" class="governorate-checkbox">
-                                                <span>أسيوط</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="سوهاج" class="governorate-checkbox">
-                                                <span>سوهاج</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="قنا" class="governorate-checkbox">
-                                                <span>قنا</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="الأقصر" class="governorate-checkbox">
-                                                <span>الأقصر</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="أسوان" class="governorate-checkbox">
-                                                <span>أسوان</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="بني سويف" class="governorate-checkbox">
-                                                <span>بني سويف</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="الفيوم" class="governorate-checkbox">
-                                                <span>الفيوم</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="الوادي الجديد" class="governorate-checkbox">
-                                                <span>الوادي الجديد</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="مطروح" class="governorate-checkbox">
-                                                <span>مطروح</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="شمال سيناء" class="governorate-checkbox">
-                                                <span>شمال سيناء</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="جنوب سيناء" class="governorate-checkbox">
-                                                <span>جنوب سيناء</span>
-                                            </label>
-                                            <label class="governorate-option">
-                                                <input type="checkbox" value="البحر الأحمر" class="governorate-checkbox">
-                                                <span>البحر الأحمر</span>
-                                            </label>
-                                        </div>
-                                        <div class="dropdown-actions">
-                                            <button type="button" id="request-select-all-governorates" class="action-btn">تحديد الكل</button>
-                                            <button type="button" id="request-clear-all-governorates" class="action-btn">إلغاء الكل</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="request-selected-governorates" class="selected-governorates mt-2"></div>
-                                <div id="request-governorate-error" class="validation-error hidden"></div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">يمكنك اختيار أكثر من محافظة إذا كان المنتج متوفر في عدة محافظات</p>
-                        </div>
-                                
 
-                                
-                                <!-- المناطق/المدن -->
-                                <div class="mt-6" id="request-cities-group" style="display: none;">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">المناطق/المدن المتوفرة (اختياري)</label>
-                                    <div id="request-cities-container">
-                                        <div class="cities-filter-container">
-                                            <div class="cities-header">
-                                                <div class="cities-trigger" id="request-cities-trigger">
-                                                    <div class="trigger-content">
-                                                        <svg class="location-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                                            <circle cx="12" cy="10" r="3"></circle>
-                                                        </svg>
-                                                        <span class="trigger-text">اختر المناطق/المدن (اختياري)</span>
-                                                        <span class="selected-count" id="request-cities-selected-count"></span>
-                                                    </div>
-                                                    <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                        <polyline points="6,9 12,15 18,9"></polyline>
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="cities-dropdown" id="request-cities-dropdown">
-                                                <div class="dropdown-header">
-                                                    <div class="search-container">
-                                                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                            <circle cx="11" cy="11" r="8"></circle>
-                                                            <path d="m21 21-4.35-4.35"></path>
-                                                        </svg>
-                                                        <input type="text" id="request-cities-search" placeholder="ابحث عن منطقة..." class="search-input">
-                                                    </div>
-                                                    <div class="actions">
-                                                        <button type="button" id="request-select-all-cities-btn" class="action-btn">تحديد الكل</button>
-                                                        <button type="button" id="request-clear-all-cities-btn" class="action-btn">إلغاء الكل</button>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="cities-list" id="request-cities-list">
-                                                    <!-- المدن ستظهر هنا -->
-                                                </div>
-                                                
-                                                <div class="dropdown-footer">
-                                                    <button type="button" id="request-apply-cities-filter" class="apply-btn">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                            <polyline points="20,6 9,17 4,12"></polyline>
-                                                        </svg>
-                                                        تطبيق الفلتر
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="request-selected-cities" class="selected-cities"></div>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-1">اختر المناطق أو المدن المتوفرة داخل المحافظات المختارة (اختياري - يمكنك تخطي هذا الحقل)</p>
-                                </div>
-                    </div>
-                    
-                    <!-- معلومات التواصل -->
-                    <div class="mb-8">
-                        <h3 class="text-xl font-bold mb-4 text-gray-800">معلومات التواصل</h3>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">وسائل التواصل الاجتماعي <span class="text-red-500">*</span></label>
-                            <p class="text-sm text-gray-500 mb-3">يجب ملء حقل واحد على الأقل من الحقول التالية:</p>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label for="request-whatsapp" class="block text-sm font-medium text-gray-600 mb-2">رقم الواتساب</label>
-                                    <input type="tel" id="request-whatsapp" name="whatsapp" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="+20 123 456 7890">
-                                    <div id="request-whatsapp-error" class="validation-error hidden"></div>
-                                </div>
-                                
-                                <div>
-                                                                    <label for="request-facebook" class="block text-sm font-medium text-gray-600 mb-2">رابط فيسبوك</label>
-                                <input type="url" id="request-facebook" name="facebook" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="https://facebook.com/username">
-                                <p class="text-xs text-gray-500 mt-1">يقبل جميع أنواع روابط الفيس بوك: صفحات، مجموعات، أحداث، منشورات، صور، فيديوهات، hashtags، روابط قصيرة (fb.me)</p>
-                                <div id="request-facebook-error" class="validation-error hidden"></div>
-                                </div>
-                                
-                                <div>
-                                    <label for="request-instagram" class="block text-sm font-medium text-gray-600 mb-2">اسم المستخدم في الإنستجرام</label>
-                                    <input type="text" id="request-instagram" name="instagram" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="username">
-                                    <div id="request-instagram-error" class="validation-error hidden"></div>
-                                </div>
-                            </div>
-                            
-                            <div id="social-media-error" class="validation-error hidden mt-2">
-                                يجب ملء حقل واحد على الأقل من وسائل التواصل الاجتماعي
-                            </div>
-                        </div>
-                    </div>
-                    
-                                                    <!-- رفع الصور -->
-                                <div class="mb-8">
-                                    <h3 class="text-xl font-bold mb-4 text-gray-800">صور المنتج</h3>
-                                    
-                                    <!-- عداد الصور -->
-                                    <div class="flex items-center justify-between mb-3">
-                                        <span class="text-sm text-gray-600">عدد الصور المرفوعة:</span>
-                                        <span id="image-counter" class="text-sm font-semibold text-green-500">0/3</span>
-                                    </div>
-                                    
-                                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-yellow-500 transition-colors" id="request-upload-area">
-                                        <input type="file" id="request-image-upload" multiple accept="image/*" class="hidden">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                        </svg>
-                                        <p class="text-lg font-medium text-gray-600 mb-2">اسحب الصور هنا أو اضغط للاختيار</p>
-                                        <p class="text-sm text-gray-500">يمكنك رفع 3 صور كحد أقصى - سيتم ضغط الصور تلقائياً لتوفير المساحة</p>
-                                    </div>
-                                    
-                                    <div id="request-image-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                                        <div class="image-sort-instructions mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg col-span-2 md:col-span-4">
-                                            <div class="flex items-center text-blue-700">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                                                </svg>
-                                                <span class="text-sm font-medium">اسحب الصور لترتيبها - الصورة الأولى ستكون الصورة الرئيسية</span>
-                                            </div>
-                                        </div>
-                                        <!-- معاينة الصور ستظهر هنا -->
-                                                        </div>
-                </div>
-                    
-                    <!-- Global Error Banner - Below the form, above submit button -->
-                    <div id="global-error-banner" class="hidden mb-6 bg-red-600 text-white rounded-lg shadow-lg">
-                        <div class="p-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3 space-x-reverse">
-                                    <svg class="w-6 h-6 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                    </svg>
-                                    <div>
-                                        <h3 class="font-semibold text-lg">الرجاء استكمال الحقول المطلوبة</h3>
-                                        <p class="text-sm opacity-90">هناك حقول تحتاج إلى الانتباه. يُرجى مراجعة الملاحظات أسفل كل حقل.</p>
-                                    </div>
-                                </div>
-                                <button id="close-error-banner" class="text-white hover:text-red-200 transition-colors p-2 rounded-lg hover:bg-red-700">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    
-                    <!-- زر الإرسال -->
-                    <div class="text-center">
-                        <button type="submit" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
-                            إرسال الطلب
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
+
+
+
+
+
+
+
+
+
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8">
@@ -3888,29 +3560,26 @@
         function setupHeaderButtons() {
             console.log('🔄 Setting up header buttons...');
             
-            // زر "أضف منتجك" في الهيدر
+            // زر "أضف منتجك" في الهيدر - الآن يعمل كرابط عادي
             const addProductRequestBtn = document.getElementById('add-product-request-btn');
             if (addProductRequestBtn) {
-                console.log('✅ Found add product request button');
+                console.log('✅ Found add product request button - now working as normal link');
+                // إزالة preventDefault للسماح بالانتقال الطبيعي
                 addProductRequestBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('🖱️ Button clicked, scrolling to section...');
-                    // تمرير فوري بدون تأخير
-                    scrollToProductRequestSection();
+                    console.log('🖱️ Button clicked, navigating to add-product-request.html...');
+                    // السماح بالانتقال الطبيعي إلى الصفحة
                 });
             } else {
                 console.error('❌ Add product request button not found');
             }
             
-            // أزرار "أضف منتجك" في القائمة المتحركة
-            const mobileAddProductRequestBtns = document.querySelectorAll('a[href="#product-request-section"]');
-            console.log(`📱 Found ${mobileAddProductRequestBtns.length} mobile buttons`);
+            // أزرار "أضف منتجك" في القائمة المتحركة - الآن تعمل كروابط عادية
+            const mobileAddProductRequestBtns = document.querySelectorAll('a[href="pages/add-product-request.html"]');
+            console.log(`📱 Found ${mobileAddProductRequestBtns.length} mobile buttons - now working as normal links`);
             mobileAddProductRequestBtns.forEach((btn, index) => {
                 btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log(`🖱️ Mobile button ${index + 1} clicked, scrolling to section...`);
-                    // تمرير فوري بدون تأخير
-                    scrollToProductRequestSection();
+                    console.log(`🖱️ Mobile button ${index + 1} clicked, navigating to add-product-request.html...`);
+                    // السماح بالانتقال الطبيعي إلى الصفحة
                 });
             });
         }
