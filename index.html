@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>زينة | Zeina Events – تنوّع يلبي كل الأذواق من الكوشات والطرطات والدعوات</title>
-    <meta name="description" content="زينة | Zeina Events: كوشات، تورتات وشكولاتات، مرايا، ديكورات متنوعة، دعوات وتوزيعات. تصفّح التصنيفات وابحث عن كل ما تحتاجه لحفلتك.">
+    <title>زينة | Zeina Events – تنوّع يلبي كل الأذواق من الكوشات والتورتات والدعوات</title>
+    <meta name="description" content="زينة | Zeina Events: كوشات، تورتات وأنواع الشوكولاتة، مرايا، ديكورات متنوعة، دعوات وتوزيعات. تصفّح التصنيفات وابحث عن كل ما تحتاجه لحفلتك.">
     <link rel="icon" type="image/png" href="assets/images/zeina.jpeg">
     <script type="application/ld+json">
     {
@@ -784,6 +784,108 @@
                 box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             }
         }
+        
+        /* تحسينات التصميم المتجاوب للنموذج */
+        #product-request-section {
+            scroll-margin-top: 100px; /* تعويض ارتفاع الهيدر */
+        }
+        
+        /* تحسينات للأجهزة المحمولة */
+        @media (max-width: 768px) {
+            #product-request-section {
+                scroll-margin-top: 80px;
+                padding: 1rem;
+            }
+            
+            #product-request-section .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            #product-request-form {
+                padding: 1.5rem;
+                margin: 0 0.5rem;
+            }
+            
+            /* تحسين عرض الحقول على الشاشات الصغيرة */
+            .grid.grid-cols-1.md\\:grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            /* تحسين أحجام الأزرار */
+            #product-request-form button[type="submit"] {
+                width: 100%;
+                padding: 1rem;
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* تحسينات للشاشات الصغيرة جداً */
+        @media (max-width: 480px) {
+            #product-request-section {
+                padding: 0.5rem;
+            }
+            
+            #product-request-form {
+                padding: 1rem;
+                border-radius: 16px;
+            }
+            
+            /* تحسين عرض التصنيفات الفرعية */
+            #request-subcategory-options {
+                grid-template-columns: 1fr;
+            }
+            
+            /* تحسين عرض المحافظات */
+            .governorate-options {
+                max-height: 250px;
+            }
+        }
+        
+        /* تحسينات للشاشات الكبيرة */
+        @media (min-width: 1200px) {
+            #product-request-section .container {
+                max-width: 1200px;
+            }
+            
+            #product-request-form {
+                padding: 2.5rem;
+            }
+        }
+        
+        /* تأثيرات بصرية محسنة للنموذج */
+        #product-request-form {
+            transition: all 0.3s ease;
+            will-change: transform, box-shadow;
+        }
+        
+        #product-request-form:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* تحسين عرض رسائل الخطأ */
+        .validation-error {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+        
+        /* تحسين عرض رسائل النجاح */
+        .success-notification {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
         .cities-filter-container {
             position: relative;
@@ -1356,7 +1458,7 @@
             <!-- التصنيفات والروابط للشاشات الكبيرة -->
             <div class="hidden lg:flex items-center space-x-6 space-x-reverse">
                 <a href="pages/category-koshat.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">كوشات</a>
-                                        <a href="pages/category-cake.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">تورتات وشكولاتات</a>
+                                        <a href="pages/category-cake.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">تورتات وأنواع الشوكولاتة</a>
                 <a href="pages/category-mirr.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">مرايا</a>
                 <a href="pages/category-other.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">ديكورات متنوعة</a>
                 <a href="pages/category-invitations.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">دعوات وتوزيعات</a>
@@ -1455,7 +1557,7 @@
                     <h3 class="text-sm font-semibold text-gray-700 mb-2">التصنيفات</h3>
                     <div class="space-y-2">
                         <a href="pages/category-koshat.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">كوشات</a>
-                        <a href="pages/category-cake.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">تورتات وشكولاتات</a>
+                        <a href="pages/category-cake.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">تورتات وأنواع الشوكولاتة</a>
                         <a href="pages/category-mirr.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">مرايا</a>
                         <a href="pages/category-other.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">ديكورات متنوعة</a>
                         <a href="pages/category-invitations.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">دعوات وتوزيعات</a>
@@ -1588,8 +1690,8 @@
                          class="w-full h-48 md:h-80 object-cover object-center group-hover:scale-110 transition-transform duration-300" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-3 md:p-6 text-white">
-                        <h3 class="text-lg md:text-xl font-bold mb-1 md:mb-2">تورتات وشكولاتات</h3>
-                        <p class="text-xs md:text-sm opacity-90">تورتات وشكولاتات مخصصة ومميزة</p>
+                        <h3 class="text-lg md:text-xl font-bold mb-1 md:mb-2">تورتات وأنواع الشوكولاتة</h3>
+                        <p class="text-xs md:text-sm opacity-90">تورتات وأنواع الشوكولاتة مخصصة ومميزة</p>
                     </div>
                 </div>
             </a>
@@ -1853,7 +1955,7 @@
                                     <option value="">اختر التصنيف</option>
                                     <option value="koshat">كوشات</option>
                                     <option value="mirr">مرايا</option>
-                                    <option value="cake">تورتات وشكولاتات</option>
+                                    <option value="cake">تورتات وأنواع الشوكولاتة</option>
                                     <option value="other">ديكورات متنوعة</option>
                                     <option value="invitations">دعوات وتوزيعات</option>
                                 </select>
@@ -2178,7 +2280,7 @@
                     <ul class="space-y-2">
                         <li><a href="pages/category-koshat.html" class="text-gray-300 hover:text-white">كوشات</a></li>
                         <li><a href="pages/category-mirr.html" class="text-gray-300 hover:text-white">مرايا</a></li>
-                        <li><a href="pages/category-cake.html" class="text-gray-300 hover:text-white">تورتات وشكولاتات</a></li>
+                        <li><a href="pages/category-cake.html" class="text-gray-300 hover:text-white">تورتات وأنواع الشوكولاتة</a></li>
                         <li><a href="pages/category-other.html" class="text-gray-300 hover:text-white">ديكورات متنوعة</a></li>
                         <li><a href="pages/category-invitations.html" class="text-gray-300 hover:text-white">دعوات وتوزيعات</a></li>
                     </ul>
@@ -4062,7 +4164,7 @@
                 { value: 'cake-birthday', label: 'تورتة عيد ميلاد' },
                 { value: 'cake-chocolate', label: 'تورتة شوكولاتة' },
                 { value: 'cake-fruit', label: 'تورتة فواكه' },
-                { value: 'cake-chocolate-tray', label: 'صينية شكولاتات' }
+                { value: 'cake-chocolate-tray', label: 'صينية شوكولاتة' }
             ],
             'other': [
                 { value: 'other-birthday', label: 'ديكور عيد ميلاد' },
@@ -4824,24 +4926,24 @@
                 const result = await productRequestsService.submitProductRequest(requestData, imageFiles);
                 
                 if (result.success) {
-                    // Show success message
+                    // ✅ 1. رسالة النجاح
                     showSuccessMessage('تم إرسال طلبك بنجاح! سنقوم بمراجعته وإضافته للموقع قريباً.');
                     
-                    // Clear form
+                    // ✅ 2. مسح النموذج
                     e.target.reset();
                     uploadedImages.length = 0;
                     const imagePreview = document.getElementById('request-image-preview');
                     imagePreview.innerHTML = '';
                     
-                    // Clear cities filter
+                    // ✅ 3. مسح فلتر المدن
                     selectedCities.clear();
                     updateCitiesDisplay();
                     
-                    // Hide subcategory group
+                    // ✅ 4. إخفاء مجموعات التصنيفات
                     document.getElementById('request-subcategory-group').style.display = 'none';
                     document.getElementById('request-cities-group').style.display = 'none';
                     
-                    // Show instructions again
+                    // ✅ 5. إعادة عرض تعليمات الصور
                     const instructions = document.createElement('div');
                     instructions.className = 'image-sort-instructions mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg col-span-2 md:col-span-4';
                     instructions.innerHTML = `
@@ -4854,28 +4956,29 @@
                     `;
                     imagePreview.appendChild(instructions);
                     
-                    // Reset governorate selection
+                    // ✅ 6. إعادة تعيين اختيارات المحافظات
                     currentGovernorates = [];
-                    // Reset governorate dropdown
                     const governorateCheckboxes = document.querySelectorAll('.governorate-checkbox');
                     governorateCheckboxes.forEach(checkbox => {
                         checkbox.checked = false;
                     });
                     
-                    // Update placeholder
+                    // ✅ 7. تحديث النص التوضيحي
                     const placeholder = document.getElementById('request-governorate-placeholder');
                     if (placeholder) {
                         placeholder.textContent = 'اختر المحافظات';
                     }
                     
-                    // Clear selected governorates display
+                    // ✅ 8. مسح عرض المحافظات المختارة
                     const selectedContainer = document.getElementById('request-selected-governorates');
                     if (selectedContainer) {
                         selectedContainer.innerHTML = '';
                     }
                     
-                    // Refresh the page after successful submission
+                    // ✅ 9. إعادة تحميل الصفحة مع البقاء في نفس العنوان
                     setTimeout(() => {
+                        // حفظ موقع النموذج في الذاكرة المؤقتة
+                        sessionStorage.setItem('scrollToForm', 'true');
                         location.reload();
                     }, 2000); // انتظار ثانيتين لعرض رسالة النجاح
                 } else {
@@ -5157,6 +5260,42 @@
             // هذا يمكن أن يكون مفيداً للمنتجات الموجودة في المفضلة
             return 'other'; // تصنيف افتراضي
         }
+        
+        // الانتقال التلقائي للنموذج بعد إعادة التحميل
+        function scrollToFormAfterReload() {
+            if (sessionStorage.getItem('scrollToForm') === 'true') {
+                // إزالة العلامة من الذاكرة المؤقتة
+                sessionStorage.removeItem('scrollToForm');
+                
+                // انتظار قليل لضمان تحميل الصفحة
+                setTimeout(() => {
+                    const formSection = document.getElementById('product-request-section');
+                    if (formSection) {
+                        // الانتقال السلس للنموذج مع تعويض ارتفاع الهيدر
+                        const headerHeight = document.querySelector('header').offsetHeight;
+                        const formTop = formSection.offsetTop - headerHeight - 20;
+                        
+                        window.scrollTo({
+                            top: formTop,
+                            behavior: 'smooth'
+                        });
+                        
+                        // إضافة تأثير بصري للنموذج
+                        formSection.style.transition = 'all 0.3s ease';
+                        formSection.style.transform = 'scale(1.02)';
+                        formSection.style.boxShadow = '0 20px 40px rgba(0,0,0,0.1)';
+                        
+                        setTimeout(() => {
+                            formSection.style.transform = 'scale(1)';
+                            formSection.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+                        }, 300);
+                    }
+                }, 500);
+            }
+        }
+        
+        // تشغيل الانتقال التلقائي عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', scrollToFormAfterReload);
     </script>
 </body>
 </html> 
