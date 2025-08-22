@@ -1845,151 +1845,159 @@
                             </div>
                         </div>
                         
-                                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                                    <div>
-                                        <label for="request-category" class="block text-sm font-medium text-gray-700 mb-2">التصنيف الرئيسي <span class="text-red-500">*</span></label>
-                                        <select id="request-category" name="category" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-                                            <option value="">اختر التصنيف</option>
-                                            <option value="koshat">كوشات</option>
-                                            <option value="mirr">مرايا</option>
-                                            <option value="cake">تورتات وشكولاتات</option>
-                                            <option value="other">ديكورات متنوعة</option>
-                                            <option value="invitations">دعوات وتوزيعات</option>
-                                        </select>
-                                        <div id="request-category-error" class="validation-error hidden"></div>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">المحافظات المتوفرة <span class="text-red-500">*</span></label>
-                                        <div class="simple-governorate-filter">
-                                            <div class="filter-dropdown">
-                                                <button type="button" id="request-governorate-dropdown-btn" class="dropdown-btn">
-                                                    <span id="request-governorate-placeholder">اختر المحافظات</span>
-                                                    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                        <polyline points="6,9 12,15 18,9"></polyline>
-                                                    </svg>
-                                                </button>
-                                                <div id="request-governorate-dropdown-content" class="dropdown-content hidden">
-                                                    <div class="governorate-options">
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="القاهرة" class="governorate-checkbox">
-                                                            <span>القاهرة</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="الجيزة" class="governorate-checkbox">
-                                                            <span>الجيزة</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="الإسكندرية" class="governorate-checkbox">
-                                                            <span>الإسكندرية</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="الشرقية" class="governorate-checkbox">
-                                                            <span>الشرقية</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="الغربية" class="governorate-checkbox">
-                                                            <span>الغربية</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="المنوفية" class="governorate-checkbox">
-                                                            <span>المنوفية</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="القليوبية" class="governorate-checkbox">
-                                                            <span>القليوبية</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="البحيرة" class="governorate-checkbox">
-                                                            <span>البحيرة</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="كفر الشيخ" class="governorate-checkbox">
-                                                            <span>كفر الشيخ</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="دمياط" class="governorate-checkbox">
-                                                            <span>دمياط</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="الدقهلية" class="governorate-checkbox">
-                                                            <span>الدقهلية</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="المنيا" class="governorate-checkbox">
-                                                            <span>المنيا</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="أسيوط" class="governorate-checkbox">
-                                                            <span>أسيوط</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="سوهاج" class="governorate-checkbox">
-                                                            <span>سوهاج</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="قنا" class="governorate-checkbox">
-                                                            <span>قنا</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="الأقصر" class="governorate-checkbox">
-                                                            <span>الأقصر</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="أسوان" class="governorate-checkbox">
-                                                            <span>أسوان</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="بني سويف" class="governorate-checkbox">
-                                                            <span>بني سويف</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="الفيوم" class="governorate-checkbox">
-                                                            <span>الفيوم</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="الوادي الجديد" class="governorate-checkbox">
-                                                            <span>الوادي الجديد</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="مطروح" class="governorate-checkbox">
-                                                            <span>مطروح</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="شمال سيناء" class="governorate-checkbox">
-                                                            <span>شمال سيناء</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="جنوب سيناء" class="governorate-checkbox">
-                                                            <span>جنوب سيناء</span>
-                                                        </label>
-                                                        <label class="governorate-option">
-                                                            <input type="checkbox" value="البحر الأحمر" class="governorate-checkbox">
-                                                            <span>البحر الأحمر</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="dropdown-actions">
-                                                        <button type="button" id="request-select-all-governorates" class="action-btn">تحديد الكل</button>
-                                                        <button type="button" id="request-clear-all-governorates" class="action-btn">إلغاء الكل</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div id="request-selected-governorates" class="selected-governorates mt-2"></div>
-                                            <div id="request-governorate-error" class="validation-error hidden"></div>
-                                        </div>
-                                        <p class="text-xs text-gray-500 mt-1">يمكنك اختيار أكثر من محافظة إذا كان المنتج متوفر في عدة محافظات</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- التصنيف الفرعي -->
-                                <div class="mt-6" id="request-subcategory-group" style="display: none;">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">التصنيف الفرعي <span class="text-red-500">*</span></label>
+                                                        <!-- التصنيف الرئيسي والفرعي في صف واحد -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            <div>
+                                <label for="request-category" class="block text-sm font-medium text-gray-700 mb-2">التصنيف الرئيسي <span class="text-red-500">*</span></label>
+                                <select id="request-category" name="category" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    <option value="">اختر التصنيف</option>
+                                    <option value="koshat">كوشات</option>
+                                    <option value="mirr">مرايا</option>
+                                    <option value="cake">تورتات وشكولاتات</option>
+                                    <option value="other">ديكورات متنوعة</option>
+                                    <option value="invitations">دعوات وتوزيعات</option>
+                                </select>
+                                <div id="request-category-error" class="validation-error hidden"></div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">التصنيف الفرعي <span class="text-red-500">*</span></label>
+                                <div id="request-subcategory-group" class="w-full">
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="request-subcategory-options">
                                         <!-- خيارات التصنيف الفرعي ستظهر هنا -->
+                                        <div class="text-center py-8 text-gray-500">
+                                            <p>اختر التصنيف الرئيسي أولاً</p>
+                                        </div>
                                     </div>
                                     <div id="request-subcategory-error" class="validation-error hidden"></div>
-                                    <p class="text-xs text-gray-500 mt-1">اختر التصنيف الفرعي المناسب</p>
                                 </div>
+                                <p class="text-xs text-gray-500 mt-1">اختر التصنيف الفرعي المناسب</p>
+                            </div>
+                        </div>
+                        
+                        <!-- المحافظات في صف منفصل -->
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">المحافظات المتوفرة <span class="text-red-500">*</span></label>
+                            <div class="simple-governorate-filter">
+                                <div class="filter-dropdown">
+                                    <button type="button" id="request-governorate-dropdown-btn" class="dropdown-btn">
+                                        <span id="request-governorate-placeholder">اختر المحافظات</span>
+                                        <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="6,9 12,15 18,9"></polyline>
+                                        </svg>
+                                    </button>
+                                    <div id="request-governorate-dropdown-content" class="dropdown-content hidden">
+                                        <div class="governorate-options">
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="القاهرة" class="governorate-checkbox">
+                                                <span>القاهرة</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="الجيزة" class="governorate-checkbox">
+                                                <span>الجيزة</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="الإسكندرية" class="governorate-checkbox">
+                                                <span>الإسكندرية</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="الشرقية" class="governorate-checkbox">
+                                                <span>الشرقية</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="الغربية" class="governorate-checkbox">
+                                                <span>الغربية</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="المنوفية" class="governorate-checkbox">
+                                                <span>المنوفية</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="القليوبية" class="governorate-checkbox">
+                                                <span>القليوبية</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="البحيرة" class="governorate-checkbox">
+                                                <span>البحيرة</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="كفر الشيخ" class="governorate-checkbox">
+                                                <span>كفر الشيخ</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="دمياط" class="governorate-checkbox">
+                                                <span>دمياط</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="الدقهلية" class="governorate-checkbox">
+                                                <span>الدقهلية</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="المنيا" class="governorate-checkbox">
+                                                <span>المنيا</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="أسيوط" class="governorate-checkbox">
+                                                <span>أسيوط</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="سوهاج" class="governorate-checkbox">
+                                                <span>سوهاج</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="قنا" class="governorate-checkbox">
+                                                <span>قنا</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="الأقصر" class="governorate-checkbox">
+                                                <span>الأقصر</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="أسوان" class="governorate-checkbox">
+                                                <span>أسوان</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="بني سويف" class="governorate-checkbox">
+                                                <span>بني سويف</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="الفيوم" class="governorate-checkbox">
+                                                <span>الفيوم</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="الوادي الجديد" class="governorate-checkbox">
+                                                <span>الوادي الجديد</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="مطروح" class="governorate-checkbox">
+                                                <span>مطروح</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="شمال سيناء" class="governorate-checkbox">
+                                                <span>شمال سيناء</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="جنوب سيناء" class="governorate-checkbox">
+                                                <span>جنوب سيناء</span>
+                                            </label>
+                                            <label class="governorate-option">
+                                                <input type="checkbox" value="البحر الأحمر" class="governorate-checkbox">
+                                                <span>البحر الأحمر</span>
+                                            </label>
+                                        </div>
+                                        <div class="dropdown-actions">
+                                            <button type="button" id="request-select-all-governorates" class="action-btn">تحديد الكل</button>
+                                            <button type="button" id="request-clear-all-governorates" class="action-btn">إلغاء الكل</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="request-selected-governorates" class="selected-governorates mt-2"></div>
+                                <div id="request-governorate-error" class="validation-error hidden"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">يمكنك اختيار أكثر من محافظة إذا كان المنتج متوفر في عدة محافظات</p>
+                        </div>
+                                
+
                                 
                                 <!-- المناطق/المدن -->
                                 <div class="mt-6" id="request-cities-group" style="display: none;">
