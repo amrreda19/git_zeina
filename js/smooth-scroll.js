@@ -74,34 +74,24 @@ function calculateTargetPosition(section) {
     return Math.max(0, sectionTop - headerHeight - offset);
 }
 
-// تنفيذ التمرير السلس
+// تنفيذ التمرير السلس - محسن لمنع scroll snap-back/jank
 function performSmoothScroll(targetPosition) {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     try {
-        if (prefersReducedMotion) {
-            // إذا كان المستخدم يفضل تقليل الحركة
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'auto'
-            });
-            console.log('✅ Instant scroll completed (reduced motion)');
-        } else {
-            // التمرير السلس
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-            
-            // التأكد من الوصول للموضع الصحيح
-            verifyScrollPosition(targetPosition);
-        }
-    } catch (error) {
-        console.warn('Smooth scrolling failed, using instant scroll:', error);
+        // استخدام التمرير الفوري دائماً لتجنب مشاكل scroll snap-back/jank
         window.scrollTo({
             top: targetPosition,
             behavior: 'auto'
         });
+        console.log('✅ Instant scroll completed (optimized to prevent jank)');
+        
+        // التأكد من الوصول للموضع الصحيح
+        verifyScrollPosition(targetPosition);
+    } catch (error) {
+        console.warn('Scroll failed, using fallback:', error);
+        // fallback
+        window.scrollTo(0, targetPosition);
     }
 }
 
@@ -133,9 +123,9 @@ function addScrollStyles() {
     const style = document.createElement('style');
     style.id = 'smooth-scroll-styles';
     style.textContent = `
-        /* تحسين التمرير السلس */
+        /* تحسين التمرير السلس - محسن لمنع scroll snap-back/jank */
         html {
-            scroll-behavior: smooth;
+            scroll-behavior: auto; /* تغيير من smooth إلى auto */
             scroll-padding-top: 80px;
         }
         
@@ -143,6 +133,7 @@ function addScrollStyles() {
         @media (max-width: 768px) {
             html {
                 scroll-padding-top: 70px;
+                scroll-behavior: auto; /* تأكيد على auto */
             }
         }
         
