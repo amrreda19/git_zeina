@@ -243,12 +243,117 @@
                 padding: 1rem;
                 font-size: 1.1rem;
             }
+            
+            /* تحسين رسائل النجاح والخطأ للشاشات الصغيرة */
+            #success-message,
+            #error-message,
+            #general-error-alert {
+                margin: 0 0.5rem 1rem 0.5rem;
+                padding: 1rem;
+                font-size: 0.875rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            #success-message .flex,
+            #error-message .flex,
+            #general-error-alert .flex {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+            
+            #success-message svg,
+            #error-message svg,
+            #general-error-alert svg {
+                margin: 0 auto 0.5rem auto;
+            }
+            
+            /* تحسين إضافي للرسائل على الهواتف الصغيرة */
+            #success-message span,
+            #error-message span,
+            #general-error-alert span {
+                word-wrap: break-word;
+                hyphens: auto;
+            }
         }
         
         @media (max-width: 480px) {
             #product-request-form {
                 padding: 1rem;
                 border-radius: 16px;
+            }
+            
+            /* تحسين إضافي للشاشات الصغيرة جداً */
+            #success-message,
+            #error-message,
+            #general-error-alert {
+                margin: 0 0.25rem 0.75rem 0.25rem;
+                padding: 0.75rem;
+                font-size: 0.8rem;
+            }
+            
+            #success-message span,
+            #error-message span,
+            #general-error-alert span {
+                line-height: 1.4;
+            }
+        }
+        
+        /* Bottom Sheet Styles */
+        #bottom-sheet {
+            pointer-events: none;
+        }
+        
+        #bottom-sheet.show {
+            pointer-events: auto;
+        }
+        
+        #bottom-sheet-content {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        #bottom-sheet-content.show {
+            transform: translateY(0);
+        }
+        
+        /* Mobile specific bottom sheet styles */
+        @media (max-width: 768px) {
+            #bottom-sheet-content {
+                max-height: 70vh;
+                border-radius: 20px 20px 0 0;
+            }
+            
+            #bottom-sheet-content .p-6 {
+                padding: 1.5rem;
+            }
+            
+            #bottom-sheet-content h3 {
+                font-size: 1.25rem;
+            }
+            
+            #bottom-sheet-content p {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #bottom-sheet-content {
+                max-height: 65vh;
+                border-radius: 16px 16px 0 0;
+            }
+            
+            #bottom-sheet-content .p-6 {
+                padding: 1rem;
+            }
+            
+            #bottom-sheet-content h3 {
+                font-size: 1.125rem;
+            }
+            
+            #bottom-sheet-content p {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -691,6 +796,26 @@
                             </div>
                         </div>
                         
+                        <!-- رسالة النجاح -->
+                        <div id="success-message" class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg hidden">
+                            <div class="flex items-center justify-center text-green-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="font-medium">تم إرسال طلبك بنجاح! سنقوم بمراجعته وإعلامك بالنتيجة.</span>
+                            </div>
+                        </div>
+                        
+                        <!-- رسالة الخطأ -->
+                        <div id="error-message" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg hidden">
+                            <div class="flex items-center justify-center text-red-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span id="error-message-text" class="font-medium"></span>
+                            </div>
+                        </div>
+                        
                         <button type="submit" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
                             إرسال الطلب
                         </button>
@@ -707,12 +832,46 @@
         </div>
     </footer>
 
-    <!-- Floating Button - يظهر فقط في صفحة أضف منتجك -->
-    <div id="floating-advertise-btn" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 hidden">
-        <a href="advertise-with-us.html" class="inline-flex items-center whitespace-nowrap px-12 py-6 sm:px-16 sm:py-7 md:px-20 md:py-8 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold text-lg sm:text-xl md:text-2xl rounded-full shadow-2xl hover:from-pink-600 hover:to-pink-700 transform hover:scale-110 transition-all duration-300 border-2 border-white">
-            <span class="ml-2 sm:ml-3 text-lg sm:text-xl md:text-2xl">🚀</span>
-            <span class="text-lg sm:text-xl md:text-2xl">اضغط هنا لتمييز منتجك</span>
-        </a>
+    <!-- Bottom Sheet - نافذة عائمة سفلية -->
+    <div id="bottom-sheet" class="fixed inset-0 z-50 hidden">
+        <!-- Overlay -->
+        <div id="bottom-sheet-overlay" class="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300"></div>
+        
+        <!-- Bottom Sheet Content -->
+        <div id="bottom-sheet-content" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transform translate-y-full transition-transform duration-500 ease-out">
+            <!-- Header with close button -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 class="text-lg font-bold text-gray-800">✨ ميّز منتجك الآن!</h3>
+                <button id="close-bottom-sheet" class="p-2 text-gray-500 hover:text-gray-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Content -->
+            <div class="p-6">
+                <div class="text-center mb-6">
+                    <p class="text-gray-700 text-lg leading-relaxed mb-4">
+                        هل تريد أن يظهر منتجك في مكان بارز داخل الصفحة ويحصل على مشاهدات أكثر؟
+                    </p>
+                    <p class="text-gray-600 text-base">
+                        اضغط على الزر بالأسفل لمعرفة التفاصيل وكيفية إضافة منتجك للإعلانات المميزة 🚀
+                    </p>
+                </div>
+                
+                <!-- CTA Button -->
+                <div class="text-center">
+                    <a href="advertise-with-us.html" class="inline-flex items-center justify-center w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold text-lg px-8 py-4 rounded-xl hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                        <span class="ml-2">🚀</span>
+                        اضغط هنا لتمييز منتجك
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Bottom padding for mobile -->
+            <div class="h-4 bg-white"></div>
+        </div>
     </div>
 
     <script>
@@ -722,23 +881,90 @@
             menu.classList.toggle('hidden');
         });
         
-        // Show floating button after 3 seconds
+        // Bottom Sheet functionality
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const floatingBtn = document.getElementById('floating-advertise-btn');
-                if (floatingBtn) {
-                    floatingBtn.classList.remove('hidden');
-                    floatingBtn.style.opacity = '0';
-                    floatingBtn.style.transform = 'translate(-50%, 20px)';
+            const bottomSheet = document.getElementById('bottom-sheet');
+            const bottomSheetContent = document.getElementById('bottom-sheet-content');
+            const closeButton = document.getElementById('close-bottom-sheet');
+            const overlay = document.getElementById('bottom-sheet-overlay');
+            
+            // Check if user has seen the bottom sheet in this session
+            const hasSeenBottomSheet = sessionStorage.getItem('bottomSheetShown');
+            
+            // Show bottom sheet after 5 seconds if not shown before
+            if (!hasSeenBottomSheet) {
+                setTimeout(function() {
+                    showBottomSheet();
+                }, 5000); // 5 seconds delay
+            }
+            
+            function showBottomSheet() {
+                if (bottomSheet && bottomSheetContent) {
+                    // Mark as shown in this session
+                    sessionStorage.setItem('bottomSheetShown', 'true');
                     
-                    // Fade in animation
+                    // Show the bottom sheet
+                    bottomSheet.classList.remove('hidden');
+                    
+                    // Trigger animation after a small delay
                     setTimeout(function() {
-                        floatingBtn.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                        floatingBtn.style.opacity = '1';
-                        floatingBtn.style.transform = 'translate(-50%, 0)';
+                        bottomSheet.classList.add('show');
+                        bottomSheetContent.classList.add('show');
                     }, 100);
                 }
-            }, 3000); // 3 seconds delay
+            }
+            
+            function hideBottomSheet() {
+                if (bottomSheet && bottomSheetContent) {
+                    bottomSheetContent.classList.remove('show');
+                    bottomSheet.classList.remove('show');
+                    
+                    // Hide completely after animation
+                    setTimeout(function() {
+                        bottomSheet.classList.add('hidden');
+                    }, 500);
+                }
+            }
+            
+            // Close button event
+            if (closeButton) {
+                closeButton.addEventListener('click', hideBottomSheet);
+            }
+            
+            // Overlay click event
+            if (overlay) {
+                overlay.addEventListener('click', hideBottomSheet);
+            }
+            
+            // Keyboard escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && bottomSheet && !bottomSheet.classList.contains('hidden')) {
+                    hideBottomSheet();
+                }
+            });
+            
+            // Touch/swipe to close on mobile
+            let startY = 0;
+            let currentY = 0;
+            
+            if (bottomSheetContent) {
+                bottomSheetContent.addEventListener('touchstart', function(e) {
+                    startY = e.touches[0].clientY;
+                });
+                
+                bottomSheetContent.addEventListener('touchmove', function(e) {
+                    currentY = e.touches[0].clientY;
+                });
+                
+                bottomSheetContent.addEventListener('touchend', function(e) {
+                    const diffY = startY - currentY;
+                    
+                    // If swiped down more than 100px, close the sheet
+                    if (diffY > 100) {
+                        hideBottomSheet();
+                    }
+                });
+            }
         });
         
         // Form validation and submission
@@ -885,6 +1111,97 @@
                     generalErrorAlert.classList.add('hidden');
                 }
             }
+            
+            // Function to show success message
+            function showSuccessMessage() {
+                // Hide all other messages first
+                hideGeneralError();
+                hideErrorMessage();
+                
+                const successMessage = document.getElementById('success-message');
+                if (successMessage) {
+                    successMessage.classList.remove('hidden');
+                    
+                    // Scroll to success message with smooth animation
+                    // Use different scroll behavior for mobile devices
+                    if (window.innerWidth <= 768) {
+                        // For mobile devices, scroll to top of form
+                        const form = document.getElementById('product-request-form');
+                        if (form) {
+                            form.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start' 
+                            });
+                        }
+                    } else {
+                        // For desktop, scroll to center of success message
+                        successMessage.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }
+                    
+                    // Auto-hide after 5 seconds
+                    setTimeout(() => {
+                        successMessage.classList.add('hidden');
+                    }, 5000);
+                }
+            }
+            
+            // Function to show error message
+            function showErrorMessage(message) {
+                // Hide all other messages first
+                hideGeneralError();
+                hideSuccessMessage();
+                
+                const errorMessage = document.getElementById('error-message');
+                const errorMessageText = document.getElementById('error-message-text');
+                
+                if (errorMessage && errorMessageText) {
+                    errorMessageText.textContent = message;
+                    errorMessage.classList.remove('hidden');
+                    
+                    // Scroll to error message with smooth animation
+                    // Use different scroll behavior for mobile devices
+                    if (window.innerWidth <= 768) {
+                        // For mobile devices, scroll to top of form
+                        const form = document.getElementById('product-request-form');
+                        if (form) {
+                            form.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start' 
+                            });
+                        }
+                    } else {
+                        // For desktop, scroll to center of error message
+                        errorMessage.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }
+                    
+                    // Auto-hide after 8 seconds
+                    setTimeout(() => {
+                        errorMessage.classList.add('hidden');
+                    }, 8000);
+                }
+            }
+            
+            // Function to hide success message
+            function hideSuccessMessage() {
+                const successMessage = document.getElementById('success-message');
+                if (successMessage) {
+                    successMessage.classList.add('hidden');
+                }
+            }
+            
+            // Function to hide error message
+            function hideErrorMessage() {
+                const errorMessage = document.getElementById('error-message');
+                if (errorMessage) {
+                    errorMessage.classList.add('hidden');
+                }
+            }
 
             
             async function submitForm() {
@@ -956,13 +1273,17 @@
                     }
                     
                     if (result && result.success) {
-                        // Show success message
-                        alert('تم إرسال طلبك بنجاح! سنقوم بمراجعته وإعلامك بالنتيجة.');
-                        form.reset();
-                        clearForm();
+                        // Show success message with better UX for mobile
+                        showSuccessMessage();
+                        
+                        // Clear form after a short delay to ensure message is visible
+                        setTimeout(() => {
+                            form.reset();
+                            clearForm();
+                        }, 1000);
                     } else {
                         const errorMessage = result ? result.error : 'حدث خطأ غير معروف';
-                        alert('حدث خطأ أثناء إرسال الطلب: ' + errorMessage);
+                        showErrorMessage('حدث خطأ أثناء إرسال الطلب: ' + errorMessage);
                     }
                     
                 } catch (error) {
@@ -998,6 +1319,8 @@
             }
             
             function clearForm() {
+                console.log('🧹 Clearing form...');
+                
                 // Clear all image slots
                 if (window.currentImages) {
                     window.currentImages = {
@@ -1085,10 +1408,50 @@
                 if (imageCounterElement) imageCounterElement.textContent = '0/3';
                 if (subcategoryOptionsElement) subcategoryOptionsElement.innerHTML = '<div class="text-center py-8 text-gray-500"><p>اختر التصنيف الرئيسي أولاً</p></div>';
                 
+                // Clear all form fields
+                const form = document.getElementById('product-request-form');
+                if (form) {
+                    // Reset text inputs and textareas
+                    form.querySelectorAll('input[type="text"], input[type="tel"], input[type="url"], input[type="number"], textarea').forEach(field => {
+                        field.value = '';
+                        field.classList.remove('field-error');
+                    });
+                    
+                    // Reset selects
+                    form.querySelectorAll('select').forEach(select => {
+                        select.selectedIndex = 0;
+                        select.classList.remove('field-error');
+                    });
+                    
+                    // Reset radio buttons
+                    form.querySelectorAll('input[type="radio"]').forEach(radio => {
+                        radio.checked = false;
+                    });
+                    
+                    // Reset checkboxes
+                    form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                }
+                
+                // Reset governorate dropdown
+                const governoratePlaceholder = document.getElementById('request-governorate-placeholder');
+                if (governoratePlaceholder) {
+                    governoratePlaceholder.textContent = 'اختر المحافظات';
+                }
+                
+                // Reset category selection
+                const categorySelect = document.getElementById('request-category');
+                if (categorySelect) {
+                    categorySelect.selectedIndex = 0;
+                }
+                
                 // Re-setup event listeners for all slots
                 if (typeof window.setupSlotEventListeners === 'function') {
                     window.setupSlotEventListeners();
                 }
+                
+                console.log('✅ Form cleared successfully');
             }
         });
         
@@ -1717,6 +2080,40 @@
             }
             
             // Mobile touch events removed - no drag and drop functionality
+        
+        // Add responsive form handling for mobile devices
+        function handleMobileFormBehavior() {
+            if (window.innerWidth <= 768) {
+                // Add touch-friendly interactions for mobile
+                const form = document.getElementById('product-request-form');
+                if (form) {
+                    // Ensure form is properly scrollable on mobile
+                    form.style.webkitOverflowScrolling = 'touch';
+                }
+                
+                // Add mobile-specific event listeners
+                const mobileElements = document.querySelectorAll('.dropdown-btn, .select-image-btn, button[type="submit"]');
+                mobileElements.forEach(element => {
+                    element.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.95)';
+                    });
+                    
+                    element.addEventListener('touchend', function() {
+                        this.style.transform = 'scale(1)';
+                    });
+                });
+            }
+        }
+        
+        // Initialize mobile behavior when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            handleMobileFormBehavior();
+            
+            // Handle window resize for responsive behavior
+            window.addEventListener('resize', function() {
+                handleMobileFormBehavior();
+            });
+        });
         });
     </script>
     
