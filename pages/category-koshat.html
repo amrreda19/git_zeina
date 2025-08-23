@@ -1178,8 +1178,8 @@
                 if (result.success) {
                     allProducts = result.data;
                     
-                    // Shuffle products randomly
-                    shuffleProducts();
+                    // ترتيب المنتجات حسب المعايير المطلوبة
+                    sortProductsByCriteria();
                     applyFilters();
                 } else {
                     showError('حدث خطأ في تحميل المنتجات: ' + result.error);
@@ -1190,13 +1190,17 @@
             }
         }
 
-        // Shuffle products randomly
-        function shuffleProducts() {
+        // ترتيب المنتجات حسب السعر فقط
+        function sortProductsByCriteria() {
             if (allProducts && allProducts.length > 0) {
-                for (let i = allProducts.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [allProducts[i], allProducts[j]] = [allProducts[j], allProducts[i]];
-                }
+                allProducts.sort((a, b) => {
+                    // السعر تصاعدياً (من الأرخص إلى الأغلى)
+                    const priceA = parseFloat(a.price) || 0;
+                    const priceB = parseFloat(b.price) || 0;
+                    return priceA - priceB;
+                });
+                
+                console.log('✅ تم ترتيب المنتجات حسب السعر (من الأرخص إلى الأغلى)');
             }
         }
 

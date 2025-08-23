@@ -1069,10 +1069,10 @@
                     console.log(`✅ تم جلب ${allProducts.length} منتج بنجاح`);
                     console.log('🔍 تفاصيل المنتجات:', allProducts);
                     
-                    // Shuffle products randomly
-                    shuffleProducts();
+                    // ترتيب المنتجات حسب المعايير المطلوبة
+                    sortProductsByCriteria();
                     
-                    // تحديث filteredProducts بعد الخلط
+                    // تحديث filteredProducts بعد الترتيب
                     filteredProducts = [...allProducts];
                     
                     updateProductsCount();
@@ -1193,17 +1193,30 @@
                         console.error('🔍 Error parsing subcategory JSON:', error);
                     }
                 } else {
-                    // It's a plain string (display name), try to find matching key
+                    // It's a plain string, check if it's a key in subcategoryMap first
                     console.log('🔍 Subcategory is plain string:', product.subcategory);
-                    const foundKey = Object.keys(subcategoryMap).find(key => 
-                        subcategoryMap[key].name === product.subcategory
-                    );
-                    if (foundKey) {
-                        subcategoryNames = [subcategoryMap[foundKey].name];
-                        subcategoryColors = [subcategoryMap[foundKey].color];
-                        console.log('🔍 Found matching key:', foundKey);
+                    
+                    // First, try direct key matching
+                    const subcategoryInfo = subcategoryMap[product.subcategory];
+                    if (subcategoryInfo) {
+                        subcategoryNames = [subcategoryInfo.name];
+                        subcategoryColors = [subcategoryInfo.color];
+                        console.log('🔍 Found direct key match:', product.subcategory);
                     } else {
-                        console.log('🔍 No matching key found for:', product.subcategory);
+                        // If not found as key, try to find by display name
+                        const foundKey = Object.keys(subcategoryMap).find(key => 
+                            subcategoryMap[key].name === product.subcategory
+                        );
+                        if (foundKey) {
+                            subcategoryNames = [subcategoryMap[foundKey].name];
+                            subcategoryColors = [subcategoryMap[foundKey].color];
+                            console.log('🔍 Found matching key by name:', foundKey);
+                        } else {
+                            // If still not found, use the original string but format it
+                            console.log('🔍 No matching key found, using original string:', product.subcategory);
+                            subcategoryNames = [product.subcategory];
+                            subcategoryColors = ['bg-gray-500'];
+                        }
                     }
                 }
             } else {
@@ -1269,14 +1282,17 @@
             }
         }
 
-        // Shuffle products randomly
-        function shuffleProducts() {
+                // ترتيب المنتجات حسب السعر فقط
+        function sortProductsByCriteria() {
             if (allProducts && allProducts.length > 0) {
-                for (let i = allProducts.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [allProducts[i], allProducts[j]] = [allProducts[j], allProducts[i]];
-                }
-                console.log('🔄 تم خلط المنتجات عشوائياً');
+                allProducts.sort((a, b) => {
+                    // السعر تصاعدياً (من الأرخص إلى الأغلى)
+                    const priceA = parseFloat(a.price) || 0;
+                    const priceB = parseFloat(b.price) || 0;
+                    return priceA - priceB;
+                });
+                
+                console.log('✅ تم ترتيب المنتجات حسب السعر (من الأرخص إلى الأغلى)');
             }
         }
 
@@ -2427,6 +2443,33 @@
                     </div>
                     
                     <div class="p-4">
+                        <!-- عرض التصنيفات الفرعية -->
+                        <div class="mb-2 flex flex-wrap gap-1">
+                            ${ad.subcategories && ad.subcategories.length > 0 ? 
+                                ad.subcategories.map(subcat => {
+                                    // Define subcategoryMap for featured ads
+                                    const subcategoryMap = {
+                                        'invitation-wedding': { name: 'دعوة زفاف', color: 'bg-pink-500' },
+                                        'invitation-engagement': { name: 'دعوة خطوبة', color: 'bg-purple-500' },
+                                        'invitation-chocolate': { name: 'توزيعات بالشوكولاتة', color: 'bg-yellow-500' },
+                                        'invitation-perfumed': { name: 'توزيعات بالبرفان', color: 'bg-indigo-500' },
+                                        'invitation-gift': { name: 'توزيعات مع هدية صغيرة', color: 'bg-red-500' },
+                                        'invitation-digital': { name: 'دعوة رقمية', color: 'bg-teal-500' },
+                                        'invitation-innovative': { name: 'دعوة مبتكرة', color: 'bg-orange-500' }
+                                    };
+                                    
+                                    const subcategoryInfo = subcategoryMap[subcat];
+                                    const name = subcategoryInfo ? subcategoryInfo.name : subcat;
+                                    const color = subcategoryInfo ? subcategoryInfo.color : 'bg-gray-500';
+                                    const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
+                                    const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
+                                    
+                                    return `<span class="inline-block ${bgColor} ${textColor} text-xs px-2 py-1 rounded-full">${name}</span>`;
+                                }).join('') 
+                                : '<span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">دعوة</span>'
+                            }
+                        </div>
+                        
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-base sm:text-lg font-bold text-yellow-600">
                                 ${ad.price > 0 ? ad.price + ' ج.م' : 'السعر عند الطلب'}

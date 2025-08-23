@@ -2601,7 +2601,9 @@
                                         }
                                         
                                         if (subcategoryValue) {
-                                            return `<span class='inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-1 mb-1'>${getSubcategoryName(subcategoryValue)}</span>`;
+                                            const arabicName = getSubcategoryName(subcategoryValue);
+
+                                            return `<span class='inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-1 mb-1'>${arabicName}</span>`;
                                         }
                                     }
                                     return '';
@@ -3003,6 +3005,11 @@
                     // دعوات
                     'invitation-wedding': 'دعوة زفاف',
                     'invitation-engagement': 'دعوة خطوبة',
+                    'invitation-chocolate': 'توزيعات بالشوكولاتة',
+                    'invitation-perfumed': 'توزيعات بالبرفان',
+                    'invitation-gift': 'توزيعات مع هدية صغيرة',
+                    'invitation-digital': 'دعوة رقمية',
+                    'invitation-innovative': 'دعوة مبتكرة',
                     'invitation-birthday': 'دعوة عيد ميلاد',
                     'invitation-party': 'دعوة حفلة',
                     'invitation-corporate': 'دعوة شركة'
