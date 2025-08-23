@@ -2459,6 +2459,8 @@
                 }
             }
             
+
+
             // Display products in grid
             function displayProducts(products, containerId) {
                 console.log('🎨 Displaying products:', products ? products.length : 0, 'in container:', containerId);
@@ -2603,7 +2605,66 @@
                                         }
                                         
                                         if (subcategoryValue) {
-                                            const arabicName = getSubcategoryName(subcategoryValue);
+                                            // Define subcategoryMap locally like in category-invitations.html
+                                            const subcategoryMap = {
+                                                // كوشات
+                                                'koshat-wedding': 'كوشات زفاف',
+                                                'koshat-engagement': 'كوشات خطوبة',
+                                                'koshat-birthday': 'كوشات عيد ميلاد',
+                                                'koshat-party': 'كوشات حفلات',
+                                                'koshat-corporate': 'كوشات شركات',
+                                                
+                                                // مرايا
+                                                'mirr-wedding': 'مرايا زفاف',
+                                                'mirr-engagement': 'مرايا خطوبة',
+                                                'mirr-birthday': 'مرايا عيد ميلاد',
+                                                'mirr-decorative': 'مرايا ديكور',
+                                                'mirr-custom': 'مرايا مخصصة',
+                                                'mirr-classic': 'مرايا كلاسيكية',
+                                                'mirr-modern': 'مرايا عصرية',
+                                                'mirr-luxury': 'مرايا فاخرة',
+                                                
+                                                // مرايا - إضافة المفاتيح البديلة
+                                                'mirror-wedding': 'مرايا زفاف',
+                                                'mirror-engagement': 'مرايا خطوبة',
+                                                'mirror-birthday': 'مرايا عيد ميلاد',
+                                                'mirror-decorative': 'مرايا ديكور',
+                                                'mirror-custom': 'مرايا مخصصة',
+                                                'mirror-classic': 'مرايا كلاسيكية',
+                                                'mirror-modern': 'مرايا عصرية',
+                                                'mirror-luxury': 'مرايا فاخرة',
+                                                
+                                                // تورتة
+                                                'cake-wedding': 'تورتة زفاف',
+                                                'cake-engagement': 'تورتة خطوبة',
+                                                'cake-birthday': 'تورتة عيد ميلاد',
+                                                'cake-chocolate': 'تورتة شوكولاتة',
+                                                'cake-fruit': 'تورتة فواكه',
+                                                'cake-custom': 'تورتة مخصصة',
+                                                
+                                                // ديكورات متنوعة
+                                                'other-birthday': 'ديكور عيد ميلاد',
+                                                'other-hospital': 'ديكور استقبال مستشفى',
+                                                'other-bride': 'ديكور استقبال عروسة',
+                                                'other-party': 'ديكور حفلات بسيطة',
+                                                'other-balloons': 'بالونات وهدايا',
+                                                'other-flowers': 'زهور وأزهار',
+                                                'other-lights': 'إضاءات ديكور',
+                                                
+                                                // دعوات
+                                                'invitation-wedding': 'دعوة زفاف',
+                                                'invitation-engagement': 'دعوة خطوبة',
+                                                'invitation-chocolate': 'توزيعات بالشوكولاتة',
+                                                'invitation-perfumed': 'توزيعات بالبرفان',
+                                                'invitation-gift': 'توزيعات مع هدية صغيرة',
+                                                'invitation-digital': 'دعوة رقمية',
+                                                'invitation-innovative': 'دعوة مبتكرة',
+                                                'invitation-birthday': 'دعوة عيد ميلاد',
+                                                'invitation-party': 'دعوة حفلة',
+                                                'invitation-corporate': 'دعوة شركة'
+                                            };
+                                            
+                                            const arabicName = subcategoryMap[subcategoryValue] || subcategoryValue;
 
                                             return `<span class='inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-1 mb-1'>${arabicName}</span>`;
                                         }
@@ -2957,67 +3018,6 @@
                 return categories[category] || category;
             }
             
-            // Get subcategory name in Arabic
-            function getSubcategoryName(subcategory) {
-                const subcategories = {
-                    // كوشات
-                    'koshat-wedding': 'كوشات زفاف',
-                    'koshat-engagement': 'كوشات خطوبة',
-                    'koshat-birthday': 'كوشات عيد ميلاد',
-                    'koshat-party': 'كوشات حفلات',
-                    'koshat-corporate': 'كوشات شركات',
-                    
-                    // مرايا - تصحيح المفاتيح
-                    'mirr-wedding': 'مرايا زفاف',
-                    'mirr-engagement': 'مرايا خطوبة',
-                    'mirr-birthday': 'مرايا عيد ميلاد',
-                    'mirr-decorative': 'مرايا ديكور',
-                    'mirr-custom': 'مرايا مخصصة',
-                    'mirr-classic': 'مرايا كلاسيكية',
-                    'mirr-modern': 'مرايا عصرية',
-                    'mirr-luxury': 'مرايا فاخرة',
-                    
-                    // مرايا - إضافة المفاتيح البديلة
-                    'mirror-wedding': 'مرايا زفاف',
-                    'mirror-engagement': 'مرايا خطوبة',
-                    'mirror-birthday': 'مرايا عيد ميلاد',
-                    'mirror-decorative': 'مرايا ديكور',
-                    'mirror-custom': 'مرايا مخصصة',
-                    'mirror-classic': 'مرايا كلاسيكية',
-                    'mirror-modern': 'مرايا عصرية',
-                    'mirror-luxury': 'مرايا فاخرة',
-                    
-                    // تورتة
-                    'cake-wedding': 'تورتة زفاف',
-                    'cake-engagement': 'تورتة خطوبة',
-                    'cake-birthday': 'تورتة عيد ميلاد',
-                    'cake-chocolate': 'تورتة شوكولاتة',
-                    'cake-fruit': 'تورتة فواكه',
-                    'cake-custom': 'تورتة مخصصة',
-                    
-                    // ديكورات متنوعة
-                    'other-birthday': 'ديكور عيد ميلاد',
-                    'other-hospital': 'ديكور استقبال مستشفى',
-                    'other-bride': 'ديكور استقبال عروسة',
-                    'other-party': 'ديكور حفلات بسيطة',
-                    'other-balloons': 'بالونات وهدايا',
-                    'other-flowers': 'زهور وأزهار',
-                    'other-lights': 'إضاءات ديكور',
-                    
-                    // دعوات
-                    'invitation-wedding': 'دعوة زفاف',
-                    'invitation-engagement': 'دعوة خطوبة',
-                    'invitation-chocolate': 'توزيعات بالشوكولاتة',
-                    'invitation-perfumed': 'توزيعات بالبرفان',
-                    'invitation-gift': 'توزيعات مع هدية صغيرة',
-                    'invitation-digital': 'دعوة رقمية',
-                    'invitation-innovative': 'دعوة مبتكرة',
-                    'invitation-birthday': 'دعوة عيد ميلاد',
-                    'invitation-party': 'دعوة حفلة',
-                    'invitation-corporate': 'دعوة شركة'
-                };
-                return subcategories[subcategory] || subcategory;
-        }
             
             // Format date
             function formatDate(dateString) {

@@ -1377,10 +1377,12 @@
         const closeAdBtn = document.getElementById('close-ad-btn');
         const fasterSellBtn = document.getElementById('faster-sell-btn');
         
-        // إظهار النافذة فوراً عند فتح الصفحة
+        // إظهار النافذة بعد ثانية واحدة من فتح الصفحة
         if (floatingAdWindow) {
-            floatingAdWindow.classList.remove('translate-y-full', 'opacity-0');
-            floatingAdWindow.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                floatingAdWindow.classList.remove('translate-y-full', 'opacity-0');
+                floatingAdWindow.classList.add('translate-y-0', 'opacity-100');
+            }, 1000); // تأخير 1000 مللي ثانية = ثانية واحدة
         }
         
         // إغلاق النافذة
