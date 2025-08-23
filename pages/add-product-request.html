@@ -575,37 +575,107 @@
                     <div class="mb-8">
                         <h3 class="text-xl font-bold mb-4 text-gray-800">صور المنتج</h3>
                         
-                        <!-- عداد الصور -->
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-600">عدد الصور المرفوعة:</span>
-                            <span id="image-counter" class="text-sm font-semibold text-green-500">0/3</span>
+                                                 <!-- عداد الصور -->
+                         <div class="flex items-center justify-between mb-4">
+                             <span class="text-sm text-gray-600">عدد الصور المرفوعة:</span>
+                             <span id="image-counter" class="text-sm font-semibold text-green-500">0/3</span>
+                         </div>
+                         
+                         <!-- رسالة خطأ الصورة الرئيسية -->
+                         <div id="request-main-image-error" class="validation-error hidden"></div>
+                        
+                        <!-- صف واحد من 3 خانات للصور -->
+                        <div id="request-image-preview" class="flex flex-col sm:flex-row gap-4 mt-4">
+                            <!-- خانة الصورة الرئيسية -->
+                            <div class="image-slot flex-1 min-h-[200px] border-2 border-dashed border-yellow-400 rounded-lg bg-yellow-50 flex flex-col items-center justify-center" data-slot="main" data-required="true">
+                                <div class="text-center p-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-yellow-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                    </svg>
+                                    <p class="text-sm font-medium text-yellow-700">الصورة الرئيسية</p>
+                                    <p class="text-xs text-yellow-600">إلزامية</p>
+                                </div>
+                                
+                                <!-- زر اختيار الصورة -->
+                                <button type="button" class="select-image-btn bg-yellow-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors font-medium">
+                                    اختيار صورة
+                                </button>
+                                
+                                <!-- أزرار الإجراءات (تظهر عند وجود صورة) -->
+                                <div class="image-actions hidden space-y-2 mt-3">
+                                    <button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-3 py-1 rounded hover:bg-red-600 transition-colors">
+                                        إزالة
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- خانة الصورة الإضافية الأولى -->
+                            <div class="image-slot flex-1 min-h-[200px] border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 flex flex-col items-center justify-center" data-slot="extra1" data-required="false">
+                                <div class="text-center p-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                    <p class="text-sm font-medium text-gray-600">صورة إضافية</p>
+                                    <p class="text-xs text-gray-500">اختيارية</p>
+                                </div>
+                                
+                                <!-- زر اختيار الصورة -->
+                                <button type="button" class="select-image-btn bg-gray-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium">
+                                    اختيار صورة
+                                </button>
+                                
+                                <!-- أزرار الإجراءات (تظهر عند وجود صورة) -->
+                                <div class="image-actions hidden space-y-2 mt-3">
+                                    <button type="button" class="set-main-btn bg-yellow-500 text-white text-xs px-2 py-1 rounded hover:bg-yellow-600 transition-colors">
+                                        تعيين كصورة رئيسية
+                                    </button>
+                                    <button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-3 py-1 rounded hover:bg-red-600 transition-colors">
+                                        إزالة
+                                    </button>
+                                    <button type="button" class="swap-btn bg-blue-500 text-white text-xs px-2 py-1 rounded hover:bg-blue-600 transition-colors">
+                                        تبديل مع 3
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- خانة الصورة الإضافية الثانية -->
+                            <div class="image-slot flex-1 min-h-[200px] border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 flex flex-col items-center justify-center" data-slot="extra2" data-required="false">
+                                <div class="text-center p-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                    <p class="text-sm font-medium text-gray-600">صورة إضافية</p>
+                                    <p class="text-xs text-gray-500">اختيارية</p>
+                                </div>
+                                
+                                <!-- زر اختيار الصورة -->
+                                <button type="button" class="select-image-btn bg-gray-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium">
+                                    اختيار صورة
+                                </button>
+                                
+                                <!-- أزرار الإجراءات (تظهر عند وجود صورة) -->
+                                <div class="image-actions hidden space-y-2 mt-3">
+                                    <button type="button" class="set-main-btn bg-yellow-500 text-white text-xs px-2 py-1 rounded hover:bg-yellow-600 transition-colors">
+                                        تعيين كصورة رئيسية
+                                    </button>
+                                    <button type="button" class="remove-image-btn bg-red-500 text-xs px-3 py-1 rounded hover:bg-red-600 transition-colors">
+                                        إزالة
+                                    </button>
+                                    <button type="button" class="swap-btn bg-blue-500 text-white text-xs px-2 py-1 rounded hover:bg-blue-600 transition-colors">
+                                        تبديل مع 2
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-yellow-500 transition-colors" id="request-upload-area">
-                            <input type="file" id="request-image-upload" multiple accept="image/*" class="hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                            </svg>
-                            <p class="text-lg font-medium text-gray-600 mb-2">اسحب الصور هنا أو اضغط للاختيار</p>
-                            <p class="text-sm text-gray-500">يمكنك رفع 3 صور كحد أقصى - سيتم ضغط الصور تلقائياً لتوفير المساحة</p>
-                        </div>
-                        
-                        <div id="request-image-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                                                <div class="image-sort-instructions mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg col-span-2 md:col-span-4">
-                        <div class="flex items-center text-blue-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                            </svg>
-                            <span class="text-sm font-medium">اسحب الصور لترتيبها - الصورة الأولى ستكون الصورة الرئيسية</span>
-                        </div>
-                        <div class="mt-2 text-xs text-blue-600">
-                            💡 <strong>نصائح:</strong> الصورة الأولى ستظهر كصورة رئيسية للمنتج
-                        </div>
-                        <div class="mt-1 text-xs text-blue-500">
-                            🎯 <strong>الحد الأقصى:</strong> 3 صور - <strong>الترتيب مهم:</strong> 1️⃣ رئيسية، 2️⃣ إضافية، 3️⃣ إضافية
-                        </div>
-                    </div>
-                            <!-- معاينة الصور ستظهر هنا -->
+                        <!-- تعليمات إضافية -->
+                        <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                            <div class="flex items-center text-blue-700 text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span><strong>نصائح:</strong> الصورة الرئيسية إلزامية - يمكنك إعادة ترتيب الصور الإضافية</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -639,7 +709,7 @@
 
     <!-- Floating Button - يظهر فقط في صفحة أضف منتجك -->
     <div id="floating-advertise-btn" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 hidden">
-        <a href="advertise-with-us.html" class="inline-flex items-center whitespace-nowrap px-12 py-6 sm:px-16 sm:py-7 md:px-20 md:py-8 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold text-lg sm:text-xl md:text-2xl rounded-full shadow-2xl hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-110 transition-all duration-300 border-2 border-white">
+        <a href="advertise-with-us.html" class="inline-flex items-center whitespace-nowrap px-12 py-6 sm:px-16 sm:py-7 md:px-20 md:py-8 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold text-lg sm:text-xl md:text-2xl rounded-full shadow-2xl hover:from-pink-600 hover:to-pink-700 transform hover:scale-110 transition-all duration-300 border-2 border-white">
             <span class="ml-2 sm:ml-3 text-lg sm:text-xl md:text-2xl">🚀</span>
             <span class="text-lg sm:text-xl md:text-2xl">اضغط هنا لتمييز منتجك</span>
         </a>
@@ -748,6 +818,12 @@
                 //     isValid = false;
                 // }
                 
+                // Validate main image (required)
+                if (!window.currentImages || !window.currentImages.main) {
+                    showError('request-main-image', 'الصورة الرئيسية مطلوبة');
+                    isValid = false;
+                }
+                
                 // Validate social media (at least one required)
                 const whatsapp = document.getElementById('request-whatsapp').value.trim();
                 const facebook = document.getElementById('request-facebook').value.trim();
@@ -792,7 +868,7 @@
                         field.classList.add('field-error');
                     }
                 }
-                        }
+            }
             
             function showGeneralError() {
                 const generalErrorAlert = document.getElementById('general-error-alert');
@@ -832,8 +908,15 @@
                         instagram: document.getElementById('request-instagram').value.trim() || '' // إرسال نص فارغ بدلاً من null
                     };
                     
-                    // Get image files
-                    const imageFiles = Array.from(document.getElementById('request-image-upload').files);
+                    // Get image files from the new slot system
+                    const imageFiles = [];
+                    if (window.currentImages) {
+                        Object.values(window.currentImages).forEach(image => {
+                            if (image) {
+                                imageFiles.push(image);
+                            }
+                        });
+                    }
                     
                     console.log('📝 Form data collected:', formData);
                     console.log('🖼️ Image files:', imageFiles.length);
@@ -915,28 +998,97 @@
             }
             
             function clearForm() {
-                // Clear image preview
-                document.getElementById('request-image-preview').innerHTML = `
-                    <div class="image-sort-instructions mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg col-span-2 md:col-span-4">
-                        <div class="flex items-center text-blue-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                            </svg>
-                            <span class="text-sm font-medium">اسحب الصور لترتيبها - الصورة الأولى ستكون الصورة الرئيسية</span>
-                        </div>
-                    </div>
-                `;
+                // Clear all image slots
+                if (window.currentImages) {
+                    window.currentImages = {
+                        main: null,
+                        extra1: null,
+                        extra2: null
+                    };
+                }
+                
+                // Reset all slots to default state
+                const imageSlots = {
+                    main: document.querySelector('[data-slot="main"]'),
+                    extra1: document.querySelector('[data-slot="extra1"]'),
+                    extra2: document.querySelector('[data-slot="extra2"]')
+                };
+                
+                Object.keys(imageSlots).forEach(slotName => {
+                    if (imageSlots[slotName]) {
+                        const slot = imageSlots[slotName];
+                        const isMain = slotName === 'main';
+                        
+                        slot.innerHTML = `
+                            <div class="text-center p-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="${isMain ? 'h-12 w-12 text-yellow-500' : 'h-8 w-8 text-gray-400'} mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    ${isMain ? 
+                                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />' :
+                                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />'
+                                    }
+                                </svg>
+                                <p class="text-sm font-medium ${isMain ? 'text-yellow-700' : 'text-gray-600'}">${isMain ? 'الصورة الرئيسية' : 'صورة إضافية'}</p>
+                                <p class="text-xs ${isMain ? 'text-yellow-600' : 'text-gray-500'}">${isMain ? 'إلزامية' : 'اختيارية'}</p>
+                            </div>
+                            
+                            <!-- زر اختيار الصورة -->
+                            <button type="button" class="select-image-btn ${isMain ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-gray-500 hover:bg-gray-600'} text-white text-sm px-4 py-2 rounded-lg transition-colors font-medium">
+                                اختيار صورة
+                            </button>
+                            
+                            <!-- أزرار الإجراءات (تظهر عند وجود صورة) -->
+                            <div class="image-actions hidden space-y-2 mt-3">
+                                ${isMain ? 
+                                    '<button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-3 py-1 rounded hover:bg-red-600 transition-colors">إزالة</button>' :
+                                    `<button type="button" class="set-main-btn bg-yellow-500 text-white text-xs px-2 py-1 rounded hover:bg-yellow-600 transition-colors">تعيين كصورة رئيسية</button>
+                                    <button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-3 py-1 rounded hover:bg-red-600 transition-colors">إزالة</button>
+                                    <button type="button" class="swap-btn bg-blue-500 text-white text-xs px-2 py-1 rounded hover:bg-blue-600 transition-colors">تبديل مع ${slotName === 'extra1' ? '3' : '2'}</button>`
+                                }
+                            </div>
+                        `;
+                        
+                        // Re-setup file input for this slot
+                        const selectBtn = slot.querySelector('.select-image-btn');
+                        if (selectBtn) {
+                            const fileInput = document.createElement('input');
+                            fileInput.type = 'file';
+                            fileInput.accept = 'image/*';
+                            fileInput.className = 'hidden';
+                            fileInput.dataset.slot = slotName;
+                            
+                            slot.appendChild(fileInput);
+                            
+                            selectBtn.addEventListener('click', () => {
+                                fileInput.click();
+                            });
+                            
+                            fileInput.addEventListener('change', (e) => {
+                                const files = Array.from(e.target.files);
+                                if (files.length > 0) {
+                                    assignImageToSlot(files[0], slotName);
+                                }
+                            });
+                        }
+                    }
+                });
                 
                 // Clear selected governorates and cities
-                document.getElementById('request-selected-governorates').innerHTML = '';
-                document.getElementById('cities-selection-section').classList.add('hidden');
-                document.getElementById('cities-by-governorate').innerHTML = '';
+                const selectedGovernoratesElement = document.getElementById('request-selected-governorates');
+                const citiesSectionElement = document.getElementById('cities-selection-section');
+                const citiesByGovernorateElement = document.getElementById('cities-by-governorate');
+                const imageCounterElement = document.getElementById('image-counter');
+                const subcategoryOptionsElement = document.getElementById('request-subcategory-options');
                 
-                // Reset counter
-                document.getElementById('image-counter').textContent = '0/3';
+                if (selectedGovernoratesElement) selectedGovernoratesElement.innerHTML = '';
+                if (citiesSectionElement) citiesSectionElement.classList.add('hidden');
+                if (citiesByGovernorateElement) citiesByGovernorateElement.innerHTML = '';
+                if (imageCounterElement) imageCounterElement.textContent = '0/3';
+                if (subcategoryOptionsElement) subcategoryOptionsElement.innerHTML = '<div class="text-center py-8 text-gray-500"><p>اختر التصنيف الرئيسي أولاً</p></div>';
                 
-                // Clear subcategories
-                document.getElementById('request-subcategory-options').innerHTML = '<div class="text-center py-8 text-gray-500"><p>اختر التصنيف الرئيسي أولاً</p></div>';
+                // Re-setup event listeners for all slots
+                if (typeof window.setupSlotEventListeners === 'function') {
+                    window.setupSlotEventListeners();
+                }
             }
         });
         
@@ -1130,16 +1282,18 @@
                 console.log('📍 Selected governorates:', selected);
                 
                 if (selected.length > 0) {
-                    placeholder.textContent = `تم اختيار ${selected.length} محافظة`;
-                    selectedGovernorates.innerHTML = selected.map(gov => 
-                        `<span class="selected-governorate-tag">
-                            ${gov}
-                            <button type="button" class="remove-governorate" onclick="removeGovernorate('${gov}')">×</button>
-                        </span>`
-                    ).join('');
+                    if (placeholder) placeholder.textContent = `تم اختيار ${selected.length} محافظة`;
+                    if (selectedGovernorates) {
+                        selectedGovernorates.innerHTML = selected.map(gov => 
+                            `<span class="selected-governorate-tag">
+                                ${gov}
+                                <button type="button" class="remove-governorate" onclick="removeGovernorate('${gov}')">×</button>
+                            </span>`
+                        ).join('');
+                    }
                 } else {
-                    placeholder.textContent = 'اختر المحافظات';
-                    selectedGovernorates.innerHTML = '';
+                    if (placeholder) placeholder.textContent = 'اختر المحافظات';
+                    if (selectedGovernorates) selectedGovernorates.innerHTML = '';
                 }
             }
             
@@ -1151,11 +1305,11 @@
                 console.log('🏙️ Updating cities section for:', selectedGovernorates);
                 
                 if (selectedGovernorates.length > 0) {
-                    citiesSection.classList.remove('hidden');
+                    if (citiesSection) citiesSection.classList.remove('hidden');
                     renderCitiesSelection(selectedGovernorates);
                 } else {
-                    citiesSection.classList.add('hidden');
-                    citiesByGovernorate.innerHTML = '';
+                    if (citiesSection) citiesSection.classList.add('hidden');
+                    if (citiesByGovernorate) citiesByGovernorate.innerHTML = '';
                 }
             }
             
@@ -1168,6 +1322,8 @@
                 }
                 
                 console.log('🏙️ Rendering cities for governorates:', governorates);
+                
+                if (!citiesByGovernorate) return;
                 
                 citiesByGovernorate.innerHTML = governorates.map(governorate => {
                     const cities = window.citiesServiceInstance.getCitiesForGovernorate(governorate);
@@ -1247,10 +1403,12 @@
             const categorySelect = document.getElementById('request-category');
             const subcategoryGroup = document.getElementById('request-subcategory-options');
             
-            categorySelect.addEventListener('change', function() {
-                const category = this.value;
-                updateSubcategories(category);
-            });
+            if (categorySelect) {
+                categorySelect.addEventListener('change', function() {
+                    const category = this.value;
+                    updateSubcategories(category);
+                });
+            }
             
             function updateSubcategories(category) {
                 const subcategories = {
@@ -1262,221 +1420,303 @@
                 };
                 
                 if (category && subcategories[category]) {
-                    subcategoryGroup.innerHTML = subcategories[category].map(sub => 
-                        `<label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                            <input type="radio" name="subcategory" value="${sub}" class="ml-3 text-yellow-600 focus:ring-yellow-500">
-                            <span class="text-gray-700">${sub}</span>
-                        </label>`
-                    ).join('');
+                    if (subcategoryGroup) {
+                        subcategoryGroup.innerHTML = subcategories[category].map(sub => 
+                            `<label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="subcategory" value="${sub}" class="ml-3 text-yellow-600 focus:ring-yellow-500">
+                                <span class="text-gray-700">${sub}</span>
+                            </label>`
+                        ).join('');
+                    }
                 } else {
-                    subcategoryGroup.innerHTML = '<div class="text-center py-8 text-gray-500"><p>اختر التصنيف الرئيسي أولاً</p></div>';
+                    if (subcategoryGroup) {
+                        subcategoryGroup.innerHTML = '<div class="text-center py-8 text-gray-500"><p>اختر التصنيف الرئيسي أولاً</p></div>';
+                    }
                 }
             }
         });
         
-        // Image upload functionality
+        // Image upload functionality - New Simplified Version
         document.addEventListener('DOMContentLoaded', function() {
-            const uploadArea = document.getElementById('request-upload-area');
-            const fileInput = document.getElementById('request-image-upload');
-            const imagePreview = document.getElementById('request-image-preview');
             const imageCounter = document.getElementById('image-counter');
             
-            // Click to upload
-            uploadArea.addEventListener('click', () => fileInput.click());
+            // Store image slots
+            const imageSlots = {
+                main: document.querySelector('[data-slot="main"]'),
+                extra1: document.querySelector('[data-slot="extra1"]'),
+                extra2: document.querySelector('[data-slot="extra2"]')
+            };
             
-            // Drag and drop
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('border-yellow-500', 'bg-yellow-50');
-            });
+            // Store current images
+            let currentImages = {
+                main: null,
+                extra1: null,
+                extra2: null
+            };
             
-            uploadArea.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('border-yellow-500', 'bg-yellow-50');
-            });
+            // Make it globally accessible for clearForm function
+            window.currentImages = currentImages;
             
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('border-yellow-500', 'bg-yellow-50');
+            // Setup file inputs for each slot
+            setupFileInputs();
+            
+            // Setup slot event listeners
+            setupSlotEventListeners();
+            
+            function setupFileInputs() {
+                // Create hidden file inputs for each slot
+                Object.keys(imageSlots).forEach(slotName => {
+                    const slot = imageSlots[slotName];
+                    if (!slot) return; // Skip if slot doesn't exist
+                    
+                    const selectBtn = slot.querySelector('.select-image-btn');
+                    if (!selectBtn) return; // Skip if button doesn't exist
+                    
+                    // Create hidden file input
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.className = 'hidden';
+                    fileInput.dataset.slot = slotName;
+                    
+                    // Add to DOM
+                    slot.appendChild(fileInput);
+                    
+                    // Add click event to select button
+                    selectBtn.addEventListener('click', () => {
+                        fileInput.click();
+                    });
+                    
+                    // Handle file selection
+                    fileInput.addEventListener('change', (e) => {
+                        const files = Array.from(e.target.files);
+                        if (files.length > 0) {
+                            assignImageToSlot(files[0], slotName);
+                        }
+                    });
+                });
+            }
+            
+            function assignImageToSlot(file, slotName) {
+                const slot = imageSlots[slotName];
+                if (!slot) return; // Skip if slot doesn't exist
                 
-                const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-                handleFiles(files, 'drop');
-            });
-            
-            // File input change
-            fileInput.addEventListener('change', (e) => {
-                const files = Array.from(e.target.files);
-                handleFiles(files, 'input');
-            });
-            
-            function handleFiles(files, source = 'drop') {
-                let currentFiles = [];
+                const reader = new FileReader();
                 
-                // If source is 'input', don't get existing files since they're already included
-                if (source === 'drop') {
-                    currentFiles = Array.from(fileInput.files);
+                reader.onload = function(e) {
+                    slot.innerHTML = `
+                        <div class="relative w-full h-full">
+                            <img src="${e.target.result}" alt="صورة المنتج" class="w-full h-full object-cover rounded-lg">
+                            
+                            <!-- أزرار الإجراءات - تظهر دائماً في الجانب -->
+                            <div class="absolute bottom-2 right-2">
+                                <div class="image-actions bg-black bg-opacity-60 rounded-md p-1 space-y-1">
+                                    ${getSlotActions(slotName)}
+                                </div>
+                            </div>
+                            
+                            <div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                                ${slotName === 'main' ? '⭐' : slotName === 'extra1' ? '2️⃣' : '3️⃣'}
+                            </div>
+                        </div>
+                    `;
+                    
+                    currentImages[slotName] = file;
+                    
+                    // Re-setup event listeners for this slot
+                    if (typeof window.setupSlotEventListeners === 'function') {
+                        window.setupSlotEventListeners();
+                    }
+                    updateImageCounter();
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            function getSlotActions(slotName) {
+                if (slotName === 'main') {
+                    return `<button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition-colors font-medium">
+                        🗑️ إزالة
+                    </button>`;
+                } else {
+                    return `
+                        <button type="button" class="set-main-btn bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-yellow-600 transition-colors font-medium mb-0.5">
+                            ⭐ تعيين كصورة رئيسية
+                        </button>
+                        <button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-red-600 transition-colors font-medium mb-0.5">
+                            🗑️ إزالة
+                        </button>
+                        <button type="button" class="swap-btn bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-blue-600 transition-colors font-medium">
+                            🔄 تبديل مع ${slotName === 'extra1' ? '3' : '2'}
+                        </button>
+                    `;
                 }
-                
-                // Filter out duplicate files (by name and size)
-                const filteredFiles = files.filter(newFile => {
-                    return !currentFiles.some(existingFile => 
-                        existingFile.name === newFile.name && 
-                        existingFile.size === newFile.size
-                    );
+            }
+            
+            function setupSlotEventListeners() {
+                // Remove existing event listeners to prevent duplicates
+                document.querySelectorAll('.set-main-btn, .remove-image-btn, .swap-btn').forEach(btn => {
+                    btn.replaceWith(btn.cloneNode(true));
                 });
                 
-                const totalFiles = currentFiles.length + filteredFiles.length;
+                // Set main image button
+                document.querySelectorAll('.set-main-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const slot = this.closest('.image-slot');
+                        if (!slot) return;
+                        const slotName = slot.dataset.slot;
+                        if (slotName) {
+                            setAsMainImage(slotName);
+                        }
+                    });
+                });
                 
-                if (totalFiles > 3) {
-                    alert('يمكنك رفع 3 صور كحد أقصى');
-                    return;
+                // Remove image button
+                document.querySelectorAll('.remove-image-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const slot = this.closest('.image-slot');
+                        if (!slot) return;
+                        const slotName = slot.dataset.slot;
+                        if (slotName) {
+                            removeImageFromSlot(slotName);
+                        }
+                    });
+                });
+                
+                // Swap button
+                document.querySelectorAll('.swap-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const slot = this.closest('.image-slot');
+                        if (!slot) return;
+                        const slotName = slot.dataset.slot;
+                        if (slotName === 'extra1') {
+                            swapImages('extra1', 'extra2');
+                        } else if (slotName === 'extra2') {
+                            swapImages('extra2', 'extra1');
+                        }
+                    });
+                });
+            }
+            
+            // Make setupSlotEventListeners globally accessible
+            window.setupSlotEventListeners = setupSlotEventListeners;
+            
+            function setAsMainImage(sourceSlot) {
+                if (!currentImages[sourceSlot]) return;
+                
+                // Swap main with source
+                const temp = currentImages.main;
+                currentImages.main = currentImages[sourceSlot];
+                currentImages[sourceSlot] = temp;
+                
+                // Re-render both slots
+                if (currentImages.main) {
+                    assignImageToSlot(currentImages.main, 'main');
                 }
-                
-                if (filteredFiles.length === 0 && source === 'drop') {
-                    alert('تم رفع هذه الصور مسبقاً');
-                    return;
+                if (currentImages[sourceSlot]) {
+                    assignImageToSlot(currentImages[sourceSlot], sourceSlot);
                 }
-                
-                // For drag and drop, add new files to existing ones
-                // For file input, use only the new files
-                const dataTransfer = new DataTransfer();
-                if (source === 'drop') {
-                    currentFiles.forEach(file => dataTransfer.items.add(file));
-                }
-                filteredFiles.forEach(file => dataTransfer.items.add(file));
-                fileInput.files = dataTransfer.files;
-                
-                updateImagePreview();
+            }
+            
+            function removeImageFromSlot(slotName) {
+                currentImages[slotName] = null;
+                resetSlot(slotName);
                 updateImageCounter();
             }
             
-            function updateImagePreview() {
-                const files = Array.from(fileInput.files);
+            function swapImages(slot1, slot2) {
+                const temp = currentImages[slot1];
+                currentImages[slot1] = currentImages[slot2];
+                currentImages[slot2] = temp;
                 
-                if (files.length === 0) {
-                    imagePreview.innerHTML = `
-                        <div class="image-sort-instructions mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg col-span-2 md:col-span-4">
-                            <div class="flex items-center text-blue-700">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                                </svg>
-                                <span class="text-sm font-medium">اسحب الصور لترتيبها - الصورة الأولى ستكون الصورة الرئيسية</span>
-                            </div>
-                        </div>
-                    `;
-                    return;
+                // Re-render both slots
+                if (currentImages[slot1]) {
+                    assignImageToSlot(currentImages[slot1], slot1);
                 }
+                if (currentImages[slot2]) {
+                    assignImageToSlot(currentImages[slot2], slot2);
+                }
+            }
+            
+            function clearAllSlots() {
+                Object.keys(imageSlots).forEach(slotName => {
+                    resetSlot(slotName);
+                });
                 
-                const previewHtml = files.map((file, index) => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.getElementById(`preview-${index}`);
-                        if (img) img.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                    
-                    return `
-                        <div class="relative group cursor-move" draggable="true" data-index="${index}">
-                            <img id="preview-${index}" src="" alt="معاينة" class="w-full h-32 object-cover rounded-lg border-2 border-gray-200">
-                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
-                                <button type="button" onclick="removeImage(${index})" class="bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                                ${index + 1}
-                            </div>
-                            <div class="absolute bottom-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                                ${index === 0 ? 'رئيسية' : 'إضافية'}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                // Re-setup event listeners for all slots
+                if (typeof window.setupSlotEventListeners === 'function') {
+                    window.setupSlotEventListeners();
+                }
+            }
+            
+            function resetSlot(slotName) {
+                const slot = imageSlots[slotName];
+                if (!slot) return; // Skip if slot doesn't exist
                 
-                imagePreview.innerHTML = `
-                    <div class="image-sort-instructions mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg col-span-2 md:col-span-4">
-                        <div class="flex items-center text-blue-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                            </svg>
-                            <span class="text-sm font-medium">اسحب الصور لترتيبها - الصورة الأولى ستكون الصورة الرئيسية</span>
-                        </div>
+                const isMain = slotName === 'main';
+                
+                slot.innerHTML = `
+                    <div class="text-center p-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="${isMain ? 'h-12 w-12 text-yellow-500' : 'h-8 w-8 text-gray-400'} mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            ${isMain ? 
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />' :
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />'
+                            }
+                        </svg>
+                        <p class="text-sm font-medium ${isMain ? 'text-yellow-700' : 'text-gray-600'}">${isMain ? 'الصورة الرئيسية' : 'صورة إضافية'}</p>
+                        <p class="text-xs ${isMain ? 'text-yellow-600' : 'text-gray-500'}">${isMain ? 'إلزامية' : 'اختيارية'}</p>
                     </div>
-                    ${previewHtml}
+                    
+                    <!-- زر اختيار الصورة -->
+                    <button type="button" class="select-image-btn ${isMain ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-gray-500 hover:bg-gray-600'} text-white text-sm px-4 py-2 rounded-lg transition-colors font-medium">
+                        اختيار صورة
+                    </button>
+                    
+                    <!-- أزرار الإجراءات (تظهر عند وجود صورة) -->
+                    <div class="image-actions hidden space-y-2 mt-3">
+                        ${getSlotActions(slotName)}
+                    </div>
                 `;
                 
-                // Add drag and drop reordering
-                setupDragAndDrop();
+                currentImages[slotName] = null;
+                
+                // Re-setup file input for this slot
+                const selectBtn = slot.querySelector('.select-image-btn');
+                if (selectBtn) {
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.className = 'hidden';
+                    fileInput.dataset.slot = slotName;
+                    
+                    slot.appendChild(fileInput);
+                    
+                    selectBtn.addEventListener('click', () => {
+                        fileInput.click();
+                    });
+                    
+                    fileInput.addEventListener('change', (e) => {
+                        const files = Array.from(e.target.files);
+                        if (files.length > 0) {
+                            assignImageToSlot(files[0], slotName);
+                        }
+                    });
+                }
+                
+                // Re-setup event listeners for this slot
+                if (typeof window.setupSlotEventListeners === 'function') {
+                    window.setupSlotEventListeners();
+                }
             }
             
             function updateImageCounter() {
-                const count = fileInput.files.length;
-                imageCounter.textContent = `${count}/3`;
+                const count = Object.values(currentImages).filter(img => img !== null).length;
+                if (imageCounter) {
+                    imageCounter.textContent = `${count}/3`;
+                }
             }
             
-            let draggedItem = null;
-            let previewItems = [];
-            
-            function setupDragAndDrop() {
-                previewItems = document.querySelectorAll('[draggable="true"]');
-                
-                previewItems.forEach(item => {
-                    item.addEventListener('dragstart', handleDragStart);
-                    item.addEventListener('dragover', handleDragOver);
-                    item.addEventListener('drop', handleDrop);
-                    item.addEventListener('dragend', handleDragEnd);
-                });
-            }
-            
-            function handleDragStart(e) {
-                draggedItem = this;
-                this.classList.add('opacity-50');
-            }
-            
-            function handleDragOver(e) {
-                e.preventDefault();
-            }
-            
-            function handleDrop(e) {
-                e.preventDefault();
-                if (this === draggedItem) return;
-                
-                const items = [...previewItems];
-                const draggedIndex = items.indexOf(draggedItem);
-                const droppedIndex = items.indexOf(this);
-                
-                // Reorder files
-                const files = Array.from(fileInput.files);
-                const reorderedFiles = [...files];
-                const [draggedFile] = reorderedFiles.splice(draggedIndex, 1);
-                reorderedFiles.splice(droppedIndex, 0, draggedFile);
-                
-                // Update file input
-                const dataTransfer = new DataTransfer();
-                reorderedFiles.forEach(file => dataTransfer.items.add(file));
-                fileInput.files = dataTransfer.files;
-                
-                updateImagePreview();
-            }
-            
-            function handleDragEnd(e) {
-                this.classList.remove('opacity-50');
-            }
-            
-            // Remove image function (global)
-            window.removeImage = function(index) {
-                const files = Array.from(fileInput.files);
-                files.splice(index, 1);
-                
-                const dataTransfer = new DataTransfer();
-                files.forEach(file => dataTransfer.items.add(file));
-                fileInput.files = dataTransfer.files;
-                
-                updateImagePreview();
-                updateImageCounter();
-            };
+            // Mobile touch events removed - no drag and drop functionality
         });
     </script>
     
