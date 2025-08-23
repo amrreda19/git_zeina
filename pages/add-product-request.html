@@ -1162,11 +1162,10 @@
                         // Show success message with better UX for mobile
                         showSuccessMessage();
                         
-                        // Clear form after a short delay to ensure message is visible
+                        // Reload the entire page after a short delay to ensure message is visible
                         setTimeout(() => {
-                            form.reset();
-                            clearForm();
-                        }, 1000);
+                            window.location.reload();
+                        }, 1500);
                     } else {
                         const errorMessage = result ? result.error : 'حدث خطأ غير معروف';
                         showErrorMessage('حدث خطأ أثناء إرسال الطلب: ' + errorMessage);
