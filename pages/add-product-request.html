@@ -276,6 +276,19 @@
                 word-wrap: break-word;
                 hyphens: auto;
             }
+            
+            /* تحسين النافذة العائمة للشاشات الصغيرة */
+            #floating-ad-window {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+                left: 1rem;
+                bottom: 1rem;
+            }
+            
+            #faster-sell-btn {
+                right: 1rem;
+                bottom: 1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -298,64 +311,33 @@
             #general-error-alert span {
                 line-height: 1.4;
             }
-        }
-        
-        /* Bottom Sheet Styles */
-        #bottom-sheet {
-            pointer-events: none;
-        }
-        
-        #bottom-sheet.show {
-            pointer-events: auto;
-        }
-        
-        #bottom-sheet-content {
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        #bottom-sheet-content.show {
-            transform: translateY(0);
-        }
-        
-        /* Mobile specific bottom sheet styles */
-        @media (max-width: 768px) {
-            #bottom-sheet-content {
-                max-height: 70vh;
-                border-radius: 20px 20px 0 0;
-            }
             
-            #bottom-sheet-content .p-6 {
-                padding: 1.5rem;
-            }
-            
-            #bottom-sheet-content h3 {
-                font-size: 1.25rem;
-            }
-            
-            #bottom-sheet-content p {
-                font-size: 1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            #bottom-sheet-content {
-                max-height: 65vh;
-                border-radius: 16px 16px 0 0;
-            }
-            
-            #bottom-sheet-content .p-6 {
+            /* تحسين النافذة العائمة للشاشات الصغيرة جداً */
+            #floating-ad-window {
+                width: calc(100vw - 1rem);
+                right: 0.5rem;
+                left: 0.5rem;
+                bottom: 0.5rem;
                 padding: 1rem;
             }
             
-            #bottom-sheet-content h3 {
-                font-size: 1.125rem;
+            #floating-ad-window h3 {
+                font-size: 1rem;
             }
             
-            #bottom-sheet-content p {
-                font-size: 0.9rem;
+            #floating-ad-window p {
+                font-size: 0.875rem;
+            }
+            
+            #faster-sell-btn {
+                right: 0.5rem;
+                bottom: 0.5rem;
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
             }
         }
+        
+
     </style>
 </head>
 <body class="text-gray-700 bg-gray-50">
@@ -832,47 +814,35 @@
         </div>
     </footer>
 
-    <!-- Bottom Sheet - نافذة عائمة سفلية -->
-    <div id="bottom-sheet" class="fixed inset-0 z-50 hidden">
-        <!-- Overlay -->
-        <div id="bottom-sheet-overlay" class="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300"></div>
-        
-        <!-- Bottom Sheet Content -->
-        <div id="bottom-sheet-content" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transform translate-y-full transition-transform duration-500 ease-out">
-            <!-- Header with close button -->
-            <div class="flex items-center justify-between p-4 border-b border-gray-200">
-                <h3 class="text-lg font-bold text-gray-800">✨ ميّز منتجك الآن!</h3>
-                <button id="close-bottom-sheet" class="p-2 text-gray-500 hover:text-gray-700 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
+    <!-- النافذة العائمة للإعلان -->
+    <div id="floating-ad-window" class="fixed bottom-6 right-6 w-80 lg:w-96 xl:w-[28rem] bg-white rounded-xl shadow-2xl border border-yellow-200 transform translate-y-full opacity-0 transition-all duration-500 ease-out z-50">
+        <div class="p-6 lg:p-8 xl:p-10">
+            <!-- زر الإغلاق -->
+            <button id="close-ad-btn" class="absolute top-3 right-3 lg:top-4 lg:right-4 xl:top-5 xl:right-5 text-gray-400 hover:text-gray-600 transition-colors text-xl lg:text-2xl xl:text-3xl font-bold">
+                ✕
+            </button>
             
-            <!-- Content -->
-            <div class="p-6">
-                <div class="text-center mb-6">
-                    <p class="text-gray-700 text-lg leading-relaxed mb-4">
-                        هل تريد أن يظهر منتجك في مكان بارز داخل الصفحة ويحصل على مشاهدات أكثر؟
-                    </p>
-                    <p class="text-gray-600 text-base">
-                        اضغط على الزر بالأسفل لمعرفة التفاصيل وكيفية إضافة منتجك للإعلانات المميزة 🚀
-                    </p>
-                </div>
+            <!-- المحتوى -->
+            <div class="text-center">
+                <h3 class="text-lg lg:text-xl xl:text-2xl font-bold text-gray-800 mb-2 lg:mb-3 xl:mb-4">ميّز منتجك الآن!</h3>
+                <p class="text-sm lg:text-base xl:text-lg text-gray-600 mb-4 lg:mb-6 xl:mb-8 leading-relaxed">
+                    هل تريد أن يظهر منتجك في مكان بارز داخل الصفحة ويحصل على مشاهدات أكثر؟
+                </p>
                 
-                <!-- CTA Button -->
-                <div class="text-center">
-                    <a href="advertise-with-us.html" class="inline-flex items-center justify-center w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold text-lg px-8 py-4 rounded-xl hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                        <span class="ml-2">🚀</span>
-                        اضغط هنا لتمييز منتجك
-                    </a>
-                </div>
+                <!-- زر CTA -->
+                <a href="advertise-with-us.html" class="inline-block bg-gradient-to-r from-pink-500 to-pink-600 text-white px-6 py-3 lg:px-8 lg:py-4 xl:px-10 xl:py-5 rounded-lg font-semibold hover:from-pink-600 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg text-sm lg:text-base xl:text-lg">
+                    اضغط هنا لتمييز منتجك
+                </a>
             </div>
-            
-            <!-- Bottom padding for mobile -->
-            <div class="h-4 bg-white"></div>
         </div>
     </div>
+
+    <!-- زر "بيع أسرع" العائم -->
+    <button id="faster-sell-btn" class="fixed bottom-6 right-6 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-3 lg:px-6 lg:py-4 xl:px-8 xl:py-5 rounded-full font-semibold shadow-lg hover:from-pink-600 hover:to-pink-700 transform hover:scale-110 transition-all duration-200 z-40 hidden text-sm lg:text-base xl:text-lg">
+        💰 بيع أسرع
+    </button>
+
+
 
     <script>
         // Mobile menu toggle
@@ -881,91 +851,7 @@
             menu.classList.toggle('hidden');
         });
         
-        // Bottom Sheet functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const bottomSheet = document.getElementById('bottom-sheet');
-            const bottomSheetContent = document.getElementById('bottom-sheet-content');
-            const closeButton = document.getElementById('close-bottom-sheet');
-            const overlay = document.getElementById('bottom-sheet-overlay');
-            
-            // Check if user has seen the bottom sheet in this session
-            const hasSeenBottomSheet = sessionStorage.getItem('bottomSheetShown');
-            
-            // Show bottom sheet after 5 seconds if not shown before
-            if (!hasSeenBottomSheet) {
-                setTimeout(function() {
-                    showBottomSheet();
-                }, 5000); // 5 seconds delay
-            }
-            
-            function showBottomSheet() {
-                if (bottomSheet && bottomSheetContent) {
-                    // Mark as shown in this session
-                    sessionStorage.setItem('bottomSheetShown', 'true');
-                    
-                    // Show the bottom sheet
-                    bottomSheet.classList.remove('hidden');
-                    
-                    // Trigger animation after a small delay
-                    setTimeout(function() {
-                        bottomSheet.classList.add('show');
-                        bottomSheetContent.classList.add('show');
-                    }, 100);
-                }
-            }
-            
-            function hideBottomSheet() {
-                if (bottomSheet && bottomSheetContent) {
-                    bottomSheetContent.classList.remove('show');
-                    bottomSheet.classList.remove('show');
-                    
-                    // Hide completely after animation
-                    setTimeout(function() {
-                        bottomSheet.classList.add('hidden');
-                    }, 500);
-                }
-            }
-            
-            // Close button event
-            if (closeButton) {
-                closeButton.addEventListener('click', hideBottomSheet);
-            }
-            
-            // Overlay click event
-            if (overlay) {
-                overlay.addEventListener('click', hideBottomSheet);
-            }
-            
-            // Keyboard escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && bottomSheet && !bottomSheet.classList.contains('hidden')) {
-                    hideBottomSheet();
-                }
-            });
-            
-            // Touch/swipe to close on mobile
-            let startY = 0;
-            let currentY = 0;
-            
-            if (bottomSheetContent) {
-                bottomSheetContent.addEventListener('touchstart', function(e) {
-                    startY = e.touches[0].clientY;
-                });
-                
-                bottomSheetContent.addEventListener('touchmove', function(e) {
-                    currentY = e.touches[0].clientY;
-                });
-                
-                bottomSheetContent.addEventListener('touchend', function(e) {
-                    const diffY = startY - currentY;
-                    
-                    // If swiped down more than 100px, close the sheet
-                    if (diffY > 100) {
-                        hideBottomSheet();
-                    }
-                });
-            }
-        });
+
         
         // Form validation and submission
         document.addEventListener('DOMContentLoaded', function() {
@@ -1451,11 +1337,55 @@
                     window.setupSlotEventListeners();
                 }
                 
-                console.log('✅ Form cleared successfully');
-            }
-        });
+                            console.log('✅ Form cleared successfully');
+        }
+    });
+    
+    // النافذة العائمة للإعلان
+    document.addEventListener('DOMContentLoaded', function() {
+        const floatingAdWindow = document.getElementById('floating-ad-window');
+        const closeAdBtn = document.getElementById('close-ad-btn');
+        const fasterSellBtn = document.getElementById('faster-sell-btn');
         
-        // Governorate dropdown functionality
+        // إظهار النافذة بعد 3 ثوانٍ
+        setTimeout(() => {
+            if (floatingAdWindow) {
+                floatingAdWindow.classList.remove('translate-y-full', 'opacity-0');
+                floatingAdWindow.classList.add('translate-y-0', 'opacity-100');
+            }
+        }, 3000);
+        
+        // إغلاق النافذة
+        if (closeAdBtn) {
+            closeAdBtn.addEventListener('click', function() {
+                if (floatingAdWindow) {
+                    floatingAdWindow.classList.add('translate-y-full', 'opacity-0');
+                    floatingAdWindow.classList.remove('translate-y-0', 'opacity-100');
+                }
+                
+                // إظهار زر "بيع أسرع"
+                if (fasterSellBtn) {
+                    fasterSellBtn.classList.remove('hidden');
+                }
+            });
+        }
+        
+        // إعادة إظهار النافذة عند الضغط على زر "بيع أسرع"
+        if (fasterSellBtn) {
+            fasterSellBtn.addEventListener('click', function() {
+                // إخفاء زر "بيع أسرع"
+                fasterSellBtn.classList.add('hidden');
+                
+                // إظهار النافذة مرة أخرى
+                if (floatingAdWindow) {
+                    floatingAdWindow.classList.remove('translate-y-full', 'opacity-0');
+                    floatingAdWindow.classList.add('translate-y-0', 'opacity-100');
+                }
+            });
+        }
+    });
+    
+    // Governorate dropdown functionality
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 DOM Content Loaded - Initializing governorate functionality');
             
