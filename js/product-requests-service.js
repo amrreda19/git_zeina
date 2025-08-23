@@ -697,6 +697,7 @@ class ProductRequestsService {
 
             const finalImageUrls = [];
             const timestamp = Date.now();
+            const successfullyCopiedImages = []; // لتتبع الصور التي نُسخت بنجاح
 
             // Map category to existing folder structure
             const folderMap = {
@@ -736,11 +737,43 @@ class ProductRequestsService {
 
                 if (urlData?.publicUrl) {
                     finalImageUrls.push(urlData.publicUrl);
+                    // إضافة الصورة لقائمة الصور الناجحة للحذف لاحقاً
+                    successfullyCopiedImages.push({
+                        path: image.path,
+                        original_name: image.original_name
+                    });
                     console.log(`✅ Image moved to existing folder: ${finalPath}`);
                 } else {
                     // Fallback to original URL
                     finalImageUrls.push(image.url);
                 }
+            }
+
+            // 🗑️ حذف الصور الأصلية من مجلد Product_requests بعد نجاح النسخ
+            if (successfullyCopiedImages.length > 0) {
+                console.log(`🧹 Cleaning up ${successfullyCopiedImages.length} temporary images from Product_requests/`);
+                
+                for (const image of successfullyCopiedImages) {
+                    try {
+                        console.log(`🗑️ Deleting temporary image: ${image.path}`);
+                        
+                        const { error: deleteError } = await this.supabase.storage
+                            .from('images')
+                            .remove([image.path]);
+
+                        if (deleteError) {
+                            console.error(`❌ Failed to delete temporary image ${image.path}:`, deleteError);
+                        } else {
+                            console.log(`✅ Successfully deleted temporary image: ${image.path}`);
+                        }
+                    } catch (deleteError) {
+                        console.error(`❌ Error deleting temporary image ${image.path}:`, deleteError);
+                    }
+                }
+                
+                console.log(`🧹 Cleanup completed. Deleted ${successfullyCopiedImages.length} temporary images.`);
+            } else {
+                console.log(`⚠️ No images were successfully copied, skipping cleanup.`);
             }
 
             return finalImageUrls;
