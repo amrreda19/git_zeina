@@ -1070,16 +1070,16 @@
                     </div>
                 </div>
                 
-                                 <!-- Add New Images -->
-                 <div>
-                     <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">إضافة صور جديدة</label>
-                     <div id="image-upload-area" style="border: 2px dashed #d1d5db; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                         <div style="font-size: 24px; color: #9ca3af; margin-bottom: 10px;">📷</div>
-                         <p style="color: #6b7280; margin-bottom: 5px; font-size: 14px;">اسحب الصور هنا أو اضغط للاختيار</p>
-                         <p style="font-size: 12px; color: #9ca3af; text-align: center;">يمكنك اختيار أكثر من صورة في نفس الوقت</p>
-                         <input type="file" id="new-images" multiple accept="image/*" style="display: none;">
-                     </div>
-                 </div>
+                <!-- Add New Images -->
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">إضافة صور جديدة</label>
+                    <div id="image-upload-area" style="border: 2px dashed #d1d5db; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="font-size: 24px; color: #9ca3af; margin-bottom: 10px;">📷</div>
+                        <p style="color: #6b7280; margin-bottom: 5px; font-size: 14px;">اسحب الصور هنا أو اضغط للاختيار</p>
+                        <p style="font-size: 12px; color: #9ca3af; text-align: center;">يمكنك اختيار أكثر من صورة في نفس الوقت</p>
+                        <input type="file" id="new-images" multiple accept="image/*" style="display: none;">
+                    </div>
+                </div>
                 
                 <!-- Buttons -->
                 <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 20px;">
@@ -1163,14 +1163,24 @@
                             products.forEach(product => {
                                 product.sourceTable = table;
                                 
-                                // معالجة البيانات الفارغة
-                                if (product.subcategory === null || product.subcategory === undefined) {
+                                // معالجة البيانات الفارغة - تحسين المعالجة
+                                if (product.subcategory === null || product.subcategory === undefined || product.subcategory === 'null') {
                                     product.subcategory = '';
                                 }
                                 
-                                // التأكد من أن البيانات ليست نص "null"
-                                if (product.subcategory === 'null') {
-                                    product.subcategory = '';
+                                // معالجة البيانات الفارغة للمحافظات
+                                if (product.governorate === null || product.governorate === undefined || product.governorate === 'null') {
+                                    product.governorate = '';
+                                }
+                                
+                                // معالجة البيانات الفارغة للمدن
+                                if (product.cities === null || product.cities === undefined || product.cities === 'null') {
+                                    product.cities = '';
+                                }
+                                
+                                // معالجة البيانات الفارغة للصور
+                                if (product.image_urls === null || product.image_urls === undefined || product.image_urls === 'null') {
+                                    product.image_urls = [];
                                 }
                                 
                                 // فحص جميع الحقول للبحث عن التصنيف الفرعي
@@ -1384,7 +1394,7 @@
 
             // Populate governorates with better data handling
             let governorates = [];
-            if (product.governorate) {
+            if (product.governorate && product.governorate !== '' && product.governorate !== 'null') {
                 if (Array.isArray(product.governorate)) {
                     governorates = product.governorate;
                 } else if (typeof product.governorate === 'string') {
@@ -1414,7 +1424,7 @@
             
             // Populate subcategories with better data handling
             let subcategories = [];
-            if (product.subcategory) {
+            if (product.subcategory && product.subcategory !== '' && product.subcategory !== 'null') {
                 if (Array.isArray(product.subcategory)) {
                     subcategories = product.subcategory;
                 } else if (typeof product.subcategory === 'string') {
@@ -1444,7 +1454,7 @@
             
             // Populate cities with better data handling
             let cities = [];
-            if (product.cities) {
+            if (product.cities && product.cities !== '' && product.cities !== 'null') {
                 if (Array.isArray(product.cities)) {
                     cities = product.cities;
                 } else if (typeof product.cities === 'string') {
@@ -1475,7 +1485,7 @@
             
             // Display current images with better data handling
             let imageUrls = [];
-            if (product.image_urls) {
+            if (product.image_urls && product.image_urls !== '' && product.image_urls !== 'null') {
                 if (Array.isArray(product.image_urls)) {
                     imageUrls = product.image_urls;
                 } else if (typeof product.image_urls === 'string') {
@@ -1520,27 +1530,29 @@
             
             // تحسين معالجة البيانات
             let selected = [];
-            if (selectedGovernorates && Array.isArray(selectedGovernorates)) {
-                selected = selectedGovernorates;
-            } else if (selectedGovernorates && typeof selectedGovernorates === 'string') {
-                // محاولة تحليل JSON string أولاً
-                try {
-                    if (selectedGovernorates.startsWith('[') && selectedGovernorates.endsWith(']')) {
-                        const parsed = JSON.parse(selectedGovernorates);
-                        if (Array.isArray(parsed)) {
-                            selected = parsed;
+            if (selectedGovernorates && selectedGovernorates !== '' && selectedGovernorates !== 'null') {
+                if (Array.isArray(selectedGovernorates)) {
+                    selected = selectedGovernorates;
+                } else if (typeof selectedGovernorates === 'string') {
+                    // محاولة تحليل JSON string أولاً
+                    try {
+                        if (selectedGovernorates.startsWith('[') && selectedGovernorates.endsWith(']')) {
+                            const parsed = JSON.parse(selectedGovernorates);
+                            if (Array.isArray(parsed)) {
+                                selected = parsed;
+                            }
                         }
+                    } catch (e) {
+                        console.log('🔍 JSON parsing failed for governorates, treating as regular string');
                     }
-                } catch (e) {
-                    console.log('🔍 JSON parsing failed for governorates, treating as regular string');
-                }
-                
-                // إذا لم يكن JSON، استخدم المعالجة العادية
-                if (selected.length === 0) {
-                    if (selectedGovernorates.includes(',')) {
-                        selected = selectedGovernorates.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
-                    } else if (selectedGovernorates !== 'null' && selectedGovernorates !== '') {
-                        selected = [selectedGovernorates];
+                    
+                    // إذا لم يكن JSON، استخدم المعالجة العادية
+                    if (selected.length === 0) {
+                        if (selectedGovernorates.includes(',')) {
+                            selected = selectedGovernorates.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else if (selectedGovernorates !== 'null' && selectedGovernorates !== '') {
+                            selected = [selectedGovernorates];
+                        }
                     }
                 }
             }
@@ -1632,27 +1644,29 @@
             
             // تحسين معالجة البيانات
             let selected = [];
-            if (selectedSubcategory && Array.isArray(selectedSubcategory)) {
-                selected = selectedSubcategory;
-            } else if (selectedSubcategory && typeof selectedSubcategory === 'string') {
-                // محاولة تحليل JSON string أولاً
-                try {
-                    if (selectedSubcategory.startsWith('[') && selectedSubcategory.endsWith(']')) {
-                        const parsed = JSON.parse(selectedSubcategory);
-                        if (Array.isArray(parsed)) {
-                            selected = parsed;
+            if (selectedSubcategory && selectedSubcategory !== '' && selectedSubcategory !== 'null') {
+                if (Array.isArray(selectedSubcategory)) {
+                    selected = selectedSubcategory;
+                } else if (typeof selectedSubcategory === 'string') {
+                    // محاولة تحليل JSON string أولاً
+                    try {
+                        if (selectedSubcategory.startsWith('[') && selectedSubcategory.endsWith(']')) {
+                            const parsed = JSON.parse(selectedSubcategory);
+                            if (Array.isArray(parsed)) {
+                                selected = parsed;
+                            }
                         }
+                    } catch (e) {
+                        console.log('🔍 JSON parsing failed, treating as regular string');
                     }
-                } catch (e) {
-                    console.log('🔍 JSON parsing failed, treating as regular string');
-                }
-                
-                // إذا لم يكن JSON، استخدم المعالجة العادية
-                if (selected.length === 0) {
-                    if (selectedSubcategory.includes(',')) {
-                        selected = selectedSubcategory.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
-                    } else if (selectedSubcategory !== 'null' && selectedSubcategory !== '') {
-                        selected = [selectedSubcategory];
+                    
+                    // إذا لم يكن JSON، استخدم المعالجة العادية
+                    if (selected.length === 0) {
+                        if (selectedSubcategory.includes(',')) {
+                            selected = selectedSubcategory.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else if (selectedSubcategory !== 'null' && selectedSubcategory !== '') {
+                            selected = [selectedSubcategory];
+                        }
                     }
                 }
             }

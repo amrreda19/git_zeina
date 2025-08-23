@@ -5,7 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أضف منتجك | زينة - Zeina Events</title>
     <meta name="description" content="أضف منتجك إلى موقع زينة - كوشات، تورتات، مرايا، ديكورات، دعوات وتوزيعات">
+    <meta name="title" content="أضف منتجك | زينة - Zeina Events">
+    <link rel="canonical" href="https://zeinaevents.com/pages/add-product-request.html">
     <link rel="icon" type="image/png" href="../assets/images/zeina.jpeg">
+    
+    <!-- Schema.org markup for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "أضف منتجك",
+      "description": "أضف منتجك إلى موقع زينة - كوشات، تورتات، مرايا، ديكورات، دعوات وتوزيعات",
+      "url": "https://zeinaevents.com/pages/add-product-request.html",
+      "mainEntity": {
+        "@type": "Form",
+        "name": "طلب إضافة منتج",
+        "description": "نموذج لإرسال طلب إضافة منتج جديد"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Zeina Events",
+        "url": "https://zeinaevents.com"
+      }
+    }
+    </script>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -222,6 +245,8 @@
             }
         }
         
+
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -285,10 +310,10 @@
                 bottom: 1rem;
             }
             
-            #faster-sell-btn {
-                right: 1rem;
-                bottom: 1rem;
-            }
+                    #faster-sell-btn {
+            right: 1rem;
+            bottom: 1rem;
+        }
         }
         
         @media (max-width: 480px) {
@@ -350,17 +375,20 @@
             </div>
             
             <!-- Navigation -->
-            <div class="hidden lg:flex items-center space-x-6 space-x-reverse">
+            <div class="hidden md:flex items-center space-x-reverse space-x-6">
                 <a href="../index.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">الرئيسية</a>
                 <a href="category-koshat.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">كوشات</a>
                 <a href="category-cake.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">تورتات وأنواع الشوكولاتة</a>
                 <a href="category-mirr.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">مرايا</a>
                 <a href="category-other.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">ديكورات متنوعة</a>
                 <a href="category-invitations.html" class="text-gray-600 hover:text-yellow-600 transition-colors text-sm font-medium">دعوات وتوزيعات</a>
-                
+            </div>
+            
+            <!-- Desktop Buttons -->
+            <div class="hidden lg:flex items-center space-x-reverse space-x-4">
                 <!-- Desktop Advertise Button -->
                 <a href="advertise-with-us.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
-                    <span class="flex items-center space-x-1 space-x-reverse">
+                    <span class="flex items-center space-x-reverse space-x-1">
                         <span>⭐</span>
                         <span>أضف إعلانك</span>
                     </span>
@@ -368,7 +396,7 @@
                 
                 <!-- Desktop Add Product Request Button -->
                 <a href="add-product-request.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
-                    <span class="flex items-center space-x-1 space-x-reverse">
+                    <span class="flex items-center space-x-reverse space-x-1">
                         <span>➕</span>
                         <span>أضف منتجك</span>
                     </span>
@@ -388,29 +416,32 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-gray-200">
             <div class="px-4 py-2 space-y-2">
-                <a href="../index.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">الرئيسية</a>
-                <a href="category-koshat.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">كوشات</a>
-                <a href="category-cake.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">تورتات وأنواع الشوكولاتة</a>
-                <a href="category-mirr.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">مرايا</a>
-                <a href="category-other.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">ديكورات متنوعة</a>
-                <a href="category-invitations.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">دعوات وتوزيعات</a>
-                
-                <!-- إعلن معنا -->
-                <div class="border-t border-gray-200 pt-3">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-2">أضف إعلانك</h3>
-                    <a href="advertise-with-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm flex items-center">
-                        <span class="mr-2">⭐</span>
-                        أضف إعلانك
-                    </a>
+                <!-- التصنيفات -->
+                <div class="border-b border-gray-200 pb-3">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-2">التصنيفات</h3>
+                    <div class="space-y-2">
+                        <a href="category-koshat.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">كوشات</a>
+                        <a href="category-cake.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">تورتات وأنواع الشوكولاتة</a>
+                        <a href="category-mirr.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">مرايا</a>
+                        <a href="category-other.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">ديكورات متنوعة</a>
+                        <a href="category-invitations.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">دعوات وتوزيعات</a>
+                        <a href="../index.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">الرئيسية</a>
+                    </div>
                 </div>
                 
-                <!-- إضافة منتج -->
-                <div class="border-t border-gray-200 pt-3">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-2">إضافة منتج</h3>
-                    <a href="add-product-request.html" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
-                        <span class="mr-2">➕</span>
-                        أضف منتجك
-                    </a>
+                <!-- أزرار الإعلان وإضافة المنتج -->
+                <div class="border-b border-gray-200 pb-3">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-2">خدمات إضافية</h3>
+                    <div class="space-y-2">
+                        <a href="advertise-with-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                            <span class="mr-2">⭐</span>
+                            أضف إعلانك
+                        </a>
+                        <a href="add-product-request.html" class="block py-2 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                            <span class="mr-2">➕</span>
+                            أضف منتجك
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -815,7 +846,7 @@
     </footer>
 
     <!-- النافذة العائمة للإعلان -->
-    <div id="floating-ad-window" class="fixed bottom-6 right-6 w-80 lg:w-96 xl:w-[28rem] bg-white rounded-xl shadow-2xl border border-yellow-200 transform translate-y-full opacity-0 transition-all duration-500 ease-out z-50">
+    <div id="floating-ad-window" class="fixed bottom-6 right-6 w-80 lg:w-96 xl:w-[28rem] bg-purple-50 rounded-xl shadow-2xl border border-yellow-200 transform translate-y-full opacity-0 transition-all duration-500 ease-out z-50">
         <div class="p-6 lg:p-8 xl:p-10">
             <!-- زر الإغلاق -->
             <button id="close-ad-btn" class="absolute top-3 right-3 lg:top-4 lg:right-4 xl:top-5 xl:right-5 text-gray-400 hover:text-gray-600 transition-colors text-xl lg:text-2xl xl:text-3xl font-bold">
@@ -1346,13 +1377,11 @@
         const closeAdBtn = document.getElementById('close-ad-btn');
         const fasterSellBtn = document.getElementById('faster-sell-btn');
         
-        // إظهار النافذة بعد 3 ثوانٍ
-        setTimeout(() => {
-            if (floatingAdWindow) {
-                floatingAdWindow.classList.remove('translate-y-full', 'opacity-0');
-                floatingAdWindow.classList.add('translate-y-0', 'opacity-100');
-            }
-        }, 3000);
+        // إظهار النافذة فوراً عند فتح الصفحة
+        if (floatingAdWindow) {
+            floatingAdWindow.classList.remove('translate-y-full', 'opacity-0');
+            floatingAdWindow.classList.add('translate-y-0', 'opacity-100');
+        }
         
         // إغلاق النافذة
         if (closeAdBtn) {
