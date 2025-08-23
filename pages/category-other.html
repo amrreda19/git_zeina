@@ -774,13 +774,21 @@
                         <span id="favorites-count-badge" class="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold hidden">0</span>
                     </a>
 
-                    <!-- Desktop Add Product Request Button -->
-                    <a href="add-product-request.html" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200" id="add-product-request-btn-desktop">
+                                    <!-- Desktop Add Product Request Button -->
+                <a href="add-product-request.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200" id="add-product-request-btn-desktop">
                         <span class="flex items-center space-x-1 space-x-reverse">
                             <span>➕</span>
                             <span>أضف منتجك</span>
                         </span>
                     </a>
+
+                                    <!-- Desktop Advertise Button -->
+                <a href="advertise-with-us.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
+                    <span class="flex items-center space-x-1 space-x-reverse">
+                        <span>⭐</span>
+                        <span>أضف إعلانك</span>
+                    </span>
+                </a>
 
 
                 </div>
@@ -800,10 +808,18 @@
 
                     
                     <!-- زر أضف منتجك -->
-                    <a href="add-product-request.html" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 text-center">
+                    <a href="add-product-request.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200 text-center">
                         <span class="flex items-center justify-center space-x-1 space-x-reverse">
                             <span>➕</span>
                             <span>أضف منتجك</span>
+                        </span>
+                    </a>
+                    
+                    <!-- Mobile Advertise Button -->
+                    <a href="advertise-with-us.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-2 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200 text-center">
+                        <span class="flex items-center justify-center space-x-1 space-x-reverse">
+                            <span>⭐</span>
+                            <span>أعلن معنا</span>
                         </span>
                     </a>
                     
@@ -849,6 +865,10 @@
                             <a href="about-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">من نحن</a>
                             <a href="contact-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">اتصل بنا</a>
                             <a href="../index.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm">الرئيسية</a>
+                            <a href="advertise-with-us.html" class="block py-2 px-3 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200 text-sm flex items-center">
+                                <span class="mr-2">⭐</span>
+                                أعلن معنا
+                            </a>
                         </div>
                     </div>
                     
@@ -2834,5 +2854,15 @@
             }, 1000);
         });
         </script>
+        
+        <!-- Floating Add Product Button -->
+        <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+            <a href="add-product-request.html" class="inline-flex items-center justify-center bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white px-6 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-semibold text-lg">
+                <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                أضف منتجك
+            </a>
+        </div>
 </body>
 </html> 

@@ -1477,16 +1477,16 @@
                         <span id="favorites-count-badge-desktop" class="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold hidden">0</span>
                     </a>
                     
-                    <!-- Desktop Advertise Button -->
-                    <a href="pages/advertise-with-us.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
-                        <span class="flex items-center space-x-1 space-x-reverse">
-                            <span>⭐</span>
-                            <span>أعلن معنا</span>
-                        </span>
-                    </a>
+                                    <!-- Desktop Advertise Button -->
+                <a href="pages/advertise-with-us.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
+                    <span class="flex items-center space-x-1 space-x-reverse">
+                        <span>⭐</span>
+                        <span>أضف إعلانك</span>
+                    </span>
+                </a>
                     
                     <!-- Desktop Add Product Request Button -->
-                    <a href="pages/add-product-request.html" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200" id="add-product-request-btn">
+                    <a href="pages/add-product-request.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200" id="add-product-request-btn">
                         <span class="flex items-center space-x-1 space-x-reverse">
                             <span>➕</span>
                             <span>أضف منتجك</span>
@@ -1520,12 +1520,12 @@
                 <a href="pages/advertise-with-us.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-2 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200 text-center">
                     <span class="flex items-center justify-center space-x-1 space-x-reverse">
                         <span>⭐</span>
-                        <span>أعلن معنا</span>
+                        <span>أضف إعلانك</span>
                     </span>
                 </a>
                 
                 <!-- Mobile Add Product Request Button -->
-                <a href="pages/add-product-request.html" class="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-2 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 text-center">
+                <a href="pages/add-product-request.html" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xs px-2 py-2 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200 text-center">
                     <span class="flex items-center justify-center space-x-1 space-x-reverse">
                         <span>➕</span>
                         <span>أضف منتجك</span>
@@ -1824,7 +1824,7 @@
     <section class="bg-gradient-to-r from-yellow-50 to-pink-50 py-16">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">أعلن معنا وزد من مبيعاتك</h2>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">أضف إعلانك وزد من مبيعاتك</h2>
                 <p class="text-xl text-gray-600 mb-8">
                     هل تريد أن تظهر منتجاتك في أماكن بارزة؟ احصل على الإعلانات المميزة ووصل لعملاء جدد
                 </p>
@@ -1943,7 +1943,7 @@
                         <li><a href="index.html" class="text-gray-300 hover:text-white">الرئيسية</a></li>
                         <li><a href="pages/about-us.html" class="text-gray-300 hover:text-white">من نحن</a></li>
                         <li><a href="pages/contact-us.html" class="text-gray-300 hover:text-white">اتصل بنا</a></li>
-                        <li><a href="pages/advertise-with-us.html" class="text-yellow-400 hover:text-yellow-300 font-medium">⭐ أعلن معنا</a></li>
+                        <li><a href="pages/advertise-with-us.html" class="text-yellow-400 hover:text-yellow-300 font-medium">⭐ أضف إعلانك</a></li>
                     </ul>
                 </div>
                 
@@ -4965,6 +4965,42 @@
         
         // تشغيل الانتقال التلقائي عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', scrollToFormAfterReload);
+    </script>
+    
+    <!-- Floating Add Product Button -->
+    <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50" id="floating-add-product-btn">
+        <a href="pages/add-product-request.html" class="inline-flex items-center justify-center bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white px-6 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-semibold text-lg">
+            <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            أضف منتجك
+        </a>
+    </div>
+
+    <script>
+        // إخفاء الزر العائم في صفحة إضافة المنتج
+        function hideFloatingButtonOnAddProductPage() {
+            // التحقق من أننا في الصفحة الرئيسية
+            if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '') {
+                // إظهار الزر العائم في الصفحة الرئيسية
+                const floatingBtn = document.getElementById('floating-add-product-btn');
+                if (floatingBtn) {
+                    floatingBtn.style.display = 'block';
+                }
+            } else {
+                // إخفاء الزر العائم في الصفحات الأخرى
+                const floatingBtn = document.getElementById('floating-add-product-btn');
+                if (floatingBtn) {
+                    floatingBtn.style.display = 'none';
+                }
+            }
+        }
+
+        // تشغيل الدالة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', hideFloatingButtonOnAddProductPage);
+        
+        // تشغيل الدالة أيضاً عند تغيير الصفحة (للصفحات التي تستخدم JavaScript routing)
+        window.addEventListener('popstate', hideFloatingButtonOnAddProductPage);
     </script>
 </body>
 </html> 
