@@ -2187,14 +2187,28 @@
                 <div class="modal-body">
                     <form id="new-ad-form">
                         <div class="form-group">
+                            <label for="ad-title">عنوان الإعلان:</label>
+                            <input type="text" id="ad-title" placeholder="أدخل عنوان الإعلان" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ad-description">وصف الإعلان:</label>
+                            <textarea id="ad-description" placeholder="أدخل وصف الإعلان" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
                             <label for="ad-category">التصنيف:</label>
-                            <select id="ad-category" required onchange="loadProductsForCategory()">
+                            <select id="ad-category" required onchange="loadProductsForCategory(); updateAdSections();">
                                 <option value="">اختر التصنيف</option>
                                 <option value="cake">تورتات</option>
                                 <option value="koshat">كوشات</option>
                                 <option value="mirr">مرايا</option>
                                 <option value="other">ديكورات متنوعة</option>
                                 <option value="invitations">دعوات وتوزيعات</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ad-section">القسم:</label>
+                            <select id="ad-section" required disabled>
+                                <option value="">اختر التصنيف أولاً</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -2210,6 +2224,7 @@
                                 <option value="featured">مميز</option>
                                 <option value="recommended">موصى به</option>
                                 <option value="banner">بانر</option>
+                                <option value="category_sections">أقسام التصنيفات في الصفحة الرئيسية</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -2264,14 +2279,28 @@
                     <form id="edit-ad-form">
                         <input type="hidden" id="edit-ad-id">
                         <div class="form-group">
+                            <label for="edit-ad-title">عنوان الإعلان:</label>
+                            <input type="text" id="edit-ad-title" placeholder="أدخل عنوان الإعلان" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-ad-description">وصف الإعلان:</label>
+                            <textarea id="edit-ad-description" placeholder="أدخل وصف الإعلان" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
                             <label for="edit-ad-category">التصنيف:</label>
-                            <select id="edit-ad-category" required onchange="loadProductsForEditCategory()">
+                            <select id="edit-ad-category" required onchange="loadProductsForEditCategory(); updateEditAdSections();">
                                 <option value="">اختر التصنيف</option>
                                 <option value="cake">تورتات</option>
                                 <option value="koshat">كوشات</option>
                                 <option value="mirr">مرايا</option>
                                 <option value="other">ديكورات متنوعة</option>
                                 <option value="invitations">دعوات وتوزيعات</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-ad-section">القسم:</label>
+                            <select id="edit-ad-section" required disabled>
+                                <option value="">اختر التصنيف أولاً</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -2287,6 +2316,7 @@
                                 <option value="featured">مميز</option>
                                 <option value="recommended">موصى به</option>
                                 <option value="banner">بانر</option>
+                                <option value="category_sections">أقسام التصنيفات في الصفحة الرئيسية</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -4007,7 +4037,8 @@
             const types = {
                 'featured': 'مميز',
                 'recommended': 'موصى به',
-                'banner': 'بانر'
+                'banner': 'بانر',
+                'category_sections': 'أقسام التصنيفات في الصفحة الرئيسية'
             };
             return types[type] || 'غير محدد';
         }
@@ -4017,7 +4048,8 @@
                 'homepage_featured': 'الصفحة الرئيسية - مميز',
                 'homepage_recommended': 'الصفحة الرئيسية - موصى به',
                 'category_featured': 'صفحة التصنيف - مميز',
-                'sidebar': 'الشريط الجانبي'
+                'sidebar': 'الشريط الجانبي',
+                'homepage_featured': 'أقسام التصنيفات في الصفحة الرئيسية'
             };
             return positions[position] || 'غير محدد';
         }
@@ -4060,12 +4092,22 @@
 
                 // ملء نموذج التعديل
                 document.getElementById('edit-ad-id').value = ad.id;
+                document.getElementById('edit-ad-title').value = ad.title || '';
+                document.getElementById('edit-ad-description').value = ad.description || '';
+                document.getElementById('edit-ad-category').value = ad.product_category || '';
+                document.getElementById('edit-ad-section').value = ad.category_section || '';
                 document.getElementById('edit-ad-type').value = ad.ad_type || '';
                 document.getElementById('edit-ad-position').value = ad.position || '';
                 document.getElementById('edit-ad-start-date').value = ad.start_date ? ad.start_date.slice(0, 16) : '';
                 document.getElementById('edit-ad-end-date').value = ad.end_date ? ad.end_date.slice(0, 16) : '';
                 document.getElementById('edit-ad-priority').value = ad.priority || 1;
                 document.getElementById('edit-ad-status').value = ad.is_active ? 'active' : 'paused';
+                
+                // تحديث أقسام الإعلانات حسب التصنيف
+                updateEditAdSections();
+                
+                // تحميل المنتجات للتصنيف المحدد
+                await loadProductsForEditCategory();
 
                 // إظهار النافذة
                 document.getElementById('edit-ad-modal').style.display = 'flex';
@@ -4079,7 +4121,12 @@
             try {
                 const adId = document.getElementById('edit-ad-id').value;
                 const formData = {
+                    title: document.getElementById('edit-ad-title').value,
+                    description: document.getElementById('edit-ad-description').value,
+                    image_url: null, // سيتم تعيينه تلقائياً من المنتج
+                    link_url: null, // سيتم تعيينه تلقائياً من المنتج
                     category: document.getElementById('edit-ad-category').value,
+                    category_section: document.getElementById('edit-ad-section').value, // القسم الجديد
                     product_id: document.getElementById('edit-ad-product').value,
                     ad_type: document.getElementById('edit-ad-type').value,
                     position: document.getElementById('edit-ad-position').value,
@@ -4222,6 +4269,9 @@
                 ],
                 'banner': [
                     { value: 'sidebar', text: 'الشريط الجانبي' }
+                ],
+                'category_sections': [
+                    { value: 'homepage_featured', text: 'أقسام التصنيفات في الصفحة الرئيسية' }
                 ]
             };
 
@@ -4413,6 +4463,83 @@
             }
         }
 
+        // تحديث أقسام الإعلانات حسب التصنيف
+        function updateAdSections() {
+            const category = document.getElementById('ad-category').value;
+            const sectionSelect = document.getElementById('ad-section');
+            
+            // إعادة تعيين القسم
+            sectionSelect.innerHTML = '<option value="">اختر القسم</option>';
+            sectionSelect.disabled = true;
+            
+            if (!category) {
+                return;
+            }
+            
+            // تحديد الأقسام المتاحة حسب التصنيف
+            const sections = getAvailableSections(category);
+            
+            if (sections && sections.length > 0) {
+                sections.forEach(section => {
+                    const option = document.createElement('option');
+                    option.value = section.value;
+                    option.textContent = section.label;
+                    sectionSelect.appendChild(option);
+                });
+                sectionSelect.disabled = false;
+            }
+        }
+
+        // تحديث أقسام الإعلانات في نموذج التعديل
+        function updateEditAdSections() {
+            const category = document.getElementById('edit-ad-category').value;
+            const sectionSelect = document.getElementById('edit-ad-section');
+            
+            // إعادة تعيين القسم
+            sectionSelect.innerHTML = '<option value="">اختر القسم</option>';
+            sectionSelect.disabled = true;
+            
+            if (!category) {
+                return;
+            }
+            
+            // تحديد الأقسام المتاحة حسب التصنيف
+            const sections = getAvailableSections(category);
+            
+            if (sections && sections.length > 0) {
+                sections.forEach(section => {
+                    const option = document.createElement('option');
+                    option.value = section.value;
+                    option.textContent = section.label;
+                    sectionSelect.appendChild(option);
+                });
+                sectionSelect.disabled = false;
+            }
+        }
+
+        // الحصول على الأقسام المتاحة حسب التصنيف
+        function getAvailableSections(category) {
+            const sections = {
+                'koshat': [
+                    { value: 'koshat', label: 'قسم الكوشات في الصفحة الرئيسية' }
+                ],
+                'cake': [
+                    { value: 'cake', label: 'قسم التورتات في الصفحة الرئيسية' }
+                ],
+                'mirr': [
+                    { value: 'mirr', label: 'قسم المرايا في الصفحة الرئيسية' }
+                ],
+                'other': [
+                    { value: 'other', label: 'قسم الديكورات في الصفحة الرئيسية' }
+                ],
+                'invitations': [
+                    { value: 'invitations', label: 'قسم الدعوات في الصفحة الرئيسية' }
+                ]
+            };
+            
+            return sections[category] || [];
+        }
+
         // تحديث مواضع الإعلانات حسب النوع
         function updateAdPositions() {
             const adType = document.getElementById('ad-type').value;
@@ -4427,6 +4554,12 @@
                 positionSelect.innerHTML += '<option value="homepage_recommended">الصفحة الرئيسية - موصى به</option>';
             } else if (adType === 'banner') {
                 positionSelect.innerHTML += '<option value="sidebar">الشريط الجانبي</option>';
+            } else if (adType === 'category_sections') {
+                // للنوع الجديد - استخدام موضع صحيح من قاعدة البيانات
+                positionSelect.innerHTML += '<option value="homepage_featured">أقسام التصنيفات في الصفحة الرئيسية</option>';
+                // تعيين القيمة تلقائياً
+                positionSelect.value = 'homepage_featured';
+                positionSelect.disabled = true; // تعطيل التعديل
             }
         }
 
@@ -4438,12 +4571,18 @@
         async function createNewAdvertisement() {
             try {
                 const category = document.getElementById('ad-category').value;
+                const section = document.getElementById('ad-section').value;
                 const productSelect = document.getElementById('ad-product');
                 const selectedOption = productSelect.options[productSelect.selectedIndex];
                 
                 const formData = {
+                    title: document.getElementById('ad-title').value,
+                    description: document.getElementById('ad-description').value,
+                    image_url: null, // سيتم تعيينه تلقائياً من المنتج
+                    link_url: null, // سيتم تعيينه تلقائياً من المنتج
                     product_id: document.getElementById('ad-product').value,
                     product_category: category,
+                    category_section: section, // القسم الجديد
                     ad_type: document.getElementById('ad-type').value,
                     position: document.getElementById('ad-position').value,
                     start_date: document.getElementById('ad-start-date').value,
@@ -4453,8 +4592,8 @@
                 };
                 
                 // التحقق من صحة البيانات
-                if (!category || !formData.product_id || !formData.ad_type || !formData.position || !formData.start_date) {
-                    alert('يرجى ملء جميع الحقول المطلوبة');
+                if (!category || !section || !formData.product_id || !formData.ad_type || !formData.position || !formData.start_date) {
+                    alert('يرجى ملء جميع الحقول المطلوبة (التصنيف، القسم، المنتج، نوع الإعلان، الموضع، تاريخ البداية)');
                     return;
                 }
 

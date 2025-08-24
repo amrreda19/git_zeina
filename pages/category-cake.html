@@ -41,6 +41,7 @@
     <script src="../js/product-service.js?v=2025-08-22-1"></script>
     <script src="../js/auth-service.js?v=2025-08-22-1"></script>
     <script src="../js/advertising-service.js?v=2025-08-22-1"></script>
+    <script src="../js/smart-category-advertising.js?v=2025-08-22-1"></script>
     <script src="../js/common-utils.js?v=2025-08-22-1"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1994970196400389"
      crossorigin="anonymous"></script>
@@ -1452,7 +1453,24 @@
         </div>
 
         <!-- Products Grid -->
-        <div id="products-container" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+                        <!-- مؤشر التحميل -->
+                <div id="cake-loading" class="col-span-full flex justify-center items-center py-8">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+                    <span class="mr-3 text-gray-600">جاري تحميل المنتجات...</span>
+                </div>
+                
+                <!-- رسالة عدم وجود منتجات -->
+                <div id="cake-no-products" class="col-span-full text-center py-8 hidden">
+                    <div class="text-gray-500">
+                        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                        <p class="text-lg font-medium text-gray-900 mb-2">لا توجد منتجات متاحة</p>
+                        <p class="text-gray-500">لم يتم العثور على منتجات في هذا التصنيف حالياً</p>
+                    </div>
+                </div>
+                
+                <div id="products-container" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
             <!-- Products will be loaded here -->
         </div>
 
@@ -2920,6 +2938,93 @@
             console.log(`✅ تم عرض ${ads.length} إعلان مميز في التصنيف`);
         }
 
+        // تهيئة خدمة الإعلانات الذكية
+        async function initializeSmartAdvertising() {
+            try {
+                console.log('🚀 تهيئة خدمة الإعلانات الذكية...');
+                
+                // انتظار تحميل Supabase
+                if (!window.supabaseClient) {
+                    console.log('⏳ انتظار تحميل Supabase...');
+                    await new Promise((resolve) => {
+                        const checkInterval = setInterval(() => {
+                            if (window.supabaseClient) {
+                                clearInterval(checkInterval);
+                                console.log('✅ Supabase loaded');
+                                resolve();
+                            }
+                        }, 100);
+                        
+                        setTimeout(() => {
+                            clearInterval(checkInterval);
+                            console.log('❌ Supabase not loaded after 5 seconds');
+                            resolve();
+                        }, 5000);
+                    });
+                }
+                
+                // إنشاء خدمة الإعلانات الذكية
+                window.smartCategoryAdvertising = new SmartCategoryAdvertisingService();
+                await window.smartCategoryAdvertising.initialize();
+                
+                console.log('✅ تم تهيئة خدمة الإعلانات الذكية بنجاح');
+                
+                // تحميل قسم التصنيف مع الإعلانات
+                await loadCategorySectionWithAds();
+                
+            } catch (error) {
+                console.error('❌ خطأ في تهيئة خدمة الإعلانات الذكية:', error);
+            }
+        }
+
+        // تحميل قسم التصنيف مع الإعلانات
+        async function loadCategorySectionWithAds() {
+            try {
+                if (!window.smartCategoryAdvertising) {
+                    console.log('⏳ انتظار خدمة الإعلانات الذكية...');
+                    setTimeout(loadCategorySectionWithAds, 1000);
+                    return;
+                }
+                
+                console.log('🎯 تحميل قسم التصنيف مع الإعلانات: cake');
+                
+                // تحميل قسم التصنيف مع دمج الإعلانات والمنتجات
+                const finalItems = await window.smartCategoryAdvertising.loadCategorySection('cake', 'products-container');
+                
+                if (finalItems && finalItems.length > 0) {
+                    console.log(`✅ تم تحميل ${finalItems.length} عنصر (إعلانات + منتجات)`);
+                    
+                    // تحديث المتغير العام للمنتجات
+                    allProducts = finalItems.filter(item => !item.is_ad);
+                    
+                    // تطبيق الفلاتر والترتيب
+                    sortProductsByCriteria();
+                    applyFilters();
+                    
+                    // تحديث أيقونات المفضلة
+                    setTimeout(() => {
+                        const productCards = document.querySelectorAll('.product-card');
+                        productCards.forEach(card => {
+                            const productId = card.getAttribute('data-product-id');
+                            if (productId) {
+                                updateFavoriteIcon(productId);
+                            }
+                        });
+                    }, 500);
+                    
+                } else {
+                    console.log('⚠️ لم يتم العثور على عناصر للعرض');
+                    // استخدام الطريقة القديمة إذا لم تنجح الطريقة الجديدة
+                    loadCategoryProducts();
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحميل قسم التصنيف مع الإعلانات:', error);
+                // استخدام الطريقة القديمة في حالة الخطأ
+                loadCategoryProducts();
+            }
+        }
+
         // إظهار رسالة عدم وجود إعلانات مميزة
         function showNoFeaturedAds() {
             const container = document.getElementById('featured-ads-container');
@@ -2993,6 +3098,9 @@
 
         // تحديث جميع أيقونات المفضلة عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة خدمة الإعلانات الذكية
+            initializeSmartAdvertising();
+            
             // تحميل الإعلانات المميزة في التصنيف
             loadCategoryFeaturedAds();
             

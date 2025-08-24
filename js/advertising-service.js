@@ -873,7 +873,9 @@ class AdvertisingService {
                     is_active: adData.is_active !== undefined ? adData.is_active : true,
                     // إضافة أعمدة ربط المنتجات
                     product_id: adData.product_id || null,
-                    product_category: adData.product_category || null
+                    product_category: adData.product_category || null,
+                    // إضافة حقل القسم الجديد
+                    category_section: adData.category_section || null
                 })
                 .select()
                 .single();
@@ -912,6 +914,10 @@ class AdvertisingService {
                     end_date: updateData.end_date,
                     priority: updateData.priority,
                     is_active: updateData.is_active,
+                    // إضافة حقل القسم الجديد
+                    category_section: updateData.category_section,
+                    product_category: updateData.category,
+                    product_id: updateData.product_id,
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', adId)
@@ -1755,6 +1761,267 @@ class AdvertisingService {
 
         } catch (error) {
             console.error('❌ خطأ في فحص الإعلانات التي ستنتهي قريباً:', error);
+            return [];
+        }
+    }
+
+    /**
+     * جلب إعلانات أقسام التصنيفات للصفحة الرئيسية
+     */
+    async getCategorySectionAdvertisements(category, limit = 4) {
+        try {
+            console.log(`🔍 جلب إعلانات أقسام التصنيفات للتصنيف: ${category}`);
+            
+            // جلب الإعلانات النشطة من نوع category_sections
+            const { data, error } = await this.supabase
+                .from('advertisements')
+                .select('*')
+                .eq('is_active', true)
+                .eq('ad_type', 'category_sections')
+                .eq('position', 'homepage_featured')
+                .eq('category_section', category + '_homepage')  // البحث في category_section بدلاً من product_category
+                .order('priority', { ascending: false })
+                .order('created_at', { ascending: false })
+                .limit(limit);
+
+            if (error) throw error;
+            
+            console.log(`✅ تم جلب ${data?.length || 0} إعلان لأقسام التصنيفات للتصنيف ${category}`);
+            
+            // تحويل الإعلانات إلى تنسيق المنتجات
+            const categoryProducts = [];
+            
+            for (const ad of data || []) {
+                try {
+                    let productData = null;
+                    
+                    // إذا كان الإعلان مرتبط بمنتج حقيقي
+                    if (ad.product_id && ad.product_category) {
+                        console.log(`🔗 ربط الإعلان ${ad.id} بالمنتج ${ad.product_id} من ${ad.product_category}`);
+                        
+                        // تحديد اسم الجدول
+                        let tableName = 'products_other';
+                        switch (ad.product_category) {
+                            case 'cake':
+                                tableName = 'products_cake';
+                                break;
+                            case 'koshat':
+                                tableName = 'products_koshat';
+                                break;
+                            case 'mirr':
+                                tableName = 'products_mirr';
+                                break;
+                            case 'other':
+                                tableName = 'products_other';
+                                break;
+                            case 'invitations':
+                                tableName = 'products_invitations';
+                                break;
+                        }
+                        
+                        // جلب بيانات المنتج الحقيقي
+                        const { data: product, error: productError } = await this.supabase
+                            .from(tableName)
+                            .select('*')
+                            .eq('id', ad.product_id)
+                            .single();
+                        
+                        if (!productError && product) {
+                            productData = product;
+                            console.log(`✅ تم العثور على المنتج:`, product);
+                        } else {
+                            console.warn(`⚠️ لم يتم العثور على المنتج ${ad.product_id} في ${tableName}:`, productError);
+                        }
+                    }
+                    
+                    // إنشاء كائن المنتج مع دمج بيانات الإعلان والمنتج
+                    const product = {
+                        id: ad.id,
+                        ad_id: ad.id,
+                        
+                        // بيانات المنتج الحقيقي (إذا وجد)
+                        name: productData?.description || ad.title || 'منتج مميز',
+                        title: productData?.description || ad.title || 'منتج مميز',
+                        description: productData?.description || ad.description || 'وصف المنتج',
+                        price: productData?.price || 0,
+                        image_urls: productData?.image_urls || (ad.image_url ? [ad.image_url] : []),
+                        image_url: productData?.image_urls?.[0] || ad.image_url,
+                        
+                        // بيانات إضافية من المنتج
+                        category: productData?.category || ad.product_category,
+                        subcategory: productData?.subcategory || 'advertisement',
+                        governorate: productData?.governorate || 'جميع المحافظات',
+                        cities: productData?.cities || '',
+                        whatsapp: productData?.whatsapp || '',
+                        facebook: productData?.facebook || '',
+                        instagram: productData?.instagram || '',
+                        
+                        // بيانات الإعلان
+                        is_featured: true,
+                        is_category_section: true,
+                        ad_type: ad.ad_type,
+                        ad_position: ad.position,
+                        priority: ad.priority,
+                        
+                        // معرفات الربط
+                        product_id: ad.product_id,
+                        product_category: ad.product_category
+                    };
+                    
+                    console.log('🔄 تحويل إعلان أقسام التصنيفات إلى منتج:', ad, '→', product);
+                    categoryProducts.push(product);
+                    
+                } catch (productError) {
+                    console.error(`❌ خطأ في معالجة إعلان أقسام التصنيفات ${ad.id}:`, productError);
+                }
+            }
+            
+            console.log(`✅ تم تحويل ${categoryProducts.length} إعلان إلى منتجات لأقسام التصنيفات`);
+            return categoryProducts;
+            
+        } catch (error) {
+            console.error('❌ خطأ في جلب إعلانات أقسام التصنيفات:', error);
+            return [];
+        }
+    }
+
+    /**
+     * جلب المنتجات حسب التصنيف (للأقسام المختلفة)
+     * هذه الدالة مطلوبة لعرض الإعلانات في أقسام التصنيفات
+     */
+    async getProductsByCategory(categoryType, limit = 9) {
+        try {
+            console.log(`🔍 جلب المنتجات للتصنيف: ${categoryType} (الحد: ${limit})`);
+            
+            // تحويل اسم التصنيف إلى القيمة المستخدمة في قاعدة البيانات
+            let dbCategory = categoryType;
+            switch (categoryType) {
+                case 'mirror':
+                    dbCategory = 'mirr';
+                    break;
+                case 'koshat':
+                case 'cake':
+                case 'other':
+                case 'invitations':
+                    dbCategory = categoryType;
+                    break;
+                default:
+                    console.warn(`⚠️ تصنيف غير معروف: ${categoryType}`);
+                    dbCategory = categoryType;
+            }
+            
+            console.log(`🔄 تم تحويل التصنيف: ${categoryType} → ${dbCategory}`);
+            
+            // جلب الإعلانات النشطة للتصنيف المحدد
+            const { data: ads, error: adsError } = await this.supabase
+                .from('advertisements')
+                .select('*')
+                .eq('is_active', true)
+                .eq('product_category', dbCategory)
+                .order('priority', { ascending: false })
+                .order('created_at', { ascending: false })
+                .limit(limit);
+
+            if (adsError) {
+                console.error(`❌ خطأ في جلب الإعلانات للتصنيف ${dbCategory}:`, adsError);
+                throw adsError;
+            }
+            
+            console.log(`✅ تم جلب ${ads?.length || 0} إعلان للتصنيف ${dbCategory}`);
+            
+            // تحويل الإعلانات إلى منتجات
+            const categoryProducts = [];
+            
+            for (const ad of ads || []) {
+                try {
+                    let productData = null;
+                    
+                    // إذا كان الإعلان مرتبط بمنتج حقيقي
+                    if (ad.product_id && ad.product_category) {
+                        console.log(`🔗 ربط الإعلان ${ad.id} بالمنتج ${ad.product_id} من ${ad.product_category}`);
+                        
+                        // تحديد اسم الجدول
+                        let tableName = 'products_other';
+                        switch (ad.product_category) {
+                            case 'cake':
+                                tableName = 'products_cake';
+                                break;
+                            case 'koshat':
+                                tableName = 'products_koshat';
+                                break;
+                            case 'mirr':
+                                tableName = 'products_mirr';
+                                break;
+                            case 'other':
+                                tableName = 'products_other';
+                                break;
+                            case 'invitations':
+                                tableName = 'products_invitations';
+                                break;
+                        }
+                        
+                        // جلب بيانات المنتج الحقيقي
+                        const { data: product, error: productError } = await this.supabase
+                            .from(tableName)
+                            .select('*')
+                            .eq('id', ad.product_id)
+                            .single();
+                        
+                        if (!productError && product) {
+                            productData = product;
+                            console.log(`✅ تم العثور على المنتج:`, product);
+                        } else {
+                            console.warn(`⚠️ لم يتم العثور على المنتج ${ad.product_id} في ${tableName}:`, productError);
+                        }
+                    }
+                    
+                    // إنشاء كائن المنتج مع دمج بيانات الإعلان والمنتج
+                    const product = {
+                        id: ad.id,
+                        ad_id: ad.id,
+                        
+                        // بيانات المنتج الحقيقي (إذا وجد)
+                        name: productData?.description || ad.title || 'منتج مميز',
+                        title: productData?.description || ad.title || 'منتج مميز',
+                        description: productData?.description || ad.description || 'وصف المنتج',
+                        price: productData?.price || 0,
+                        image_urls: productData?.image_urls || (ad.image_url ? [ad.image_url] : []),
+                        image_url: productData?.image_urls?.[0] || ad.image_url,
+                        
+                        // بيانات إضافية من المنتج
+                        category: productData?.category || ad.product_category,
+                        subcategory: productData?.subcategory || 'advertisement',
+                        governorate: productData?.governorate || 'جميع المحافظات',
+                        cities: productData?.cities || '',
+                        whatsapp: productData?.whatsapp || '',
+                        facebook: productData?.facebook || '',
+                        instagram: productData?.instagram || '',
+                        
+                        // بيانات الإعلان
+                        is_featured: true,
+                        is_category_section: true,
+                        ad_type: ad.ad_type,
+                        ad_position: ad.position,
+                        priority: ad.priority,
+                        
+                        // معرفات الربط
+                        product_id: ad.product_id,
+                        product_category: ad.product_category
+                    };
+                    
+                    console.log('🔄 تحويل إعلان أقسام التصنيفات إلى منتج:', ad, '→', product);
+                    categoryProducts.push(product);
+                    
+                } catch (productError) {
+                    console.error(`❌ خطأ في معالجة إعلان أقسام التصنيفات ${ad.id}:`, productError);
+                }
+            }
+            
+            console.log(`✅ تم تحويل ${categoryProducts.length} إعلان إلى منتجات لأقسام التصنيفات`);
+            return categoryProducts;
+            
+        } catch (error) {
+            console.error('❌ خطأ في جلب إعلانات أقسام التصنيفات:', error);
             return [];
         }
     }
