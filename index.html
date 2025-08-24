@@ -99,46 +99,67 @@
             box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
         
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        /* تنسيق شبكة المنتجات 3x3 موحدة لجميع الشاشات */
+        #featured-products-grid,
+        #recommended-products-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            grid-template-rows: repeat(3, auto) !important;
+            gap: 1.5rem !important;
+            width: 100% !important;
         }
         
-        .product-card img {
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
+        /* تنسيق بطاقات المنتجات في الشبكة - الآن تستخدم نفس تصميم التصنيفات */
+        #featured-products-grid .category-product-card,
+        #recommended-products-grid .category-product-card {
+            width: 100% !important;
+            max-width: none !important;
+            flex-shrink: 0 !important;
         }
         
-        /* أنماط المفضلة */
-        .favorite-btn {
-            transition: all 0.2s ease;
-            z-index: 10;
+        /* تنسيق موحد لجميع الشاشات - تعديل الفجوات فقط */
+        @media (max-width: 1024px) {
+            #featured-products-grid,
+            #recommended-products-grid {
+                gap: 1.25rem !important;
+            }
         }
         
-        .favorite-btn:hover {
-            transform: scale(1.1);
+        @media (max-width: 768px) {
+            #featured-products-grid,
+            #recommended-products-grid {
+                gap: 1rem !important;
+            }
         }
         
-        .favorite-btn svg {
-            transition: all 0.2s ease;
+        @media (max-width: 640px) {
+            #featured-products-grid,
+            #recommended-products-grid {
+                gap: 0.75rem !important;
+            }
         }
         
-        .favorite-btn.favorite svg {
-            color: #ef4444;
-            fill: currentColor;
+        @media (max-width: 480px) {
+            #featured-products-grid,
+            #recommended-products-grid {
+                gap: 0.5rem !important;
+            }
         }
         
-        .favorite-btn:not(.favorite) svg {
-            color: #9ca3af;
+        @media (max-width: 360px) {
+            #featured-products-grid,
+            #recommended-products-grid {
+                gap: 0.375rem !important;
+            }
         }
         
-        /* تحسين مظهر القلب الأحمر */
-        .favorite-btn svg.text-red-500 {
-            color: #ef4444 !important;
-            fill: currentColor !important;
-        }
+
+        
+
+        
+
+        
+
         
         /* أنماط السلايدر الجديد */
         .product-image-container {
@@ -147,83 +168,9 @@
             border-radius: 8px 8px 0 0;
         }
         
-        .slideshow-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
+
         
-        .slideshow-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-            transform: scale(1.05);
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-        
-        .slideshow-image.active {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .slideshow-image:hover {
-            transform: scale(1.02);
-            transition: transform 0.3s ease;
-        }
-        
-        .slideshow-indicators {
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 6px;
-            z-index: 15;
-        }
-        
-        .indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .indicator.active {
-            background: #d4af37;
-            border-color: #d4af37;
-            transform: scale(1.2);
-        }
-        
-        .indicator:hover {
-            background: #d4af37;
-            border-color: #d4af37;
-        }
-        
-        .multiple-images-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            z-index: 15;
-        }
+
         
         /* تحسين القائمة الرئيسية للهاتف المحمول */
         #mobile-menu {
@@ -269,32 +216,43 @@
             -webkit-backface-visibility: hidden;
         }
         
-        /* تحسين تحميل الصور للمنتجات المميزة */
-        .product-card img {
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            loading: lazy;
-        }
-        
-        /* تحسينات العرض الأفقي */
-        #featured-products-grid {
-            scrollbar-width: thin;
-            scrollbar-color: #d4af37 #f3f4f6;
-        }
-        
-        #featured-products-grid::-webkit-scrollbar {
-            height: 8px;
-        }
-        
-        #featured-products-grid::-webkit-scrollbar-track {
-            background: #f3f4f6;
-        }
+
         
         /* تنسيق رسائل الخطأ */
         .error-message {
             animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* تحسينات أقسام التصنيفات */
+        #koshat-section,
+        #cake-section,
+        #mirror-section,
+        #other-section,
+        #invitations-section {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        
+        #koshat-section:hover,
+        #cake-section:hover,
+        #mirror-section:hover,
+        #other-section:hover,
+        #invitations-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #d4af37;
+        }
+        
+        /* تحسين أزرار عرض المزيد */
+        .category-view-more-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .category-view-more-btn:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(217, 119, 6, 0.3);
         }
         
         @keyframes fadeIn {
@@ -392,19 +350,7 @@
             box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
         }
         
-        #featured-products-grid::-webkit-scrollbar-thumb {
-            background: #d4af37;
-            border-radius: 4px;
-        }
-        
-        #featured-products-grid::-webkit-scrollbar-thumb {
-            background: #d4af37;
-            border-radius: 4px;
-        }
-        
-        #featured-products-grid::-webkit-scrollbar-thumb:hover {
-            background: #b8941f;
-        }
+
         
         .gold-border {
             border: 1px solid var(--gold);
@@ -852,6 +798,126 @@
             
             #product-request-form {
                 padding: 2.5rem;
+            }
+        }
+        
+        /* Categories Products Grid Styles - Always 3x3 */
+        .categories-products-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 1rem;
+        }
+        
+        /* Ensure 3x3 grid on all screen sizes */
+        #koshat-products-grid,
+        #cake-products-grid,
+        #mirror-products-grid,
+        #other-products-grid,
+        #invitations-products-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 1rem;
+            max-width: 100%;
+        }
+        
+        /* Product card styles for categories */
+        .category-product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .category-product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .category-product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .category-product-card:hover img {
+            transform: scale(1.05);
+        }
+        
+        .category-product-info {
+            padding: 1rem;
+        }
+        
+        .category-product-name {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .category-product-price {
+            color: #d4af37;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        /* Responsive adjustments for categories */
+        @media (max-width: 768px) {
+            #koshat-products-grid,
+            #cake-products-grid,
+            #mirror-products-grid,
+            #other-products-grid,
+            #invitations-products-grid {
+                gap: 0.75rem;
+            }
+            
+            .category-product-card img {
+                height: 160px;
+            }
+            
+            .category-product-info {
+                padding: 0.75rem;
+            }
+            
+            .category-product-name {
+                font-size: 0.9rem;
+            }
+            
+            .category-product-price {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #koshat-products-grid,
+            #cake-products-grid,
+            #mirror-products-grid,
+            #other-products-grid,
+            #invitations-products-grid {
+                gap: 0.5rem;
+            }
+            
+            .category-product-card img {
+                height: 140px;
+            }
+            
+            .category-product-info {
+                padding: 0.5rem;
+            }
+            
+            .category-product-name {
+                font-size: 0.85rem;
+            }
+            
+            .category-product-price {
+                font-size: 0.95rem;
             }
         }
         
@@ -1756,68 +1822,293 @@
 
     <!-- Featured Products -->
     <section id="featured-products" class="container mx-auto px-4 py-12">
-        <h2 class="text-2xl font-bold mb-6 text-center gold-text">منتجات مميزة</h2>
-        
-        <!-- Loading Indicator -->
-        <div id="products-loading" class="text-center py-8">
-            <div class="inline-flex items-center space-x-2 space-x-reverse">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
-                <span class="text-gray-600">جاري تحميل المنتجات...</span>
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 mb-8" id="featured-section">
+            <div class="flex items-center justify-between mb-8">
+                <div class="text-right">
+                    <h3 class="text-2xl font-bold mb-3 text-gray-800">منتجات مميزة</h3>
+                    <p class="text-gray-600 text-lg">أفضل المنتجات المختارة لكم</p>
+                </div>
             </div>
-        </div>
         
-        <!-- Search Results Count -->
-        <div id="search-results-count" class="text-center mb-4 text-gray-600"></div>
-        
-        <!-- Products Grid -->
-        <div id="featured-products-grid" class="flex flex-nowrap overflow-x-auto gap-4 md:gap-6 pb-4">
-            <!-- Products will be loaded dynamically -->
-        </div>
-        
-        <!-- No Products Message -->
-        <div id="no-products-message" class="text-center py-12 hidden">
-            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                </svg>
+            <!-- Loading Indicator -->
+            <div id="products-loading" class="text-center py-8">
+                <div class="inline-flex items-center space-x-2 space-x-reverse">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+                    <span class="text-gray-600">جاري تحميل المنتجات المميزة...</span>
+                </div>
             </div>
-            <h3 class="text-lg font-bold text-gray-700 mb-2">لا توجد منتجات متاحة</h3>
-            <p class="text-gray-500">لم يتم العثور على منتجات في هذه الفئة حالياً</p>
+            
+            <!-- Search Results Count -->
+            <div id="search-results-count" class="text-center mb-4 text-gray-600"></div>
+            
+            <!-- Products Grid 3x3 -->
+            <div id="featured-products-grid" class="hidden">
+                <!-- Products will be loaded dynamically -->
+            </div>
+            
+            <!-- No Products Message -->
+            <div id="no-products-message" class="text-center py-8 hidden">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-700 mb-2">لا توجد منتجات متاحة</h3>
+                <p class="text-gray-500">لم يتم العثور على منتجات في هذه الفئة حالياً</p>
+            </div>
         </div>
 
-        <!-- Recommended Products Section -->
-        <div class="mt-12">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold mb-4 gold-text">منتجات قد تُعجبك</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">
-                    اكتشف منتجات مميزة تم اختيارها خصيصاً لك
-                </p>
+        <!-- Recommended Products -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 mb-8" id="recommended-section">
+            <div class="flex items-center justify-between mb-8">
+                <div class="text-right">
+                    <h3 class="text-2xl font-bold mb-3 text-gray-800">منتجات قد تعجبك</h3>
+                    <p class="text-gray-600 text-lg">منتجات مختارة خصيصاً لكم</p>
+                </div>
             </div>
-            
-            <div id="recommended-products-grid" class="flex flex-nowrap overflow-x-auto gap-4 md:gap-6 pb-4">
-                <!-- Recommended products will be loaded dynamically -->
-            </div>
-            
-            <!-- Loading state for recommended products -->
+        
+            <!-- Loading Indicator -->
             <div id="recommended-loading" class="text-center py-8">
-                <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-gray-600">
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                <div class="inline-flex items-center space-x-2 space-x-reverse">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
                     <span class="text-gray-600">جاري تحميل المنتجات الموصى بها...</span>
                 </div>
             </div>
             
-            <!-- No recommended products message -->
-            <div id="no-recommended-message" class="text-center py-12 hidden">
+            <!-- Products Grid 3x3 -->
+            <div id="recommended-products-grid" class="hidden">
+                <!-- Products will be loaded dynamically -->
+            </div>
+            
+            <!-- No Products Message -->
+            <div id="recommended-no-products" class="text-center py-8 hidden">
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                     </svg>
                 </div>
-                <h3 class="text-lg font-bold text-gray-700 mb-2">لا توجد منتجات موصى بها حالياً</h3>
-                <p class="text-gray-500">سنقوم بإضافة منتجات جديدة قريباً</p>
+                <h3 class="text-lg font-bold text-gray-700 mb-2">لا توجد منتجات متاحة</h3>
+                <p class="text-gray-500">لم يتم العثور على منتجات في هذه الفئة حالياً</p>
+            </div>
+        </div>
+
+        <!-- Categories Products Section -->
+        <div class="mt-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4 gold-text">تصفح المنتجات حسب التصنيف</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    اكتشف أحدث المنتجات في كل تصنيف
+                </p>
+            </div>
+            
+                        <!-- Koshat Category -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 mb-8" id="koshat-section">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="text-right">
+                        <h3 class="text-2xl font-bold mb-3 text-gray-800">كوشات</h3>
+                        <p class="text-gray-600 text-lg">تصاميم فريدة لحفلاتكم</p>
+                    </div>
+                    <a href="pages/category-koshat.html" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
+                        <span>عرض المزيد</span>
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            
+                <!-- Loading state -->
+                <div id="koshat-loading" class="text-center py-8">
+                    <div class="inline-flex items-center space-x-2 space-x-reverse">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+                        <span class="text-gray-600">جاري تحميل منتجات الكوشات...</span>
+                    </div>
+                </div>
+                
+                <!-- Products Grid 3x3 -->
+                <div id="koshat-products-grid" class="grid grid-cols-3 gap-4 md:gap-6 hidden">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+                
+                                <!-- No products message -->
+                <div id="koshat-no-products" class="text-center py-8 hidden">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-2">لا توجد منتجات في هذا التصنيف</h3>
+                    <p class="text-gray-500">سنقوم بإضافة منتجات جديدة قريباً</p>
+                </div>
+                
+
+            </div>
+            
+            <!-- Cake Category -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 mb-8" id="cake-section">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="text-right">
+                        <h3 class="text-2xl font-bold mb-3 text-gray-800">تورتات وشكولاتات</h3>
+                        <p class="text-gray-600 text-lg">تورتات وشوكولاتات مخصصة</p>
+                    </div>
+                    <a href="pages/category-cake.html" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
+                        <span>عرض المزيد</span>
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+                
+                <!-- Loading state -->
+                <div id="cake-loading" class="text-center py-8">
+                    <div class="inline-flex items-center space-x-2 space-x-reverse">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+                        <span class="text-gray-600">جاري تحميل منتجات التورتات...</span>
+                    </div>
+                </div>
+                
+                <!-- Products Grid 3x3 -->
+                <div id="cake-products-grid" class="grid grid-cols-3 gap-4 md:gap-6 hidden">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+                
+                <!-- No products message -->
+                <div id="cake-no-products" class="text-center py-8 hidden">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-2">لا توجد منتجات في هذا التصنيف</h3>
+                    <p class="text-gray-500">سنقوم بإضافة منتجات جديدة قريباً</p>
+                </div>
+                
+
+            </div>
+            
+            <!-- Mirror Category -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 mb-8" id="mirror-section">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="text-right">
+                        <h3 class="text-2xl font-bold mb-3 text-gray-800">مرايا</h3>
+                        <p class="text-gray-600 text-lg">مرايا مزخرفة وأنيقة</p>
+                    </div>
+                    <a href="pages/category-mirr.html" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
+                        <span>عرض المزيد</span>
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+                
+                <!-- Loading state -->
+                <div id="mirror-loading" class="text-center py-8">
+                    <div class="inline-flex items-center space-x-2 space-x-reverse">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+                        <span class="text-gray-600">جاري تحميل منتجات المرايا...</span>
+                    </div>
+                </div>
+                
+                <!-- Products Grid 3x3 -->
+                <div id="mirror-products-grid" class="grid grid-cols-3 gap-4 md:gap-6 hidden">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+                
+                <!-- No products message -->
+                <div id="mirror-no-products" class="text-center py-8 hidden">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-2">لا توجد منتجات في هذا التصنيف</h3>
+                    <p class="text-gray-500">سنقوم بإضافة منتجات جديدة قريباً</p>
+                </div>
+                
+
+            </div>
+            
+            <!-- Other Category -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 mb-8" id="other-section">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="text-right">
+                        <h3 class="text-2xl font-bold mb-3 text-gray-800">ديكورات متنوعة</h3>
+                        <p class="text-gray-600 text-lg">منتجات متنوعة ومميزة</p>
+                    </div>
+                    <a href="pages/category-other.html" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
+                        <span>عرض المزيد</span>
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+                
+                <!-- Loading state -->
+                <div id="other-loading" class="text-center py-8">
+                    <div class="inline-flex items-center space-x-2 space-x-reverse">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+                        <span class="text-gray-600">جاري تحميل منتجات الديكورات...</span>
+                    </div>
+                </div>
+                
+                <!-- Products Grid 3x3 -->
+                <div id="other-products-grid" class="grid grid-cols-3 gap-4 md:gap-6 hidden">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+                
+                <!-- No products message -->
+                <div id="other-no-products" class="text-center py-8 hidden">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-2">لا توجد منتجات في هذا التصنيف</h3>
+                    <p class="text-gray-500">سنقوم بإضافة منتجات جديدة قريباً</p>
+                </div>
+                
+
+            </div>
+            
+            <!-- Invitations Category -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 mb-8" id="invitations-section">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="text-right">
+                        <h3 class="text-2xl font-bold mb-3 text-gray-800">دعوات وتوزيعات</h3>
+                        <p class="text-gray-600 text-lg">دعوات وتوزيعات مميزة</p>
+                    </div>
+                    <a href="pages/category-invitations.html" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-yellow-700 transform hover:scale-105 transition-all duration-200">
+                        <span>عرض المزيد</span>
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+                
+                <!-- Loading state -->
+                <div id="invitations-loading" class="text-center py-8">
+                    <div class="inline-flex items-center space-x-2 space-x-reverse">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+                        <span class="text-gray-600">جاري تحميل منتجات الدعوات...</span>
+                    </div>
+                </div>
+                
+                <!-- Products Grid 3x3 -->
+                <div id="invitations-products-grid" class="grid grid-cols-3 gap-4 md:gap-6 hidden">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+                
+                <!-- No products message -->
+                <div id="invitations-no-products" class="text-center py-8 hidden">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-2">لا توجد منتجات في هذا التصنيف</h3>
+                    <p class="text-gray-500">سنقوم بإضافة منتجات جديدة قريباً</p>
+                </div>
+                
+
             </div>
         </div>
     </section>
@@ -2322,28 +2613,52 @@
                 updateFavoritesCountBadge();
             }
             
+            // دالة لتحديث الشبكة حسب حجم الشاشة
+            function updateGridLayout() {
+                const featuredGrid = document.getElementById('featured-products-grid');
+                const recommendedGrid = document.getElementById('recommended-products-grid');
+                
+                if (featuredGrid && featuredGrid.style.display === 'grid') {
+                    updateGridColumns(featuredGrid);
+                }
+                if (recommendedGrid && recommendedGrid.style.display === 'grid') {
+                    updateGridColumns(recommendedGrid);
+                }
+            }
+            
+            // دالة لتحديث عدد الأعمدة في الشبكة - دائماً 3 أعمدة
+            function updateGridColumns(container) {
+                container.classList.remove('grid-cols-1', 'grid-cols-2', 'grid-cols-3');
+                container.classList.add('grid-cols-3');
+            }
+            
+            // مراقبة تغيير حجم الشاشة
+            window.addEventListener('resize', updateGridLayout);
+            
             // Load and display products
             async function loadProducts() {
                 try {
-                    console.log('🎯 loadProducts() called - Starting to load featured advertisements...');
+                    console.log('🎯 loadProducts() called - Starting to load featured and recommended products...');
                     
-                    // إظهار مؤشر التحميل
-                    const loadingIndicator = document.getElementById('products-loading');
-                    const productsGrid = document.getElementById('featured-products-grid');
-                    const noProductsMessage = document.getElementById('no-products-message');
+                    // إظهار مؤشرات التحميل
+                    const featuredLoading = document.getElementById('products-loading');
+                    const recommendedLoading = document.getElementById('recommended-loading');
+                    const featuredGrid = document.getElementById('featured-products-grid');
+                    const recommendedGrid = document.getElementById('recommended-products-grid');
+                    const featuredNoProducts = document.getElementById('no-products-message');
+                    const recommendedNoProducts = document.getElementById('recommended-no-products');
                     
-                    if (loadingIndicator) {
-                        loadingIndicator.style.display = 'block';
-                        console.log('📱 Loading indicator shown');
-                    }
-                    if (productsGrid) {
-                        productsGrid.style.display = 'none';
-                        console.log('📱 Products grid hidden');
-                    }
-                    if (noProductsMessage) {
-                        noProductsMessage.style.display = 'none';
-                        console.log('📱 No products message hidden');
-                    }
+                    // إظهار مؤشرات التحميل
+                    if (featuredLoading) featuredLoading.style.display = 'block';
+                    if (recommendedLoading) recommendedLoading.style.display = 'block';
+                    
+                    // إخفاء الشبكات
+                    if (featuredGrid) featuredGrid.style.display = 'none';
+                    if (recommendedGrid) recommendedGrid.style.display = 'none';
+                    
+                    // إخفاء رسائل عدم وجود منتجات
+                    if (featuredNoProducts) featuredNoProducts.style.display = 'none';
+                    if (recommendedNoProducts) recommendedNoProducts.style.display = 'none';
                     
                     // التحقق من خدمة الإعلانات
                     if (!window.advertisingService) {
@@ -2353,90 +2668,68 @@
                     
                     console.log('✅ AdvertisingService is available, proceeding...');
                     
-                    // استخدام خدمة الإعلانات لجلب المنتجات المميزة
-                    console.log('🔍 Calling advertisingService.getFeaturedProducts(8)...');
-                    const featuredAds = await window.advertisingService.getFeaturedProducts(8);
-                    console.log('📊 Featured advertisements result:', featuredAds);
-                    console.log('📊 Featured advertisements length:', featuredAds ? featuredAds.length : 'null');
+                    // جلب المنتجات المميزة
+                    console.log('🔍 Loading featured products...');
+                    const featuredAds = await window.advertisingService.getFeaturedProducts(9); // 3x3 grid
                     
-                    // إخفاء مؤشر التحميل
-                    if (loadingIndicator) {
-                        loadingIndicator.style.display = 'none';
-                        console.log('📱 Loading indicator hidden');
-                    }
+                    // جلب المنتجات الموصى بها
+                    console.log('🔍 Loading recommended products...');
+                    const recommendedAds = await window.advertisingService.getRecommendedProducts(9); // 3x3 grid
                     
+                    // إخفاء مؤشرات التحميل
+                    if (featuredLoading) featuredLoading.style.display = 'none';
+                    if (recommendedLoading) recommendedLoading.style.display = 'none';
+                    
+                    // عرض المنتجات المميزة
                     if (featuredAds && featuredAds.length > 0) {
-                        console.log(`✅ Successfully loaded ${featuredAds.length} featured advertisements`);
-                        
-                        // تعيين المنتجات
-                        allProducts = featuredAds;
-                        console.log('📦 allProducts set to:', allProducts);
-                        
-                        // خلط المنتجات عشوائياً
-                        shuffleProducts();
-                        console.log(`🔄 After shuffle: ${allProducts.length} products`);
-                        
-                        // جعل البيانات متاحة عالمياً للنظام
-                        window.allProducts = allProducts;
-                        console.log('🌍 window.allProducts set');
-                        
-                        // تطبيق الفلتر
-                        applyFilter(currentFilter);
-                        console.log('🔍 Filter applied');
-                        
-                        // إظهار الشبكة
-                        if (productsGrid) {
-                            productsGrid.style.display = 'flex';
-                            console.log('📱 Products grid shown');
-                        }
+                        console.log(`✅ Successfully loaded ${featuredAds.length} featured products`);
+                        displayCategoryProducts(document.getElementById('featured-products-grid'), featuredAds, 'featured');
                         
                         // تسجيل ظهور الإعلانات
                         featuredAds.forEach(product => {
                             if (product.ad_id) {
-                                console.log(`📊 Recording impression for ad: ${product.ad_id}`);
                                 window.advertisingService.recordImpression(product.ad_id);
                             }
                         });
-                        
                     } else {
-                        console.log('⚠️ No featured advertisements found, trying regular products...');
-                        // إذا لم توجد إعلانات، جرب المنتجات العادية
-                        if (window.ProductService) {
-                            const featuredResult = await window.ProductService.getFeaturedProducts(4);
-                            if (featuredResult.success) {
-                                allProducts = featuredResult.data;
-                                shuffleProducts();
-                                window.allProducts = allProducts;
-                                applyFilter(currentFilter);
-                                
-                                if (productsGrid) {
-                                    productsGrid.style.display = 'flex';
-                                }
-                            }
-                        } else {
-                            // إظهار رسالة عدم وجود منتجات
-                            if (noProductsMessage) {
-                                noProductsMessage.style.display = 'block';
-                                console.log('📱 No products message shown');
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('❌ خطأ في تحميل المنتجات المميزة:', error);
-                    // إخفاء مؤشر التحميل
-                    const loadingIndicator = document.getElementById('products-loading');
-                    if (loadingIndicator) {
-                        loadingIndicator.style.display = 'none';
-                        console.log('📱 Loading indicator hidden due to error');
+                        console.log('⚠️ No featured products found');
+                        if (featuredNoProducts) featuredNoProducts.style.display = 'block';
                     }
                     
-                    // إظهار رسالة الخطأ
-                    const noProductsMessage = document.getElementById('no-products-message');
-                    if (noProductsMessage) {
-                        noProductsMessage.querySelector('h3').textContent = 'خطأ في تحميل المنتجات';
-                        noProductsMessage.querySelector('p').textContent = 'حدث خطأ أثناء تحميل المنتجات. يرجى المحاولة مرة أخرى.';
-                        noProductsMessage.style.display = 'block';
-                        console.log('📱 Error message shown');
+                    // عرض المنتجات الموصى بها
+                    if (recommendedAds && recommendedAds.length > 0) {
+                        console.log(`✅ Successfully loaded ${recommendedAds.length} recommended products`);
+                        displayCategoryProducts(document.getElementById('recommended-products-grid'), recommendedAds, 'recommended');
+                        
+                        // تسجيل ظهور الإعلانات
+                        recommendedAds.forEach(product => {
+                            if (product.ad_id) {
+                                window.advertisingService.recordImpression(product.ad_id);
+                            }
+                        });
+                    } else {
+                        console.log('⚠️ No recommended products found');
+                        if (recommendedNoProducts) recommendedNoProducts.style.display = 'block';
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ خطأ في تحميل المنتجات:', error);
+                    
+                    // إخفاء مؤشرات التحميل
+                    if (featuredLoading) featuredLoading.style.display = 'none';
+                    if (recommendedLoading) recommendedLoading.style.display = 'none';
+                    
+                    // إظهار رسائل الخطأ
+                    if (featuredNoProducts) {
+                        featuredNoProducts.querySelector('h3').textContent = 'خطأ في تحميل المنتجات';
+                        featuredNoProducts.querySelector('p').textContent = 'حدث خطأ أثناء تحميل المنتجات. يرجى المحاولة مرة أخرى.';
+                        featuredNoProducts.style.display = 'block';
+                    }
+                    
+                    if (recommendedNoProducts) {
+                        recommendedNoProducts.querySelector('h3').textContent = 'خطأ في تحميل المنتجات';
+                        recommendedNoProducts.querySelector('p').textContent = 'حدث خطأ أثناء تحميل المنتجات. يرجى المحاولة مرة أخرى.';
+                        recommendedNoProducts.style.display = 'block';
                     }
                 }
             }
@@ -2471,7 +2764,7 @@
                 
                 // البحث عن رسالة عدم وجود منتجات حسب نوع الحاوية
                 if (containerId === 'recommended-products-grid') {
-                    noProductsMessage = document.getElementById('no-recommended-message');
+                    noProductsMessage = document.getElementById('recommended-no-products');
                 } else {
                     noProductsMessage = document.getElementById('no-products-message');
                 }
@@ -2493,7 +2786,14 @@
                 }
                 
                 // إظهار الشبكة وإخفاء رسالة عدم وجود منتجات
-                container.style.display = 'flex';
+                container.style.display = 'grid';
+                
+                // إضافة الكلاسات الأساسية للشبكة
+                container.classList.add('grid', 'gap-4', 'md:gap-6');
+                
+                // إضافة الكلاسات - دائماً 3 أعمدة
+                container.classList.add('grid-cols-3');
+                
                 if (noProductsMessage) {
                     noProductsMessage.style.display = 'none';
                 }
@@ -2527,35 +2827,19 @@
                     }
                     
                     return `
-                    <div class="product-card bg-white rounded-lg overflow-hidden ${product.product_id ? 'cursor-pointer' : 'cursor-default'} flex-shrink-0 w-80" data-product-id="${product.product_id || product.id}" data-ad-id="${product.ad_id || ''}" ${product.product_id ? `onclick="openProductDetails('${product.product_id}', '${product.ad_id || ''}')"` : ''}>
-                        <div class="relative product-image-container" style="height: 192px;">
-                            <!-- حاوية السلايدر -->
-                            <div class="slideshow-container" data-product-id="${product.product_id || product.id}" data-images='${JSON.stringify(imageUrls)}'>
-                                ${imageUrls.map((url, index) => `
-                                    <img src="${url}" 
-                                         alt="${productName}" 
-                                         class="slideshow-image ${index === 0 ? 'active' : ''}"
-                                         loading="lazy"
-                                         decoding="async">
-                                `).join('')}
-                                
-                                <!-- مؤشرات الصور -->
-                                ${imageUrls.length > 1 ? `
-                                    <div class="slideshow-indicators">
-                                        ${imageUrls.map((_, index) => `
-                                            <span class="indicator ${index === 0 ? 'active' : ''}" data-slide="${index}"></span>
-                                        `).join('')}
-                                    </div>
-                                ` : ''}
-                                
-                                <!-- شارة عدد الصور -->
-                                ${imageUrls.length > 1 ? `
-                                    <div class="multiple-images-badge">
-                                        ${imageUrls.length} صور
-                                    </div>
-                                ` : ''}
-                            </div>
+                    <div class="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 ${product.product_id ? 'cursor-pointer' : 'cursor-default'}" data-product-id="${product.product_id || product.id}" data-ad-id="${product.ad_id || ''}" ${product.product_id ? `onclick="openProductDetails('${product.product_id}', '${product.ad_id || ''}')"` : ''}>
+                        <!-- صورة المنتج -->
+                        <div class="relative h-48 md:h-80 overflow-hidden">
+                            <img src="${mainImageUrl}" 
+                                 alt="${productName}" 
+                                 class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-300"
+                                 loading="lazy"
+                                 decoding="async">
                             
+                            <!-- تدرج لوني أسود شفاف -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                            
+                            <!-- شارات المنتج -->
                             <div class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">متاح</div>
                             ${product.is_paid_ad ? '<div class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">مدفوع</div>' : (product.ad_id ? '<div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">مميز</div>' : '')}
                             
@@ -2575,436 +2859,42 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="p-4">
-                            <div class="mb-2">
-                                <span class="text-gray-500 text-sm">${getCategoryName(product.category)}</span>
-                            </div>
-                            <div class="mb-2">
-                                ${(() => {
-                                    if (product.subcategory) {
-                                        let subcategoryValue = null;
-                                        
-                                        // Handle different formats of subcategory
-                                        if (Array.isArray(product.subcategory) && product.subcategory.length > 0) {
-                                            subcategoryValue = product.subcategory[0];
-                                        } else if (typeof product.subcategory === 'string') {
-                                            // Try to parse JSON string
-                                            try {
-                                                const parsed = JSON.parse(product.subcategory);
-                                                if (Array.isArray(parsed) && parsed.length > 0) {
-                                                    subcategoryValue = parsed[0];
-                                                } else if (typeof parsed === 'string') {
-                                                    subcategoryValue = parsed;
-                                                }
-                                            } catch (e) {
-                                                // If not JSON, treat as regular string
-                                                if (product.subcategory.trim() !== '') {
-                                                    subcategoryValue = product.subcategory;
-                                                }
-                                            }
-                                        }
-                                        
-                                        if (subcategoryValue) {
-                                            // Define subcategoryMap locally like in category-invitations.html
-                                            const subcategoryMap = {
-                                                // كوشات
-                                                'koshat-wedding': 'كوشات زفاف',
-                                                'koshat-engagement': 'كوشات خطوبة',
-                                                'koshat-birthday': 'كوشات عيد ميلاد',
-                                                'koshat-party': 'كوشات حفلات',
-                                                'koshat-corporate': 'كوشات شركات',
-                                                
-                                                // مرايا
-                                                'mirr-wedding': 'مرايا زفاف',
-                                                'mirr-engagement': 'مرايا خطوبة',
-                                                'mirr-birthday': 'مرايا عيد ميلاد',
-                                                'mirr-decorative': 'مرايا ديكور',
-                                                'mirr-custom': 'مرايا مخصصة',
-                                                'mirr-classic': 'مرايا كلاسيكية',
-                                                'mirr-modern': 'مرايا عصرية',
-                                                'mirr-luxury': 'مرايا فاخرة',
-                                                
-                                                // مرايا - إضافة المفاتيح البديلة
-                                                'mirror-wedding': 'مرايا زفاف',
-                                                'mirror-engagement': 'مرايا خطوبة',
-                                                'mirror-birthday': 'مرايا عيد ميلاد',
-                                                'mirror-decorative': 'مرايا ديكور',
-                                                'mirror-custom': 'مرايا مخصصة',
-                                                'mirror-classic': 'مرايا كلاسيكية',
-                                                'mirror-modern': 'مرايا عصرية',
-                                                'mirror-luxury': 'مرايا فاخرة',
-                                                
-                                                // تورتة
-                                                'cake-wedding': 'تورتة زفاف',
-                                                'cake-engagement': 'تورتة خطوبة',
-                                                'cake-birthday': 'تورتة عيد ميلاد',
-                                                'cake-chocolate': 'تورتة شوكولاتة',
-                                                'cake-fruit': 'تورتة فواكه',
-                                                'cake-custom': 'تورتة مخصصة',
-                                                
-                                                // ديكورات متنوعة
-                                                'other-birthday': 'ديكور عيد ميلاد',
-                                                'other-hospital': 'ديكور استقبال مستشفى',
-                                                'other-bride': 'ديكور استقبال عروسة',
-                                                'other-party': 'ديكور حفلات بسيطة',
-                                                'other-balloons': 'بالونات وهدايا',
-                                                'other-flowers': 'زهور وأزهار',
-                                                'other-lights': 'إضاءات ديكور',
-                                                
-                                                // دعوات
-                                                'invitation-wedding': 'دعوة زفاف',
-                                                'invitation-engagement': 'دعوة خطوبة',
-                                                'invitation-chocolate': 'توزيعات بالشوكولاتة',
-                                                'invitation-perfumed': 'توزيعات بالبرفان',
-                                                'invitation-gift': 'توزيعات مع هدية صغيرة',
-                                                'invitation-digital': 'دعوة رقمية',
-                                                'invitation-innovative': 'دعوة مبتكرة',
-                                                'invitation-birthday': 'دعوة عيد ميلاد',
-                                                'invitation-party': 'دعوة حفلة',
-                                                'invitation-corporate': 'دعوة شركة'
-                                            };
-                                            
-                                            const arabicName = subcategoryMap[subcategoryValue] || subcategoryValue;
-
-                                            return `<span class='inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-1 mb-1'>${arabicName}</span>`;
-                                        }
-                                    }
-                                    return '';
-                                })()}
-                            </div>
-
-                            <div class="mb-2">
-                                <span class="font-bold gold-text">${productPrice > 0 ? productPrice + ' جنيه' : 'السعر عند الطلب'}</span>
-                            </div>
-                            <div class="mb-2">
-                                <div class="flex flex-wrap gap-1">
-                                    ${product.governorate ? `<span class="inline-flex items-center bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full whitespace-nowrap">${product.governorate}</span>` : ''}
-                                    ${product.cities && product.cities.trim() !== '' && product.cities !== 'جميع المدن' ? `<span class="inline-flex items-center bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full whitespace-nowrap">${product.cities.split(',')[0].trim()}</span>` : ''}
-                                </div>
-                            </div>
+                        
+                        <!-- معلومات المنتج -->
+                        <div class="absolute bottom-0 left-0 right-0 p-3 md:p-6 text-white">
+                            <h3 class="text-lg md:text-xl font-bold mb-1 md:mb-2">${productName}</h3>
+                            <p class="text-xs md:text-sm opacity-90">${getCategoryName(product.category)}</p>
+                            ${productPrice > 0 ? `<p class="text-xs md:text-sm opacity-90 mt-1">السعر: ${productPrice} د.ك</p>` : ''}
                         </div>
                     </div>
-                `;
+                    `;
                 }).join('');
                 
-                // تهيئة العرض المتحرك التلقائي المحسن للصور بعد إنشاء البطاقات
-                setTimeout(() => {
-                    if (window.enhancedAutoSlideshow) {
-                        window.enhancedAutoSlideshow.setupSlideshows();
-                    }
-                }, 100); // Reduced timeout for faster initialization
-                
-                // إعداد سلايدر المنتجات الجديد
-                setTimeout(() => {
-                    setupProductSlideshows();
-                }, 150);
+                // تم إزالة دالة السلايدر
                 
                 // تحديث أيقونات المفضلة بعد عرض المنتجات
                 setTimeout(() => {
-                    updateAllFavoriteIcons();
-                    setupFavoriteButtons();
+                    // تم إزالة دوال المفضلة
                 }, 200);
-
             }
 
         // ===== وظائف إدارة المفضلة =====
         
-        // إعداد سلايدر المنتجات
-        function setupProductSlideshows() {
-            // تنظيف السلايدرات القديمة
-            const oldSlideshows = document.querySelectorAll('.slideshow-container[data-initialized="true"]');
-            oldSlideshows.forEach(container => {
-                const interval = container.dataset.slideInterval;
-                if (interval) {
-                    clearInterval(parseInt(interval));
-                }
-                container.removeEventListener('mouseenter', container._stopAutoSlide);
-                container.removeEventListener('mouseleave', container._startAutoSlide);
-                delete container.dataset.initialized;
-                delete container.dataset.slideInterval;
-                delete container._stopAutoSlide;
-                delete container._startAutoSlide;
-            });
-            
-            const slideshowContainers = document.querySelectorAll('.slideshow-container:not([data-initialized="true"])');
-            console.log('🖼️ Setting up product slideshows:', slideshowContainers.length);
-            
-            slideshowContainers.forEach((container, index) => {
-                const images = container.querySelectorAll('.slideshow-image');
-                const indicators = container.querySelectorAll('.indicator');
-                
-                if (images.length <= 1) return;
-                
-                let currentSlide = 0;
-                let slideInterval;
-                
-                // دالة إظهار صورة معينة
-                const showSlide = (slideIndex) => {
-                    // إخفاء جميع الصور
-                    images.forEach(img => img.classList.remove('active'));
-                    
-                    // إظهار الصورة المحددة
-                    if (images[slideIndex]) {
-                        images[slideIndex].classList.add('active');
-                    }
-                    
-                    // تحديث المؤشرات
-                    indicators.forEach(ind => ind.classList.remove('active'));
-                    if (indicators[slideIndex]) {
-                        indicators[slideIndex].classList.add('active');
-                    }
-                    
-                    currentSlide = slideIndex;
-                };
-                
-                // دالة الانتقال للصورة التالية
-                const nextSlide = () => {
-                    const next = (currentSlide + 1) % images.length;
-                    showSlide(next);
-                };
-                
-                // بدء العرض التلقائي
-                const startAutoSlide = () => {
-                    slideInterval = setInterval(nextSlide, 3000); // 3 ثواني
-                    container.dataset.slideInterval = slideInterval;
-                };
-                
-                // إيقاف العرض التلقائي
-                const stopAutoSlide = () => {
-                    if (slideInterval) {
-                        clearInterval(slideInterval);
-                    }
-                };
-                
-                // حفظ الدوال للتنظيف لاحقاً
-                container._startAutoSlide = startAutoSlide;
-                container._stopAutoSlide = stopAutoSlide;
-                
-                // إضافة أحداث النقر على المؤشرات
-                indicators.forEach((indicator, indIndex) => {
-                    indicator.addEventListener('click', () => {
-                        showSlide(indIndex);
-                        stopAutoSlide();
-                        startAutoSlide(); // إعادة تشغيل
-                    });
-                });
-                
-                // إضافة أحداث التمرير
-                container.addEventListener('mouseenter', stopAutoSlide);
-                container.addEventListener('mouseleave', startAutoSlide);
-                
-                // إضافة معالجة الأخطاء للصور
-                images.forEach((img, imgIndex) => {
-                    img.addEventListener('error', () => {
-                        console.warn(`⚠️ Image ${imgIndex + 1} failed to load in slideshow ${index + 1}`);
-                        img.src = 'https://placehold.co/300x200/EEE/31343C?text=خطأ+في+تحميل+الصورة';
-                    });
-                    
-                    img.addEventListener('load', () => {
-                        console.log(`✅ Image ${imgIndex + 1} loaded successfully in slideshow ${index + 1}`);
-                    });
-                });
-                
-                // بدء العرض التلقائي
-                startAutoSlide();
-                
-                // تحديد أن السلايدر تم تهيئته
-                container.dataset.initialized = "true";
-                
-                console.log(`✅ Slideshow ${index + 1} setup complete with ${images.length} images`);
-            });
-        }
+
         
-        // إعداد أزرار المفضلة
-        function setupFavoriteButtons() {
-            const favoriteButtons = document.querySelectorAll('.favorite-btn');
-            console.log('🔘 Setting up favorite buttons:', favoriteButtons.length);
-            
-            favoriteButtons.forEach(button => {
-                // إزالة event listeners السابقة لتجنب التكرار
-                button.removeEventListener('click', handleFavoriteClick);
-                
-                // إضافة event listener جديد
-                button.addEventListener('click', handleFavoriteClick);
-            });
-        }
+
         
-        // معالج النقر على أزرار المفضلة
-        function handleFavoriteClick(event) {
-            event.stopPropagation(); // منع انتقال الحدث للعنصر الأب
-            event.preventDefault(); // منع السلوك الافتراضي
-            
-            console.log('❤️ Favorite button clicked!');
-            
-            const button = event.currentTarget;
-            const productId = button.getAttribute('data-product-id');
-            const productName = button.getAttribute('data-product-name');
-            const productImage = button.getAttribute('data-product-image');
-            const productPrice = parseInt(button.getAttribute('data-product-price')) || 0;
-            const productGovernorate = button.getAttribute('data-product-governorate');
-            const productCities = button.getAttribute('data-product-cities');
-            const productSubcategory = button.getAttribute('data-product-subcategory');
-            
-            console.log('❤️ Product data:', {
-                id: productId,
-                name: productName,
-                image: productImage,
-                price: productPrice,
-                governorate: productGovernorate,
-                cities: productCities,
-                subcategory: productSubcategory
-            });
-            
-            if (!productId) {
-                console.error('❌ No product ID found!');
-                showNotification('خطأ: لم يتم العثور على معرف المنتج', 'error');
-                return;
-            }
-            
-            toggleFavorite(event, productId, productName, productImage, productPrice, productGovernorate, productCities, productSubcategory);
-        }
+
         
-        // التحقق من وجود منتج في المفضلة
-        function isFavorite(productId) {
-            if (!productId) return false;
-            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-            return favorites.some(item => item.id === productId);
-        }
 
-        // تبديل حالة المفضلة (إضافة/إزالة)
-        function toggleFavorite(event, productId, title, imageUrl, price, governorate, cities, subcategories) {
-            console.log('🔄 toggleFavorite called!');
-            console.log('🔄 Toggle favorite for product:', {
-                id: productId,
-                title: title,
-                imageUrl: imageUrl,
-                price: price,
-                governorate: governorate,
-                cities: cities,
-                subcategories: subcategories
-            });
-            
-            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-            console.log('📋 Current favorites before toggle:', favorites);
-            
-            const existingIndex = favorites.findIndex(item => item.id === productId);
-            console.log('🔍 Existing index:', existingIndex);
-            
-            if (existingIndex > -1) {
-                // إزالة من المفضلة
-                favorites.splice(existingIndex, 1);
-                showNotification('تم إزالة المنتج من المفضلة', 'info');
-                console.log('❌ Removed from favorites');
-            } else {
-                // إضافة إلى المفضلة
-                const productData = {
-                    id: productId,
-                    title: title || 'منتج',
-                    imageUrl: imageUrl,
-                    price: price || 0,
-                    governorate: governorate || '',
-                    cities: cities || '',
-                    subcategories: subcategories || '',
-                    category: getProductCategory(productId), // إضافة التصنيف الرئيسي
-                    addedAt: new Date().toISOString()
-                };
-                favorites.push(productData);
-                showNotification('تم إضافة المنتج إلى المفضلة', 'success');
-                console.log('✅ Added to favorites:', productData);
-            }
-            
-            // حفظ في Local Storage
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            
-            // إرسال حدث مخصص لضمان التزامن مع الصفحات الأخرى
-            window.dispatchEvent(new CustomEvent('favoritesChanged', {
-                detail: { favorites: favorites }
-            }));
-            console.log('💾 Saved to localStorage, total favorites:', favorites.length);
-            console.log('💾 Current localStorage favorites:', JSON.parse(localStorage.getItem('favorites')));
-            
-            // تحديث أيقونة القلب
-            updateFavoriteIcon(productId);
-            
-            // تحديث عداد المفضلة
-            console.log('🔄 Calling updateFavoritesCountBadge from toggleFavorite');
-            updateFavoritesCountBadge();
-            
-            // إضافة تأكيد إضافي
-            setTimeout(() => {
-                const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-                console.log('🔍 Verification - Stored favorites after 100ms:', storedFavorites);
-                console.log('🔄 Calling updateFavoritesCountBadge again after delay');
-                updateFavoritesCountBadge();
-            }, 100);
-        }
 
-        // تحديث أيقونة القلب
-        function updateFavoriteIcon(productId) {
-            const favoriteBtn = document.querySelector(`[data-product-id="${productId}"] .favorite-btn svg`);
-            if (favoriteBtn) {
-                if (isFavorite(productId)) {
-                    favoriteBtn.classList.remove('text-gray-400');
-                    favoriteBtn.classList.add('text-red-500', 'fill-current');
-                    console.log(`✅ Updated favorite icon for product ${productId}: FAVORITE (RED)`);
-                } else {
-                    favoriteBtn.classList.remove('text-red-500', 'fill-current');
-                    favoriteBtn.classList.add('text-gray-400');
-                    console.log(`✅ Updated favorite icon for product ${productId}: NOT_FAVORITE (GRAY)`);
-                }
-            } else {
-                console.log(`⚠️ Favorite button not found for product: ${productId}`);
-            }
-        }
 
-        // تحديث جميع أيقونات المفضلة
-        function updateAllFavoriteIcons() {
-            const productCards = document.querySelectorAll('.product-card');
-            console.log('🔄 Updating favorite icons for', productCards.length, 'product cards');
-            
-            productCards.forEach(card => {
-                const productId = card.getAttribute('data-product-id');
-                if (productId) {
-                    updateFavoriteIcon(productId);
-                    console.log('✅ Updated icon for product:', productId);
-                } else {
-                    console.log('⚠️ No product ID found for card:', card);
-                }
-            });
-            
-            // تحديث عداد المفضلة أيضاً
-            updateFavoritesCountBadge();
-        }
 
-        // عرض إشعار
-        function showNotification(message, type = 'info') {
-            // إزالة الإشعارات السابقة
-            const existingNotification = document.querySelector('.notification');
-            if (existingNotification) {
-                existingNotification.remove();
-            }
 
-            const notification = document.createElement('div');
-            notification.className = `notification fixed top-4 left-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium transform transition-all duration-300 translate-x-0`;
-            
-            // تحديد لون الإشعار حسب النوع
-            if (type === 'success') {
-                notification.style.backgroundColor = '#10b981'; // أخضر
-            } else if (type === 'error') {
-                notification.style.backgroundColor = '#ef4444'; // أحمر
-            } else {
-                notification.style.backgroundColor = '#3b82f6'; // أزرق
-            }
-            
-            notification.textContent = message;
-            document.body.appendChild(notification);
 
-            // إخفاء الإشعار بعد 3 ثوان
-            setTimeout(() => {
-                notification.style.transform = 'translateX(-100%)';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
+
+
+
         
         // Get category name in Arabic
         function getCategoryName(category) {
@@ -3150,9 +3040,7 @@
                     
                     // تحديث أيقونات المفضلة بعد تحميل جميع المنتجات
                     setTimeout(() => {
-                        updateAllFavoriteIcons();
-                        setupFavoriteButtons();
-                        setupProductSlideshows();
+                        // تم إزالة دوال المفضلة والسلايدر
                     }, 300);
                 } else {
                     console.log('ℹ️ No recommended products available');
@@ -3168,9 +3056,7 @@
                 } finally {
                     // تحديث أيقونات المفضلة في جميع الحالات
                     setTimeout(() => {
-                        updateAllFavoriteIcons();
-                        setupFavoriteButtons();
-                        setupProductSlideshows();
+                        // تم إزالة دوال المفضلة والسلايدر
                     }, 500);
                 }
             }
@@ -3534,10 +3420,8 @@
             
             // تهيئة المفضلة بعد تحميل الصفحة
             setTimeout(() => {
-                updateAllFavoriteIcons();
-                setupFavoriteButtons();
-                setupProductSlideshows();
-                console.log('🔄 Initializing favorite icons, buttons and slideshows after page load');
+                // تم إزالة دوال المفضلة والسلايدر
+                console.log('🔄 تم إزالة دوال المفضلة والسلايدر');
             }, 1000);
             
             // Listen for changes in localStorage (favorites)
@@ -4926,18 +4810,7 @@
             }
         }
 
-        // Get product category based on product ID or data
-        function getProductCategory(productId) {
-            // محاولة العثور على المنتج في البيانات المحملة
-            const product = window.featuredProducts?.find(p => p.id === productId || p.product_id === productId);
-            if (product && product.category) {
-                return product.category;
-            }
-            
-            // إذا لم يتم العثور على المنتج، حاول استنتاج التصنيف من المعرف
-            // هذا يمكن أن يكون مفيداً للمنتجات الموجودة في المفضلة
-            return 'other'; // تصنيف افتراضي
-        }
+
         
         // الانتقال التلقائي للنموذج بعد إعادة التحميل
         function scrollToFormAfterReload() {
@@ -4974,6 +4847,145 @@
         
         // تشغيل الانتقال التلقائي عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', scrollToFormAfterReload);
+        
+        // Load category products
+        document.addEventListener('DOMContentLoaded', loadCategoryProducts);
+        
+        // Function to load products for each category
+        async function loadCategoryProducts() {
+            console.log('🎯 Loading category products...');
+            
+            // Load products for each category
+            await Promise.all([
+                loadCategoryProductsByType('koshat', 'koshat'),
+                loadCategoryProductsByType('cake', 'cake'),
+                loadCategoryProductsByType('mirror', 'mirror'),
+                loadCategoryProductsByType('other', 'other'),
+                loadCategoryProductsByType('invitations', 'invitations')
+            ]);
+        }
+        
+        // Function to load products for a specific category
+        async function loadCategoryProductsByType(categoryType, sectionId) {
+            try {
+                console.log(`🔄 Loading ${categoryType} products...`);
+                
+                const loadingElement = document.getElementById(`${sectionId}-loading`);
+                const gridElement = document.getElementById(`${sectionId}-products-grid`);
+                const noProductsElement = document.getElementById(`${sectionId}-no-products`);
+                
+                if (!loadingElement || !gridElement || !noProductsElement) {
+                    console.error(`❌ Missing elements for ${sectionId}`);
+                    return;
+                }
+                
+                // Show loading
+                loadingElement.classList.remove('hidden');
+                gridElement.classList.add('hidden');
+                noProductsElement.classList.add('hidden');
+                
+                // Get products from ProductService
+                let products = [];
+                if (window.ProductService) {
+                    const result = await window.ProductService.getProductsByCategory(categoryType, 9);
+                    if (result.success && result.data) {
+                        products = result.data;
+                    }
+                }
+                
+                // If no products from ProductService, try advertising service
+                if (products.length === 0 && window.advertisingService) {
+                    try {
+                        const ads = await window.advertisingService.getProductsByCategory(categoryType, 9);
+                        if (ads && ads.length > 0) {
+                            products = ads;
+                        }
+                    } catch (error) {
+                        console.log(`No ads found for ${categoryType}:`, error);
+                    }
+                }
+                
+                // Hide loading
+                loadingElement.classList.add('hidden');
+                
+                if (products.length > 0) {
+                    console.log(`✅ Found ${products.length} products for ${categoryType}`);
+                    
+                    // Display products in 3x3 grid
+                    displayCategoryProducts(gridElement, products, categoryType);
+                    gridElement.classList.remove('hidden');
+                    
+                } else {
+                    console.log(`⚠️ No products found for ${categoryType}`);
+                    noProductsElement.classList.remove('hidden');
+                }
+                
+            } catch (error) {
+                console.error(`❌ Error loading ${categoryType} products:`, error);
+                
+                // Hide loading and show error
+                const loadingElement = document.getElementById(`${sectionId}-loading`);
+                const noProductsElement = document.getElementById(`${sectionId}-no-products`);
+                
+                if (loadingElement) loadingElement.classList.add('hidden');
+                if (noProductsElement) noProductsElement.classList.remove('hidden');
+            }
+        }
+        
+        // Function to display products in 3x3 grid
+        function displayCategoryProducts(gridElement, products, categoryType) {
+            // Limit to 9 products maximum
+            const limitedProducts = products.slice(0, 9);
+            
+            // Create HTML for products
+            const productsHTML = limitedProducts.map((product, index) => {
+                // Handle different product formats
+                let imageUrl, productName, productPrice, productId;
+                
+                if (product.ad_id) {
+                    // This is an advertisement
+                    imageUrl = product.image_url || 'https://placehold.co/300x200/EEE/31343C?text=لا+توجد+صورة';
+                    productName = product.name || product.description || 'منتج مميز';
+                    productPrice = product.price || 0;
+                    productId = product.product_id || product.id;
+                } else {
+                    // This is a regular product
+                    imageUrl = product.image_urls && product.image_urls.length > 0 
+                        ? product.image_urls[0] 
+                        : 'https://placehold.co/300x200/EEE/31343C?text=لا+توجد+صورة';
+                    productName = product.description || 'منتج';
+                    productPrice = product.price || 0;
+                    productId = product.id;
+                }
+                
+                // تم إزالة اسم التصنيف للمنتجات المميزة والموصى بها
+                // let categoryDisplay = '';
+                // if (categoryType === 'featured' || categoryType === 'recommended') {
+                //     categoryDisplay = `<div class="category-product-name mb-2">${productName}</div>`;
+                // }
+                
+                return `
+                    <div class="category-product-card" onclick="openProductDetails('${productId}', '${product.ad_id || ''}')">
+                        <img src="${imageUrl}" 
+                             alt="${productName}" 
+                             loading="lazy"
+                             decoding="async">
+                        <div class="category-product-info">
+                            <div class="mb-2">
+                                <div class="flex flex-wrap gap-1">
+                                    ${product.governorate ? `<span class="inline-flex items-center bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full whitespace-nowrap">${product.governorate}</span>` : ''}
+                                    ${product.cities && product.cities.trim() !== '' && product.cities !== 'جميع المدن' ? `<span class="inline-flex items-center bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full whitespace-nowrap">${product.cities.split(',')[0].trim()}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="category-product-price">${productPrice > 0 ? 'ج.م ' + productPrice : 'سعر عند الطلب'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Update grid content
+            gridElement.innerHTML = productsHTML;
+        }
     </script>
     
     <!-- Floating Add Product Button -->
