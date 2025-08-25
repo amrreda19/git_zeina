@@ -1,0 +1,12 @@
+rules:
+  - name: "Reduce Token Usage"
+    description: "Keep context short and avoid sending unnecessary files"
+    settings:
+      include_full_folder_context: false   # متفتحش فولدرات بالكامل
+      max_context_tokens: 8000             # قلل حجم الـ context (بدل 128k)
+      auto_clear_chat: true                # امسح المحادثة تلقائيًا بعد فترة
+      web_search_tool: false               # اقفل البحث على الويب
+      auto_parse_links: false              # متفعلش بارس اللينكات
+      character_level_diffs: false         # متستخدمش diffs تفصيلية جدًا
+      usage_summary: auto                  # تابع الاستهلاك تلقائي
+      hierarchical_cursor_ignore: true     # طبّق cursorignore على كل الفولدرات

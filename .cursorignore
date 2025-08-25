@@ -1,0 +1,46 @@
+# فولدرات ناتجة أو تقيلة
+dist/
+build/
+.cache/
+out/
+tmp/
+logs/
+node_modules/
+vendor/
+libs/
+third_party/
+
+# أصول (صور/فيديوهات/خطوط) مش محتاجينها في الـ context
+assets/images/
+assets/img/
+assets/videos/
+assets/media/
+images/
+img/
+videos/
+media/
+fonts/
+assets/fonts/
+
+# تجاهل أنواع ملفات مش كود
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.mp4
+*.webm
+*.zip
+*.rar
+*.7z
+*.pdf
+*.psd
+*.ai
+
+# ملفات نظام
+.DS_Store
+Thumbs.db
+
+# أسرار/إعدادات محلية
+.env
