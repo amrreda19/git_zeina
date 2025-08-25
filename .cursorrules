@@ -1,12 +1,44 @@
 rules:
-  - name: "Reduce Token Usage"
-    description: "Keep context short and avoid sending unnecessary files"
-    settings:
-      include_full_folder_context: false   # متفتحش فولدرات بالكامل
-      max_context_tokens: 8000             # قلل حجم الـ context (بدل 128k)
-      auto_clear_chat: true                # امسح المحادثة تلقائيًا بعد فترة
-      web_search_tool: false               # اقفل البحث على الويب
-      auto_parse_links: false              # متفعلش بارس اللينكات
-      character_level_diffs: false         # متستخدمش diffs تفصيلية جدًا
-      usage_summary: auto                  # تابع الاستهلاك تلقائي
-      hierarchical_cursor_ignore: true     # طبّق cursorignore على كل الفولدرات
+  - name: "Arabic Minimal – تقليل الاستهلاك + منع الصور والشرح"
+    lang: "ar"   # اللغة اللي بيشتغل بيها (مش ضروري جدًا، بس بنوضّح إنها بالعربي)
+
+    behavior:
+      explain_nothing: true            # ما يكتبش أي شرح، بس يعمل اللي اتطلب
+      success_message: "تم."           # لو التعديل نجح → يكتب "تم."
+      failure_message: "❌ لم يكتمل التنفيذ."  # لو حصل خطأ → يكتب الرسالة دي
+      clarify_with_single_question: true # لو مش فاهم، يسألك سؤال واحد قصير فقط
+      add_comments: false              # ما يضيفش تعليقات داخل الكود نفسه
+
+    output:
+      images: false                    # ما يولدش صور
+      diagrams: false                  # ما يعملش مخططات أو رسومات
+      code_only_responses: true        # يطلع كود فقط من غير شرح إضافي
+
+    editing:
+      scope: "only_explicit_files_or_selection"  # يعدل بس في الملفات/الأجزاء اللي تحددها
+      keep_formatting: true            # يحافظ على شكل الكود زي ما هو
+      keep_imports_order: true         # يحافظ على ترتيب الاستيراد (import)
+      keep_whitespace: true            # ما يغيّرش المسافات/الفواصل
+      no_renames: true                 # ما يغيرش أسماء ملفات أو دوال
+      create_files: "only_if_explicitly_requested" # ما ينشئش ملفات جديدة إلا لو طلبت صراحة
+      delete_files: "only_if_explicitly_requested" # ما يمسحش ملفات إلا بطلب صريح
+
+    limits:
+      ask_before_large_changes: true   # يسألك قبل أي تعديل كبير
+      max_changed_files: 1             # يغيّر في ملف واحد بس في المرة
+      max_added_lines: 80              # أقصى عدد سطور يضيفها = 80 سطر
+
+    execution:
+      auto_run_mode: "ask"             # ما يشغّلش أوامر أوتوماتيك، لازم يأخذ إذنك
+      web_search: false                # ما يستخدمش البحث على الويب
+      install_deps: false              # ما يثبّتش مكتبات (dependencies)
+      modify_package_files: false      # ما يعدلش في package.json أو الملفات المشابهة
+
+    context:
+      include_full_folder_context: false # ما يبعتش فولدر كامل للموديل
+      hierarchical_cursor_ignore: true   # يطبّق إعدادات .cursorignore على كل الفولدرات
+      max_context_tokens: 8000           # أقصى حجم للسياق 8000 توكن (عشان الاستهلاك يقل)
+      auto_clear_chat: true              # يمسح المحادثة تلقائيًا بعد فترة
+      auto_parse_links: false            # ما يحاولش يحلل اللينكات
+      character_level_diffs: false       # ما يعملش فرق (diff) على مستوى الحروف
+      usage_summary: auto                # يتابع الاستهلاك تلقائي

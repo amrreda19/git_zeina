@@ -941,9 +941,9 @@
                 }
                 
                 // Validate subcategory
-                const subcategory = document.querySelector('input[name="subcategory"]:checked');
-                if (!subcategory) {
-                    showError('request-subcategory', 'التصنيف الفرعي مطلوب');
+                const subcategories = document.querySelectorAll('input[name="subcategory"]:checked');
+                if (subcategories.length === 0) {
+                    showError('request-subcategory', 'يجب اختيار تصنيف فرعي واحد على الأقل');
                     isValid = false;
                 }
                 
@@ -1134,7 +1134,7 @@
                         description: document.getElementById('request-description').value.trim(),
                         price: document.getElementById('request-price').value || null,
                         category: document.getElementById('request-category').value,
-                        subcategory: document.querySelector('input[name="subcategory"]:checked').value,
+                        subcategory: Array.from(document.querySelectorAll('input[name="subcategory"]:checked')).map(cb => cb.value).join(', '),
                         governorate: Array.from(document.querySelectorAll('.governorate-checkbox:checked')).map(cb => cb.value).join(', '), // تحويل إلى نص مفصول بفواصل
                         cities: Array.from(document.querySelectorAll('input[name="cities"]:checked')).map(cb => cb.value).join(', '), // تحويل إلى نص مفصول بفواصل
                         whatsapp: document.getElementById('request-whatsapp').value.trim() || '', // إرسال نص فارغ بدلاً من null
@@ -1190,13 +1190,8 @@
                     }
                     
                     if (result && result.success) {
-                        // Show success message with better UX for mobile
-                        showSuccessMessage();
-                        
-                        // Reload the entire page after a short delay to ensure message is visible
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
+                        // Show success popup
+                        showSuccessPopup();
                     } else {
                         const errorMessage = result ? result.error : 'حدث خطأ غير معروف';
                         showErrorMessage('حدث خطأ أثناء إرسال الطلب: ' + errorMessage);
@@ -1746,7 +1741,7 @@
                     if (subcategoryGroup) {
                         subcategoryGroup.innerHTML = subcategories[category].map(sub => 
                             `<label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                                <input type="radio" name="subcategory" value="${sub}" class="ml-3 text-yellow-600 focus:ring-yellow-500">
+                                <input type="checkbox" name="subcategory" value="${sub}" class="ml-3 text-yellow-600 focus:ring-yellow-500">
                                 <span class="text-gray-700">${sub}</span>
                             </label>`
                         ).join('');
@@ -2075,8 +2070,64 @@
             });
         });
         });
+        
+        // Success popup functionality
+        function showSuccessPopup() {
+            const popup = document.getElementById('success-popup');
+            if (popup) {
+                popup.classList.remove('hidden');
+                popup.style.display = 'flex';
+            }
+        }
+        
+        function hideSuccessPopup() {
+            const popup = document.getElementById('success-popup');
+            if (popup) {
+                popup.classList.add('hidden');
+                popup.style.display = 'none';
+                // Reload page after hiding popup
+                window.location.reload();
+            }
+        }
+        
+        // Add event listeners for popup
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeBtn = document.getElementById('close-success-popup');
+            const popup = document.getElementById('success-popup');
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', hideSuccessPopup);
+            }
+            
+            if (popup) {
+                // Close popup when clicking outside the modal content
+                popup.addEventListener('click', function(e) {
+                    if (e.target === popup) {
+                        hideSuccessPopup();
+                    }
+                });
+            }
+        });
     </script>
     
+    <!-- Success Popup Modal -->
+    <div id="success-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl transform transition-all">
+            <div class="mb-6">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">تم إضافة المنتج بنجاح</h3>
+                <p class="text-gray-600">سيتم مراجعة طلبك وإضافته للموقع قريباً</p>
+            </div>
+            <button id="close-success-popup" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                حسناً
+            </button>
+        </div>
+    </div>
+
     <!-- لا يوجد زر عائم في صفحة إضافة المنتج -->
 </body>
 </html>
