@@ -787,11 +787,14 @@
                          <button class="filter-btn active" data-category="all">الكل</button>
                          <button class="filter-btn" data-category="invitation-wedding">دعوة زفاف</button>
                          <button class="filter-btn" data-category="invitation-engagement">دعوة خطوبة</button>
+                         <button class="filter-btn" data-category="invitation-wedding-distribution">توزيعات فرح</button>
+                         <button class="filter-btn" data-category="invitation-engagement-distribution">توزيعات خطوبة</button>
                          <button class="filter-btn" data-category="invitation-chocolate">توزيعات بالشوكولاتة</button>
-                         <button class="filter-btn" data-category="invitation-perfumed">توزيعات بالبرفان</button>
-                         <button class="filter-btn" data-category="invitation-gift">توزيعات مع هدية صغيرة</button>
+                         <button class="filter-btn" data-category="invitation-perfumed">توزيعات بالعطور / البرفان</button>
+                         <button class="filter-btn" data-category="invitation-gift">توزيعات مع هدية صغيره</button>
+                         <button class="filter-btn" data-category="invitation-baby-week">توزيعات سبوع</button>
+                         <button class="filter-btn" data-category="invitation-kids">توزيعات أطفال</button>
                          <button class="filter-btn" data-category="invitation-digital">دعوة رقمية</button>
-                         <button class="filter-btn" data-category="invitation-innovative">دعوة مبتكرة</button>
                      </div>
                 </div>
 
@@ -1169,11 +1172,14 @@
             const subcategoryMap = {
                 'invitation-wedding': { name: 'دعوة زفاف', color: 'bg-pink-500' },
                 'invitation-engagement': { name: 'دعوة خطوبة', color: 'bg-purple-500' },
+                'invitation-wedding-distribution': { name: 'توزيعات فرح', color: 'bg-rose-500' },
+                'invitation-engagement-distribution': { name: 'توزيعات خطوبة', color: 'bg-violet-500' },
                 'invitation-chocolate': { name: 'توزيعات بالشوكولاتة', color: 'bg-yellow-500' },
-                'invitation-perfumed': { name: 'توزيعات بالبرفان', color: 'bg-indigo-500' },
-                'invitation-gift': { name: 'توزيعات مع هدية صغيرة', color: 'bg-red-500' },
-                'invitation-digital': { name: 'دعوة رقمية', color: 'bg-teal-500' },
-                'invitation-innovative': { name: 'دعوة مبتكرة', color: 'bg-orange-500' }
+                'invitation-perfumed': { name: 'توزيعات بالعطور / البرفان', color: 'bg-indigo-500' },
+                'invitation-gift': { name: 'توزيعات مع هدية صغيره', color: 'bg-red-500' },
+                'invitation-baby-week': { name: 'توزيعات سبوع', color: 'bg-blue-500' },
+                'invitation-kids': { name: 'توزيعات أطفال', color: 'bg-green-500' },
+                'invitation-digital': { name: 'دعوة رقمية', color: 'bg-teal-500' }
             };
             
             console.log('🔍 Product object:', product);
@@ -2491,11 +2497,14 @@
                                     const subcategoryMap = {
                                         'invitation-wedding': { name: 'دعوة زفاف', color: 'bg-pink-500' },
                                         'invitation-engagement': { name: 'دعوة خطوبة', color: 'bg-purple-500' },
+                                        'invitation-wedding-distribution': { name: 'توزيعات فرح', color: 'bg-rose-500' },
+                                        'invitation-engagement-distribution': { name: 'توزيعات خطوبة', color: 'bg-violet-500' },
                                         'invitation-chocolate': { name: 'توزيعات بالشوكولاتة', color: 'bg-yellow-500' },
-                                        'invitation-perfumed': { name: 'توزيعات بالبرفان', color: 'bg-indigo-500' },
-                                        'invitation-gift': { name: 'توزيعات مع هدية صغيرة', color: 'bg-red-500' },
-                                        'invitation-digital': { name: 'دعوة رقمية', color: 'bg-teal-500' },
-                                        'invitation-innovative': { name: 'دعوة مبتكرة', color: 'bg-orange-500' }
+                                        'invitation-perfumed': { name: 'توزيعات بالعطور / البرفان', color: 'bg-indigo-500' },
+                                        'invitation-gift': { name: 'توزيعات مع هدية صغيره', color: 'bg-red-500' },
+                                        'invitation-baby-week': { name: 'توزيعات سبوع', color: 'bg-blue-500' },
+                                        'invitation-kids': { name: 'توزيعات أطفال', color: 'bg-green-500' },
+                                        'invitation-digital': { name: 'دعوة رقمية', color: 'bg-teal-500' }
                                     };
                                     
                                     const subcategoryInfo = subcategoryMap[subcat];
