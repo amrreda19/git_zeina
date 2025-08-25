@@ -1388,17 +1388,33 @@
             }
         }
 
-        // ترتيب المنتجات حسب السعر فقط
+        // ترتيب المنتجات حسب الأولوية: منتجات بسعر أولاً ثم بدون سعر
         function sortProductsByCriteria() {
             if (allProducts && allProducts.length > 0) {
                 allProducts.sort((a, b) => {
-                    // السعر تصاعدياً (من الأرخص إلى الأغلى)
-                    const priceA = parseFloat(a.price) || 0;
-                    const priceB = parseFloat(b.price) || 0;
-                    return priceA - priceB;
+                    const priceA = parseFloat(a.price);
+                    const priceB = parseFloat(b.price);
+                    const hasValidPriceA = !isNaN(priceA) && priceA > 0;
+                    const hasValidPriceB = !isNaN(priceB) && priceB > 0;
+                    
+                    // إذا كان أحدهما له سعر والآخر لا، المنتج الذي له سعر يأتي أولاً
+                    if (hasValidPriceA && !hasValidPriceB) {
+                        return -1; // A يأتي قبل B
+                    }
+                    if (!hasValidPriceA && hasValidPriceB) {
+                        return 1; // B يأتي قبل A
+                    }
+                    
+                    // إذا كان كلاهما له سعر، ترتيب تصاعدي حسب السعر
+                    if (hasValidPriceA && hasValidPriceB) {
+                        return priceA - priceB;
+                    }
+                    
+                    // إذا كان كلاهما بدون سعر، ترتيب حسب تاريخ الإنشاء
+                    return new Date(b.created_at) - new Date(a.created_at);
                 });
                 
-                console.log('✅ تم ترتيب المنتجات حسب السعر (من الأرخص إلى الأغلى)');
+                console.log('✅ تم ترتيب المنتجات: منتجات بسعر أولاً (تصاعدياً) ثم منتجات بدون سعر');
             }
         }
 
