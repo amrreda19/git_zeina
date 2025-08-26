@@ -978,13 +978,9 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">التصنيف الفرعي</label>
                     <div class="multi-filter-buttons flex flex-wrap gap-2">
                         <button class="filter-btn active" data-category="all">الكل</button>
-                        <button class="filter-btn" data-category="mirror-wedding">مرآة زفاف</button>
-                        <button class="filter-btn" data-category="mirror-engagement">مرآة خطوبة</button>
-                        <button class="filter-btn" data-category="mirror-decorative">مرآة ديكور</button>
-                        <button class="filter-btn" data-category="mirror-custom">مرآة مخصصة</button>
-                        <button class="filter-btn" data-category="mirror-classic">مرآة كلاسيكية</button>
-                        <button class="filter-btn" data-category="mirror-modern">مرآة عصرية</button>
-                        <button class="filter-btn" data-category="mirror-luxury">مرآة فاخرة</button>
+                        <button class="filter-btn" data-category="mirr-wedding">مرايا زفاف</button>
+                        <button class="filter-btn" data-category="mirr-engagement">مرايا خطوبة</button>
+                        <button class="filter-btn" data-category="mirr-decorative">مرايا ديكور</button>
                     </div>
                 </div>
 
@@ -1551,24 +1547,16 @@
                 filteredProducts = filteredProducts.filter(product => {
                     // خريطة تحويل النصوص العربية إلى أكواد
                     const arabicToCodeMap = {
-                        'مرآة زفاف': 'mirror-wedding',
-                        'مرآة خطوبة': 'mirror-engagement',
-                        'مرآة ديكور': 'mirror-decorative',
-                        'مرآة مخصصة': 'mirror-custom',
-                        'مرآة كلاسيكية': 'mirror-classic',
-                        'مرآة عصرية': 'mirror-modern',
-                        'مرآة فاخرة': 'mirror-luxury'
+                        'مرايا زفاف': 'mirr-wedding',
+                        'مرايا خطوبة': 'mirr-engagement',
+                        'مرايا ديكور': 'mirr-decorative'
                     };
                     
                     // خريطة تحويل الأكواد إلى نصوص عربية
                     const codeToArabicMap = {
-                        'mirror-wedding': 'مرآة زفاف',
-                        'mirror-engagement': 'مرآة خطوبة',
-                        'mirror-decorative': 'مرآة ديكور',
-                        'mirror-custom': 'مرآة مخصصة',
-                        'mirror-classic': 'مرآة كلاسيكية',
-                        'mirror-modern': 'مرآة عصرية',
-                        'mirror-luxury': 'مرآة فاخرة'
+                        'mirr-wedding': 'مرايا زفاف',
+                        'mirr-engagement': 'مرايا خطوبة',
+                        'mirr-decorative': 'مرايا ديكور'
                     };
                     
                     // Handle different subcategory formats
