@@ -1549,14 +1549,20 @@
                     const arabicToCodeMap = {
                         'مرايا زفاف': 'mirr-wedding',
                         'مرايا خطوبة': 'mirr-engagement',
-                        'مرايا ديكور': 'mirr-decorative'
+                        'مرايا ديكور': 'mirr-decorative',
+                        'مرآة زفاف': 'mirr-wedding',
+                        'مرآة خطوبة': 'mirr-engagement',
+                        'مرآة ديكور': 'mirr-decorative'
                     };
                     
                     // خريطة تحويل الأكواد إلى نصوص عربية
                     const codeToArabicMap = {
                         'mirr-wedding': 'مرايا زفاف',
                         'mirr-engagement': 'مرايا خطوبة',
-                        'mirr-decorative': 'مرايا ديكور'
+                        'mirr-decorative': 'مرايا ديكور',
+                        'mirror-wedding': 'مرايا زفاف',
+                        'mirror-engagement': 'مرايا خطوبة',
+                        'mirror-decorative': 'مرايا ديكور'
                     };
                     
                     // Handle different subcategory formats
@@ -1711,6 +1717,9 @@
             // Add subcategory filter
             activeFilters.subcategory.forEach(sub => {
                 const subcategoryLabels = {
+                    'mirr-wedding': 'مرايا زفاف',
+                    'mirr-engagement': 'مرايا خطوبة',
+                    'mirr-decorative': 'مرايا ديكور',
                     'mirror-wedding': 'مرآة زفاف',
                     'mirror-engagement': 'مرآة خطوبة',
                     'mirror-decorative': 'مرآة ديكور',
