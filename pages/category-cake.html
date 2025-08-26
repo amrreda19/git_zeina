@@ -2348,9 +2348,22 @@
                                         const color = subcategoryColors[index];
                                         const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
                                         const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
+                                        // تقسيم النصوص الطويلة على عدة سطور
+                                        let displayName = name;
+                                        if (name === 'استقبال المولود بالمستشفى') {
+                                            displayName = 'استقبال المولود<br>بالمستشفى';
+                                        } else if (name.length > 15) {
+                                            // تقسيم النصوص الأخرى الطويلة تلقائياً
+                                            const words = name.split(' ');
+                                            if (words.length > 2) {
+                                                const mid = Math.ceil(words.length / 2);
+                                                displayName = words.slice(0, mid).join(' ') + '<br>' + words.slice(mid).join(' ');
+                                            }
+                                        }
+
                                         return `
                                             <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
-                                                ${name}
+                                                ${displayName}
                                             </span>
                                         `;
                                     }).join('')}

@@ -890,99 +890,184 @@
             
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                
-                if (validateForm()) {
+
+                // وضع علامة أن المستخدم بدأ في التفاعل (في حالة لم يكن قد فعل ذلك)
+                userHasStartedInteracting = true;
+
+                const errors = validateForm();
+                if (errors.length === 0) {
                     await submitForm();
+                } else {
+                    showDynamicGeneralError(errors);
                 }
             });
             
-            // Add event listeners to form fields to hide general error when user starts typing
+            // Add event listeners to form fields for dynamic validation
             const formFields = form.querySelectorAll('input, textarea, select');
             formFields.forEach(field => {
                 field.addEventListener('input', function() {
-                    // Hide general error when user starts typing
-                    hideGeneralError();
+                    updateValidationErrors();
                 });
-                
+
                 field.addEventListener('change', function() {
-                    // Hide general error when user makes a selection
-                    hideGeneralError();
+                    updateValidationErrors();
                 });
             });
-            
+
             // Add event listeners to checkboxes and radio buttons
             const checkboxes = form.querySelectorAll('input[type="checkbox"], input[type="radio"]');
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
-                    // Hide general error when user makes a selection
-                    hideGeneralError();
+                    updateValidationErrors();
                 });
             });
 
+            // Add event listener for category change to update subcategories
+            const categorySelect = document.getElementById('request-category');
+            if (categorySelect) {
+                categorySelect.addEventListener('change', function() {
+                    // Update subcategories first, then validate
+                    setTimeout(updateValidationErrors, 100);
+                });
+            }
+
+            // Add event listeners for image changes
+            window.addEventListener('imageChanged', function() {
+                updateValidationErrors();
+            });
+
+            // Add event listeners for subcategory checkboxes (they are dynamically created)
+            document.addEventListener('change', function(e) {
+                if (e.target.name === 'subcategory') {
+                    updateValidationErrors();
+                }
+            });
+
+            // Don't initialize validation on page load - only show errors when user tries to submit or interacts with fields
+
             
                         function validateForm() {
-                let isValid = true;
-                
-                // Clear previous errors
-                clearAllErrors();
-                
+                const errors = [];
+
                 // Validate description
                 const description = document.getElementById('request-description').value.trim();
                 if (!description) {
-                    showError('request-description', 'وصف المنتج مطلوب');
-                    isValid = false;
+                    errors.push('وصف المنتج');
                 }
-                
+
                 // Validate category
                 const category = document.getElementById('request-category').value;
                 if (!category) {
-                    showError('request-category', 'التصنيف الرئيسي مطلوب');
-                    isValid = false;
+                    errors.push('التصنيف الرئيسي');
                 }
-                
+
                 // Validate subcategory
                 const subcategories = document.querySelectorAll('input[name="subcategory"]:checked');
                 if (subcategories.length === 0) {
-                    showError('request-subcategory', 'يجب اختيار تصنيف فرعي واحد على الأقل');
-                    isValid = false;
+                    errors.push('التصنيف الفرعي');
                 }
-                
+
                 // Validate governorates (required)
                 const selectedGovernorates = Array.from(document.querySelectorAll('.governorate-checkbox:checked'));
                 if (selectedGovernorates.length === 0) {
-                    showError('request-governorate', 'يجب اختيار محافظة واحدة على الأقل');
-                    isValid = false;
+                    errors.push('المحافظات');
                 }
-                
-                // Cities are optional - no validation needed
-                // const selectedCities = Array.from(document.querySelectorAll('input[name="cities"]:checked'));
-                // if (selectedCities.length === 0) {
-                //     showError('cities', 'يجب اختيار مدينة واحدة على الأقل من المحافظات المختارة');
-                //     isValid = false;
-                // }
-                
+
                 // Validate main image (required)
                 if (!window.currentImages || !window.currentImages.main) {
-                    showError('request-main-image', 'الصورة الرئيسية مطلوبة');
-                    isValid = false;
+                    errors.push('الصورة الرئيسية');
                 }
-                
+
                 // Validate social media (at least one required)
                 const whatsapp = document.getElementById('request-whatsapp').value.trim();
                 const facebook = document.getElementById('request-facebook').value.trim();
                 const instagram = document.getElementById('request-instagram').value.trim();
-                
+
                 if (!whatsapp && !facebook && !instagram) {
-                    showError('social-media', 'يجب ملء حقل واحد على الأقل من وسائل التواصل الاجتماعي');
-                    isValid = false;
+                    errors.push('وسائل التواصل الاجتماعي');
                 }
-                
-                // Show general error alert if there are validation errors
-                if (!isValid) {
-                    showGeneralError();
+
+                return errors;
+            }
+
+            // متغير لتتبع ما إذا كان المستخدم قد بدأ في التفاعل مع النموذج
+            let userHasStartedInteracting = false;
+
+            // دالة التحقق التلقائي الديناميكي
+            function updateValidationErrors() {
+                // وضع علامة أن المستخدم بدأ في التفاعل
+                userHasStartedInteracting = true;
+
+                const errors = validateForm();
+
+                if (errors.length > 0) {
+                    showDynamicGeneralError(errors);
+                } else {
+                    hideGeneralError();
+                    showCompletionMessage();
                 }
-                
-                return isValid;
+            }
+
+            // دالة عرض رسالة الإكمال
+            function showCompletionMessage() {
+                // لا تظهر رسالة الإكمال إلا إذا كان المستخدم قد بدأ في التفاعل
+                if (!userHasStartedInteracting) {
+                    return;
+                }
+
+                const generalErrorAlert = document.getElementById('general-error-alert');
+                const generalErrorMessage = document.getElementById('general-error-message');
+
+                if (generalErrorAlert && generalErrorMessage) {
+                    const message = '✅ <strong>ممتاز! جميع الحقول المطلوبة مكتملة</strong><br><small class="text-green-600">يمكنك الآن إرسال الطلب</small>';
+
+                    generalErrorMessage.innerHTML = message;
+                    generalErrorAlert.classList.remove('hidden');
+                    generalErrorAlert.classList.remove('bg-red-50', 'border-red-200');
+                    generalErrorAlert.classList.add('bg-green-50', 'border-green-200');
+
+                    // Scroll to the message only if it's the first time showing completion
+                    if (generalErrorAlert.classList.contains('hidden')) {
+                        generalErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+
+                    // Auto-hide after 3 seconds
+                    setTimeout(() => {
+                        hideGeneralError();
+                        generalErrorAlert.classList.remove('bg-green-50', 'border-green-200');
+                        generalErrorAlert.classList.add('bg-red-50', 'border-red-200');
+                    }, 3000);
+                }
+            }
+
+            // دالة عرض رسالة الخطأ الديناميكية
+            function showDynamicGeneralError(errors) {
+                // لا تظهر الرسالة إلا إذا كان المستخدم قد بدأ في التفاعل
+                if (!userHasStartedInteracting) {
+                    return;
+                }
+
+                const generalErrorAlert = document.getElementById('general-error-alert');
+                const generalErrorMessage = document.getElementById('general-error-message');
+
+                if (generalErrorAlert && generalErrorMessage) {
+                    let message = '❌ <strong>يرجى ملء الحقول التالية:</strong><br>';
+                    message += '<ul class="list-disc list-inside mt-2 space-y-1">';
+
+                    errors.forEach(error => {
+                        message += `<li class="text-red-600">${error}</li>`;
+                    });
+
+                    message += '</ul>';
+
+                    generalErrorMessage.innerHTML = message;
+                    generalErrorAlert.classList.remove('hidden');
+
+                    // Scroll to the error alert only if it's the first time showing
+                    if (generalErrorAlert.classList.contains('hidden')) {
+                        generalErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
             }
             
             function clearAllErrors() {
@@ -1361,7 +1446,9 @@
                 if (typeof window.setupSlotEventListeners === 'function') {
                     window.setupSlotEventListeners();
                 }
-                
+
+                // Don't update validation errors after clearing - let user start fresh
+
                             console.log('✅ Form cleared successfully');
         }
     });
@@ -1840,7 +1927,10 @@
                     `;
                     
                     currentImages[slotName] = file;
-                    
+
+                    // Trigger validation update
+                    window.dispatchEvent(new CustomEvent('imageChanged'));
+
                     // Re-setup event listeners for this slot
                     if (typeof window.setupSlotEventListeners === 'function') {
                         window.setupSlotEventListeners();
@@ -1940,13 +2030,16 @@
                 currentImages[slotName] = null;
                 resetSlot(slotName);
                 updateImageCounter();
+
+                // Trigger validation update
+                window.dispatchEvent(new CustomEvent('imageChanged'));
             }
             
             function swapImages(slot1, slot2) {
                 const temp = currentImages[slot1];
                 currentImages[slot1] = currentImages[slot2];
                 currentImages[slot2] = temp;
-                
+
                 // Re-render both slots
                 if (currentImages[slot1]) {
                     assignImageToSlot(currentImages[slot1], slot1);
@@ -1954,6 +2047,9 @@
                 if (currentImages[slot2]) {
                     assignImageToSlot(currentImages[slot2], slot2);
                 }
+
+                // Trigger validation update (since main image might have changed)
+                window.dispatchEvent(new CustomEvent('imageChanged'));
             }
             
             function clearAllSlots() {
