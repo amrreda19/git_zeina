@@ -1919,6 +1919,26 @@
             // Apply subcategory filter
             if (activeFilters.subcategory.length > 0) {
                 filteredProducts = filteredProducts.filter(product => {
+                    // خريطة تحويل النصوص العربية إلى أكواد
+                    const arabicToCodeMap = {
+                        'تورتة زفاف': 'cake-wedding',
+                        'تورتة خطوبة': 'cake-engagement',
+                        'تورتة عيد ميلاد': 'cake-birthday',
+                        'تورتة شوكولاتة': 'cake-chocolate',
+                        'تورتة فواكه': 'cake-fruit',
+                        'صينية شوكولاتة': 'cake-chocolate-tray'
+                    };
+                    
+                    // خريطة تحويل الأكواد إلى نصوص عربية
+                    const codeToArabicMap = {
+                        'cake-wedding': 'تورتة زفاف',
+                        'cake-engagement': 'تورتة خطوبة',
+                        'cake-birthday': 'تورتة عيد ميلاد',
+                        'cake-chocolate': 'تورتة شوكولاتة',
+                        'cake-fruit': 'تورتة فواكه',
+                        'cake-chocolate-tray': 'صينية شوكولاتة'
+                    };
+                    
                     // Handle different subcategory formats
                     let productSubcategories = [];
                     
@@ -1939,9 +1959,24 @@
                     }
                     
                     // Check if any of the selected subcategories match the product's subcategories
-                    return activeFilters.subcategory.some(selected => 
-                        productSubcategories.includes(selected)
-                    );
+                    return activeFilters.subcategory.some(selectedCode => {
+                        // Check direct match with code
+                        if (productSubcategories.includes(selectedCode)) {
+                            return true;
+                        }
+                        
+                        // Check match with Arabic text
+                        const selectedArabic = codeToArabicMap[selectedCode];
+                        if (selectedArabic && productSubcategories.includes(selectedArabic)) {
+                            return true;
+                        }
+                        
+                        // Check if product has Arabic text that matches the selected code
+                        return productSubcategories.some(productSub => {
+                            const productCode = arabicToCodeMap[productSub];
+                            return productCode === selectedCode;
+                        });
+                    });
                 });
             }
 
@@ -2180,29 +2215,26 @@
                     : 'https://placehold.co/400x300/EEE/31343C?text=لا+توجد+صورة';
                 
                 // Get subcategory display name
-                let subcategoryName = '';
-                let subcategoryColor = 'bg-blue-500';
+                let subcategoryNames = [];
+                let subcategoryColors = [];
                 
-                // Debug: Log the actual subcategory data
-                console.log('🔍 Product subcategory data:', {
+                // تسجيل بيانات التصنيف الفرعي للتشخيص
+                console.log('🔍 Product subcategory debug:', {
                     productId: product.id,
                     subcategory: product.subcategory,
                     subcategoryType: typeof product.subcategory,
                     isArray: Array.isArray(product.subcategory),
-                    length: product.subcategory ? product.subcategory.length : 'N/A'
+                    stringified: product.subcategory ? JSON.stringify(product.subcategory) : 'null'
                 });
-                
-                let subcategoryNames = [];
-                let subcategoryColors = [];
                 
                 if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
                     const subcategoryMap = {
                         'cake-wedding': { name: 'تورتة زفاف', color: 'bg-pink-500' },
                         'cake-engagement': { name: 'تورتة خطوبة', color: 'bg-purple-500' },
                         'cake-birthday': { name: 'تورتة عيد ميلاد', color: 'bg-yellow-500' },
-                        'cake-chocolate': { name: 'تورتة شوكولاتة', color: 'bg-brown-500' },
+                        'cake-chocolate': { name: 'تورتة شوكولاتة', color: 'bg-amber-500' },
                         'cake-fruit': { name: 'تورتة فواكه', color: 'bg-green-500' },
-                        'cake-custom': { name: 'تورتة مخصصة', color: 'bg-indigo-500' }
+                        'cake-chocolate-tray': { name: 'صينية شوكولاتة', color: 'bg-orange-500' }
                     };
                     
                     // معالجة جميع التصنيفات الفرعية
@@ -2213,23 +2245,44 @@
                             subcategoryColors.push(subcategoryInfo.color);
                         }
                     });
-                    
-                    console.log('🔍 All subcategories:', subcategoryNames);
                 } else if (product.subcategory && typeof product.subcategory === 'string') {
-                    // Handle case where subcategory is a JSON string
-                    console.log('🔍 Subcategory is a string:', product.subcategory);
+                    // Handle case where subcategory is a JSON string or Arabic text
+                    
+                    // خريطة للنصوص العربية المباشرة
+                    const arabicToCodeMap = {
+                        'تورتة زفاف': 'cake-wedding',
+                        'تورتة خطوبة': 'cake-engagement',
+                        'تورتة عيد ميلاد': 'cake-birthday',
+                        'تورتة شوكولاتة': 'cake-chocolate',
+                        'تورتة فواكه': 'cake-fruit',
+                        'صينية شوكولاتة': 'cake-chocolate-tray'
+                    };
+                    
                     try {
-                        const subcategoryArray = JSON.parse(product.subcategory);
-                        console.log('🔍 Parsed subcategory array:', subcategoryArray);
+                        let subcategoryArray = [];
+                        
+                        // محاولة تحليل JSON أولاً
+                        try {
+                            subcategoryArray = JSON.parse(product.subcategory);
+                        } catch (parseError) {
+                            // إذا فشل JSON، تحقق من النص العربي المباشر
+                            const subcategoryCode = arabicToCodeMap[product.subcategory];
+                            if (subcategoryCode) {
+                                subcategoryArray = [subcategoryCode];
+                            } else {
+                                // استخدم النص كما هو
+                                subcategoryArray = [product.subcategory];
+                            }
+                        }
                         
                         if (Array.isArray(subcategoryArray) && subcategoryArray.length > 0) {
                             const subcategoryMap = {
                                 'cake-wedding': { name: 'تورتة زفاف', color: 'bg-pink-500' },
                                 'cake-engagement': { name: 'تورتة خطوبة', color: 'bg-purple-500' },
                                 'cake-birthday': { name: 'تورتة عيد ميلاد', color: 'bg-yellow-500' },
-                                'cake-chocolate': { name: 'تورتة شوكولاتة', color: 'bg-brown-500' },
+                                'cake-chocolate': { name: 'تورتة شوكولاتة', color: 'bg-amber-500' },
                                 'cake-fruit': { name: 'تورتة فواكه', color: 'bg-green-500' },
-                                'cake-custom': { name: 'تورتة مخصصة', color: 'bg-indigo-500' }
+                                'cake-chocolate-tray': { name: 'صينية شوكولاتة', color: 'bg-orange-500' }
                             };
                             
                             // معالجة جميع التصنيفات الفرعية
@@ -2238,21 +2291,40 @@
                                 if (subcategoryInfo) {
                                     subcategoryNames.push(subcategoryInfo.name);
                                     subcategoryColors.push(subcategoryInfo.color);
+                                } else {
+                                    // إذا لم يتم العثور على ترجمة، استخدم النص كما هو
+                                    subcategoryNames.push(subcat);
+                                    subcategoryColors.push('bg-gray-500');
                                 }
                             });
-                            
-                            console.log('🔍 All subcategories from parsed array:', subcategoryNames);
                         }
                     } catch (error) {
-                        console.error('🔍 Error parsing subcategory JSON:', error);
+                        console.error('🔍 Error processing subcategory:', error);
+                    }
+                } else if (product.subcategory) {
+                    // محاولة أخيرة لمعالجة أي تنسيق آخر
+                    console.log('🔍 Fallback subcategory processing:', product.subcategory);
+                    const subcategoryMap = {
+                        'cake-wedding': { name: 'تورتة زفاف', color: 'bg-pink-500' },
+                        'cake-engagement': { name: 'تورتة خطوبة', color: 'bg-purple-500' },
+                        'cake-birthday': { name: 'تورتة عيد ميلاد', color: 'bg-yellow-500' },
+                        'cake-chocolate': { name: 'تورتة شوكولاتة', color: 'bg-amber-500' },
+                        'cake-fruit': { name: 'تورتة فواكه', color: 'bg-green-500' },
+                        'cake-chocolate-tray': { name: 'صينية شوكولاتة', color: 'bg-orange-500' }
+                    };
+                    
+                    const subcategoryInfo = subcategoryMap[product.subcategory];
+                    if (subcategoryInfo) {
+                        subcategoryNames.push(subcategoryInfo.name);
+                        subcategoryColors.push(subcategoryInfo.color);
                     }
                 }
                 
-                // إذا لم توجد تصنيفات فرعية، استخدم قيم افتراضية
-                if (subcategoryNames.length === 0) {
-                    subcategoryNames = ['منتج'];
-                    subcategoryColors = ['bg-gray-500'];
-                }
+                console.log('🔍 Final subcategory result:', {
+                    productId: product.id,
+                    subcategoryNames,
+                    subcategoryColors
+                });
                 
 
                 
@@ -2270,18 +2342,20 @@
                             </div>
                         </div>
                                                                             <div class="p-3 sm:p-4">
-                            <div class="mb-2 flex flex-wrap gap-1">
-                                ${subcategoryNames.map((name, index) => {
-                                    const color = subcategoryColors[index];
-                                    const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
-                                    const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
-                                    return `
-                                        <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
-                                            ${name}
-                                        </span>
-                                    `;
-                                }).join('')}
-                            </div>
+                            ${subcategoryNames.length > 0 ? `
+                                <div class="mb-2 flex flex-wrap gap-1">
+                                    ${subcategoryNames.map((name, index) => {
+                                        const color = subcategoryColors[index];
+                                        const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
+                                        const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
+                                        return `
+                                            <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                                                ${name}
+                                            </span>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
 
                             <div class="flex justify-between items-center">
                                 <span class="gold-text font-bold text-sm sm:text-lg">

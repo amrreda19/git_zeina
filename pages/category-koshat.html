@@ -1672,6 +1672,18 @@
             // Apply subcategory filter
             if (activeFilters.subcategory.length > 0) {
                 filteredProducts = filteredProducts.filter(product => {
+                    // خريطة تحويل النصوص العربية إلى أكواد
+                    const arabicToCodeMap = {
+                        'كوشات زفاف': 'koshat-wedding',
+                        'كوشات خطوبة': 'koshat-engagement'
+                    };
+                    
+                    // خريطة تحويل الأكواد إلى نصوص عربية
+                    const codeToArabicMap = {
+                        'koshat-wedding': 'كوشات زفاف',
+                        'koshat-engagement': 'كوشات خطوبة'
+                    };
+                    
                     // Handle different subcategory formats
                     let productSubcategories = [];
                     
@@ -1692,9 +1704,24 @@
                     }
                     
                     // Check if any of the selected subcategories match the product's subcategories
-                    return activeFilters.subcategory.some(selected => 
-                        productSubcategories.includes(selected)
-                    );
+                    return activeFilters.subcategory.some(selectedCode => {
+                        // Check direct match with code
+                        if (productSubcategories.includes(selectedCode)) {
+                            return true;
+                        }
+                        
+                        // Check match with Arabic text
+                        const selectedArabic = codeToArabicMap[selectedCode];
+                        if (selectedArabic && productSubcategories.includes(selectedArabic)) {
+                            return true;
+                        }
+                        
+                        // Check if product has Arabic text that matches the selected code
+                        return productSubcategories.some(productSub => {
+                            const productCode = arabicToCodeMap[productSub];
+                            return productCode === selectedCode;
+                        });
+                    });
                 });
             }
 
@@ -1928,31 +1955,13 @@
                     : 'https://placehold.co/400x300/EEE/31343C?text=لا+توجد+صورة';
                 
                 // Get subcategory display name
-                let subcategoryName = '';
-                let subcategoryColor = 'bg-blue-500';
-                
-                // Debug: Log the subcategory data
-                console.log('🔍 Product subcategory data:', {
-                    productId: product.id,
-                    subcategory: product.subcategory,
-                    subcategoryType: typeof product.subcategory,
-                    isArray: Array.isArray(product.subcategory),
-                    length: product.subcategory ? product.subcategory.length : 'N/A'
-                });
-                
                 let subcategoryNames = [];
                 let subcategoryColors = [];
                 
                 if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
                     const subcategoryMap = {
                         'koshat-wedding': { name: 'كوشة زفاف', color: 'bg-pink-500' },
-                        'koshat-engagement': { name: 'كوشة خطوبة', color: 'bg-purple-500' },
-                        'koshat-birthday': { name: 'كوشة عيد ميلاد', color: 'bg-yellow-500' },
-                        'koshat-party': { name: 'كوشة حفلات', color: 'bg-green-500' },
-                        'koshat-corporate': { name: 'كوشة شركات', color: 'bg-indigo-500' },
-                        'koshat-graduation': { name: 'كوشة تخرج', color: 'bg-red-500' },
-                        'koshat-baby': { name: 'كوشة مولود', color: 'bg-teal-500' },
-                        'koshat-anniversary': { name: 'كوشة ذكرى', color: 'bg-orange-500' }
+                        'koshat-engagement': { name: 'كوشة خطوبة', color: 'bg-purple-500' }
                     };
                     
                     // معالجة جميع التصنيفات الفرعية
@@ -1963,23 +1972,36 @@
                             subcategoryColors.push(subcategoryInfo.color);
                         }
                     });
-                    
-                    console.log('🔍 All subcategories:', subcategoryNames);
                 } else if (product.subcategory && typeof product.subcategory === 'string') {
+                    // Handle case where subcategory is a JSON string or Arabic text
+                    
+                    // خريطة للنصوص العربية المباشرة
+                    const arabicToCodeMap = {
+                        'كوشات زفاف': 'koshat-wedding',
+                        'كوشات خطوبة': 'koshat-engagement'
+                    };
+                    
                     try {
-                        const subcategoryArray = JSON.parse(product.subcategory);
-                        console.log('🔍 Parsed subcategory array:', subcategoryArray);
+                        let subcategoryArray = [];
+                        
+                        // محاولة تحليل JSON أولاً
+                        try {
+                            subcategoryArray = JSON.parse(product.subcategory);
+                        } catch (parseError) {
+                            // إذا فشل JSON، تحقق من النص العربي المباشر
+                            const subcategoryCode = arabicToCodeMap[product.subcategory];
+                            if (subcategoryCode) {
+                                subcategoryArray = [subcategoryCode];
+                            } else {
+                                // استخدم النص كما هو
+                                subcategoryArray = [product.subcategory];
+                            }
+                        }
                         
                         if (Array.isArray(subcategoryArray) && subcategoryArray.length > 0) {
                             const subcategoryMap = {
                                 'koshat-wedding': { name: 'كوشة زفاف', color: 'bg-pink-500' },
-                                'koshat-engagement': { name: 'كوشة خطوبة', color: 'bg-purple-500' },
-                                'koshat-birthday': { name: 'كوشة عيد ميلاد', color: 'bg-yellow-500' },
-                                'koshat-party': { name: 'كوشة حفلات', color: 'bg-green-500' },
-                                'koshat-corporate': { name: 'كوشة شركات', color: 'bg-indigo-500' },
-                                'koshat-graduation': { name: 'كوشة تخرج', color: 'bg-red-500' },
-                                'koshat-baby': { name: 'كوشة مولود', color: 'bg-teal-500' },
-                                'koshat-anniversary': { name: 'كوشة ذكرى', color: 'bg-orange-500' }
+                                'koshat-engagement': { name: 'كوشة خطوبة', color: 'bg-purple-500' }
                             };
                             
                             // معالجة جميع التصنيفات الفرعية
@@ -1988,30 +2010,18 @@
                                 if (subcategoryInfo) {
                                     subcategoryNames.push(subcategoryInfo.name);
                                     subcategoryColors.push(subcategoryInfo.color);
+                                } else {
+                                    // إذا لم يتم العثور على ترجمة، استخدم النص كما هو
+                                    subcategoryNames.push(subcat);
+                                    subcategoryColors.push('bg-gray-500');
                                 }
                             });
-                            
-                            console.log('🔍 All subcategories from parsed array:', subcategoryNames);
                         }
                     } catch (error) {
                         console.error('🔍 Error parsing subcategory JSON:', error);
                     }
                 }
-                
-                // إذا لم توجد تصنيفات فرعية، استخدم قيم افتراضية
-                if (subcategoryNames.length === 0) {
-                    subcategoryNames = ['منتج'];
-                    subcategoryColors = ['bg-gray-500'];
-                }
-                
-                console.log('🔍 Final subcategory result:', {
-                    productId: product.id,
-                    subcategoryNames: subcategoryNames,
-                    subcategoryColors: subcategoryColors
-                });
-                
 
-                
                 return `
                     <div class="product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300" data-product-id="${product.id}">
                         <div class="image-container">
@@ -2026,18 +2036,20 @@
                             </div>
                         </div>
                         <div class="p-3 sm:p-4">
-                            <div class="mb-2 flex flex-wrap gap-1">
-                                ${subcategoryNames.map((name, index) => {
-                                    const color = subcategoryColors[index];
-                                    const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
-                                    const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
-                                    return `
-                                        <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
-                                            ${name}
-                                        </span>
-                                    `;
-                                }).join('')}
-                            </div>
+                            ${subcategoryNames.length > 0 ? `
+                                <div class="mb-2 flex flex-wrap gap-1">
+                                    ${subcategoryNames.map((name, index) => {
+                                        const color = subcategoryColors[index];
+                                        const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
+                                        const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
+                                        return `
+                                            <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                                                ${name}
+                                            </span>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
 
                             <div class="flex justify-between items-center">
                                 <span class="gold-text font-bold text-sm sm:text-lg">

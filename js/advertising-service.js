@@ -1042,10 +1042,10 @@ class AdvertisingService {
                         break;
                 }
                 
-                // جلب بيانات المنتج الحقيقي
+                // جلب بيانات المنتج الحقيقي مع التأكد من جلب جميع الحقول
                 const { data: product, error: productError } = await this.supabase
                     .from(tableName)
-                    .select('*')
+                    .select('id, description, price, image_urls, image_url, category, subcategory, governorate, cities, whatsapp, facebook, instagram, created_at, updated_at')
                     .eq('id', ad.product_id)
                     .single();
                 

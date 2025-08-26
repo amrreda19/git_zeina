@@ -1539,6 +1539,22 @@
             // Apply subcategory filter
             if (activeFilters.subcategory.length > 0) {
                 filteredProducts = filteredProducts.filter(product => {
+                    // خريطة تحويل النصوص العربية إلى أكواد
+                    const arabicToCodeMap = {
+                        'ديكور عيد ميلاد': 'other-birthday',
+                        'استقبال المولود بالمستشفى': 'other-hospital',
+                        'ديكور استقبال عروسة': 'other-bride',
+                        'ديكور حفلات بسيطة': 'other-party'
+                    };
+                    
+                    // خريطة تحويل الأكواد إلى نصوص عربية
+                    const codeToArabicMap = {
+                        'other-birthday': 'ديكور عيد ميلاد',
+                        'other-hospital': 'استقبال المولود بالمستشفى',
+                        'other-bride': 'ديكور استقبال عروسة',
+                        'other-party': 'ديكور حفلات بسيطة'
+                    };
+                    
                     // Handle different subcategory formats
                     let productSubcategories = [];
                     
@@ -1559,9 +1575,24 @@
                     }
                     
                     // Check if any of the selected subcategories match the product's subcategories
-                    return activeFilters.subcategory.some(selected => 
-                        productSubcategories.includes(selected)
-                    );
+                    return activeFilters.subcategory.some(selectedCode => {
+                        // Check direct match with code
+                        if (productSubcategories.includes(selectedCode)) {
+                            return true;
+                        }
+                        
+                        // Check match with Arabic text
+                        const selectedArabic = codeToArabicMap[selectedCode];
+                        if (selectedArabic && productSubcategories.includes(selectedArabic)) {
+                            return true;
+                        }
+                        
+                        // Check if product has Arabic text that matches the selected code
+                        return productSubcategories.some(productSub => {
+                            const productCode = arabicToCodeMap[productSub];
+                            return productCode === selectedCode;
+                        });
+                    });
                 });
             }
 
@@ -1834,22 +1865,33 @@
                     
                     console.log('🔍 All subcategories:', subcategoryNames);
                 } else if (product.subcategory && typeof product.subcategory === 'string') {
-                    // Handle case where subcategory is a JSON string
+                    // Handle case where subcategory is a JSON string or plain Arabic text
                     console.log('🔍 Subcategory is a string:', product.subcategory);
+                    
+                    // خريطة للنصوص العربية المباشرة
+                    const arabicToCodeMap = {
+                        'ديكور عيد ميلاد': 'other-birthday',
+                        'استقبال المولود بالمستشفى': 'other-hospital',
+                        'ديكور استقبال عروسة': 'other-bride',
+                        'ديكور حفلات بسيطة': 'other-party',
+                        'بالونات وهدايا': 'other-balloons'
+                    };
+                    
+                    // خريطة التصنيفات الفرعية
+                    const subcategoryMap = {
+                        'other-birthday': { name: 'ديكور عيد ميلاد', color: 'bg-yellow-500' },
+                        'other-hospital': { name: 'استقبال المولود بالمستشفى', color: 'bg-green-500' },
+                        'other-bride': { name: 'ديكور استقبال عروسة', color: 'bg-pink-500' },
+                        'other-party': { name: 'ديكور حفلات بسيطة', color: 'bg-purple-500' },
+                        'other-balloons': { name: 'بالونات وهدايا', color: 'bg-red-500' }
+                    };
+                    
+                    // محاولة معالجة النص كـ JSON أولاً
                     try {
                         const subcategoryArray = JSON.parse(product.subcategory);
                         console.log('🔍 Parsed subcategory array:', subcategoryArray);
                         
                         if (Array.isArray(subcategoryArray) && subcategoryArray.length > 0) {
-                            const subcategoryMap = {
-                                'other-birthday': { name: 'ديكور عيد ميلاد', color: 'bg-yellow-500' },
-                                'other-hospital': { name: 'ديكور استقبال مستشفى', color: 'bg-green-500' },
-                                'other-bride': { name: 'ديكور استقبال عروسة', color: 'bg-pink-500' },
-                                'other-party': { name: 'ديكور حفلات بسيطة', color: 'bg-purple-500' },
-                                'other-balloons': { name: 'بالونات وهدايا', color: 'bg-red-500' },
-                                'other-flowers': { name: 'زهور وأزهار', color: 'bg-pink-400' },
-                                'other-lights': { name: 'إضاءات ديكور', color: 'bg-yellow-400' }
-                            };
                             // معالجة جميع التصنيفات الفرعية
                             subcategoryArray.forEach(subcat => {
                                 const subcategoryInfo = subcategoryMap[subcat];
@@ -1862,7 +1904,22 @@
                             console.log('🔍 All subcategories from parsed array:', subcategoryNames);
                         }
                     } catch (error) {
-                        console.error('🔍 Error parsing subcategory JSON:', error);
+                        // إذا فشل تحليل JSON، قم بمعالجة النص كنص عربي مباشر
+                        console.log('🔍 Treating as direct Arabic text:', product.subcategory);
+                        
+                        // تحويل النص العربي إلى كود
+                        const subcategoryCode = arabicToCodeMap[product.subcategory];
+                        if (subcategoryCode) {
+                            const subcategoryInfo = subcategoryMap[subcategoryCode];
+                            if (subcategoryInfo) {
+                                subcategoryNames.push(subcategoryInfo.name);
+                                subcategoryColors.push(subcategoryInfo.color);
+                            }
+                        } else {
+                            // إذا لم يتم العثور على ترجمة، استخدم النص كما هو
+                            subcategoryNames.push(product.subcategory);
+                            subcategoryColors.push('bg-gray-500');
+                        }
                     }
                 }
                 
@@ -1886,18 +1943,20 @@
                             </div>
                         </div>
                                                     <div class="p-3 sm:p-4">
-                                                            <div class="mb-2 flex flex-wrap gap-1 justify-start">
-                                ${subcategoryNames.map((name, index) => {
-                                    const color = subcategoryColors[index];
-                                    const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100').replace('-400', '-100');
-                                    const textColor = color.replace('bg-', 'text-').replace('-500', '-800').replace('-400', '-800');
-                                    return `
-                                        <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
-                                            ${name}
-                                        </span>
-                                    `;
-                                }).join('')}
-                            </div>
+                            ${subcategoryNames.length > 0 ? `
+                                <div class="mb-2 flex flex-wrap gap-1">
+                                    ${subcategoryNames.map((name, index) => {
+                                        const color = subcategoryColors[index];
+                                        const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100').replace('-400', '-100');
+                                        const textColor = color.replace('bg-', 'text-').replace('-500', '-800').replace('-400', '-800');
+                                        return `
+                                            <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
+                                                ${name}
+                                            </span>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
 
                             <div class="flex justify-between items-center">
                                 <span class="gold-text font-bold text-sm sm:text-lg">

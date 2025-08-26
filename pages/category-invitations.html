@@ -1320,18 +1320,20 @@
                     </div>
                 </div>
                 <div class="p-3 sm:p-4">
-                    <div class="mb-2 flex flex-wrap gap-1">
-                        ${subcategoryNames.map((name, index) => {
-                            const color = subcategoryColors[index];
-                            const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
-                            const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
-                            return `
-                                <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
-                                    ${name}
-                                </span>
-                            `;
-                        }).join('')}
-                    </div>
+                    ${subcategoryNames.length > 0 ? `
+                        <div class="mb-2 flex flex-wrap gap-1">
+                            ${subcategoryNames.map((name, index) => {
+                                const color = subcategoryColors[index];
+                                const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
+                                const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
+                                return `
+                                    <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                                        ${name}
+                                    </span>
+                                `;
+                            }).join('')}
+                        </div>
+                    ` : ''}
 
                     <div class="flex justify-between items-center">
                         <span class="gold-text font-bold text-sm sm:text-lg">
@@ -1950,6 +1952,26 @@
             // Apply subcategory filter
             if (activeFilters.subcategory.length > 0) {
                 filtered = filtered.filter(product => {
+                    // خريطة تحويل النصوص العربية إلى أكواد
+                    const arabicToCodeMap = {
+                        'دعوة زفاف': 'invitation-wedding',
+                        'دعوة خطوبة': 'invitation-engagement',
+                        'توزيعات فرح': 'invitation-wedding-distribution',
+                        'توزيعات خطوبة': 'invitation-engagement-distribution',
+                        'توزيعات بالشوكولاتة': 'invitation-chocolate',
+                        'توزيعات بالعطور / البرفان': 'invitation-perfumed'
+                    };
+                    
+                    // خريطة تحويل الأكواد إلى نصوص عربية
+                    const codeToArabicMap = {
+                        'invitation-wedding': 'دعوة زفاف',
+                        'invitation-engagement': 'دعوة خطوبة',
+                        'invitation-wedding-distribution': 'توزيعات فرح',
+                        'invitation-engagement-distribution': 'توزيعات خطوبة',
+                        'invitation-chocolate': 'توزيعات بالشوكولاتة',
+                        'invitation-perfumed': 'توزيعات بالعطور / البرفان'
+                    };
+                    
                     if (product.subcategory) {
                         let productSubcategories = [];
                         
@@ -1973,66 +1995,25 @@
                         console.log('Product subcategories:', productSubcategories);
                         console.log('Active filters:', activeFilters.subcategory);
                         
-                        // Enhanced matching logic - Map Arabic names to English codes
-                        const arabicToEnglishMap = {
-                            'توزيعات بالشوكولاتة': 'invitation-chocolate',
-                            'توزيعات فرح': 'invitation-wedding-distribution',
-                            'توزيعات خطوبة': 'invitation-engagement-distribution',
-                            'دعوة زفاف': 'invitation-wedding',
-                            'دعوة خطوبة': 'invitation-engagement',
-                            'توزيعات مع هدية صغيره': 'invitation-gift',
-                            'توزيعات مع هدية صغيرة': 'invitation-gift',
-                            'توزيعات سبوع': 'invitation-baby-week',
-                            'توزيعات أطفال': 'invitation-kids',
-                            'دعوة رقمية': 'invitation-digital'
-                        };
-                        
-                        const matches = activeFilters.subcategory.some(selected => {
-                            // Direct match (English codes)
-                            if (productSubcategories.includes(selected)) {
-                                console.log(`✅ Direct match found: ${selected}`);
+                        // Check if any of the selected subcategories match the product's subcategories
+                        return activeFilters.subcategory.some(selectedCode => {
+                            // Check direct match with code
+                            if (productSubcategories.includes(selectedCode)) {
                                 return true;
                             }
                             
-                            // Check if any product subcategory (Arabic) maps to the selected filter (English)
-                            const arabicMatch = productSubcategories.some(productSub => {
-                                // Remove extra spaces and normalize
-                                const normalizedProductSub = productSub ? productSub.trim() : '';
-                                const mappedEnglish = arabicToEnglishMap[normalizedProductSub];
-                                
-                                if (mappedEnglish === selected) {
-                                    console.log(`✅ Arabic to English match: "${normalizedProductSub}" -> "${mappedEnglish}" = "${selected}"`);
-                                    return true;
-                                }
-                                
-                                // Handle comma-separated values
-                                if (normalizedProductSub.includes(',')) {
-                                    const parts = normalizedProductSub.split(',').map(part => part.trim());
-                                    return parts.some(part => arabicToEnglishMap[part] === selected);
-                                }
-                                
-                                return false;
+                            // Check match with Arabic text
+                            const selectedArabic = codeToArabicMap[selectedCode];
+                            if (selectedArabic && productSubcategories.includes(selectedArabic)) {
+                                return true;
+                            }
+                            
+                            // Check if product has Arabic text that matches the selected code
+                            return productSubcategories.some(productSub => {
+                                const productCode = arabicToCodeMap[productSub];
+                                return productCode === selectedCode;
                             });
-                            
-                            if (arabicMatch) {
-                                return true;
-                            }
-                            
-                            // Partial match for compatibility with old data
-                            const partialMatch = productSubcategories.some(productSub => {
-                                return productSub && productSub.includes(selected.replace('invitation-', ''));
-                            });
-                            
-                            if (partialMatch) {
-                                console.log(`✅ Partial match found for: ${selected}`);
-                                return true;
-                            }
-                            
-                            return false;
                         });
-                        
-                        console.log('Match result:', matches);
-                        return matches;
                     }
                     return false;
                 });

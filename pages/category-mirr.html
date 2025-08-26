@@ -1549,6 +1549,28 @@
             // Apply subcategory filter
             if (activeFilters.subcategory.length > 0) {
                 filteredProducts = filteredProducts.filter(product => {
+                    // خريطة تحويل النصوص العربية إلى أكواد
+                    const arabicToCodeMap = {
+                        'مرآة زفاف': 'mirror-wedding',
+                        'مرآة خطوبة': 'mirror-engagement',
+                        'مرآة ديكور': 'mirror-decorative',
+                        'مرآة مخصصة': 'mirror-custom',
+                        'مرآة كلاسيكية': 'mirror-classic',
+                        'مرآة عصرية': 'mirror-modern',
+                        'مرآة فاخرة': 'mirror-luxury'
+                    };
+                    
+                    // خريطة تحويل الأكواد إلى نصوص عربية
+                    const codeToArabicMap = {
+                        'mirror-wedding': 'مرآة زفاف',
+                        'mirror-engagement': 'مرآة خطوبة',
+                        'mirror-decorative': 'مرآة ديكور',
+                        'mirror-custom': 'مرآة مخصصة',
+                        'mirror-classic': 'مرآة كلاسيكية',
+                        'mirror-modern': 'مرآة عصرية',
+                        'mirror-luxury': 'مرآة فاخرة'
+                    };
+                    
                     // Handle different subcategory formats
                     let productSubcategories = [];
                     
@@ -1569,9 +1591,24 @@
                     }
                     
                     // Check if any of the selected subcategories match the product's subcategories
-                    return activeFilters.subcategory.some(selected => 
-                        productSubcategories.includes(selected)
-                    );
+                    return activeFilters.subcategory.some(selectedCode => {
+                        // Check direct match with code
+                        if (productSubcategories.includes(selectedCode)) {
+                            return true;
+                        }
+                        
+                        // Check match with Arabic text
+                        const selectedArabic = codeToArabicMap[selectedCode];
+                        if (selectedArabic && productSubcategories.includes(selectedArabic)) {
+                            return true;
+                        }
+                        
+                        // Check if product has Arabic text that matches the selected code
+                        return productSubcategories.some(productSub => {
+                            const productCode = arabicToCodeMap[productSub];
+                            return productCode === selectedCode;
+                        });
+                    });
                 });
             }
 
@@ -2009,18 +2046,20 @@
                             </div>
                         </div>
                         <div class="p-2 sm:p-3 md:p-4">
-                            <div class="mb-2 flex flex-wrap gap-1">
-                                ${subcategoryNames.map((name, index) => {
-                                    const color = subcategoryColors[index];
-                                    const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
-                                    const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
-                                    return `
-                                        <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
-                                            ${name}
-                                        </span>
-                                    `;
-                                }).join('')}
-                            </div>
+                            ${subcategoryNames.length > 0 ? `
+                                <div class="mb-2 flex flex-wrap gap-1">
+                                    ${subcategoryNames.map((name, index) => {
+                                        const color = subcategoryColors[index];
+                                        const bgColor = color.replace('bg-', 'bg-').replace('-500', '-100');
+                                        const textColor = color.replace('bg-', 'text-').replace('-500', '-800');
+                                        return `
+                                            <span class="inline-block ${bgColor} ${textColor} text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                                                ${name}
+                                            </span>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
 
                             <div class="flex justify-between items-center">
                                 <span class="gold-text font-bold text-sm sm:text-lg">

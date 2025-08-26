@@ -3238,6 +3238,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <p><strong>التصنيف:</strong> ${getCategoryName(request.category)}</p>
+                            <p><strong>التصنيف الفرعي:</strong> ${request.subcategory || 'غير محدد'}</p>
                             <p><strong>الوصف:</strong> ${request.description}</p>
                             <p><strong>السعر:</strong> ${request.price > 0 ? request.price + ' ج.م' : 'السعر عند الطلب'}</p>
                             <p><strong>المحافظات:</strong> ${request.governorate || 'غير محدد'}</p>
