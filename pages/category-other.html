@@ -1429,13 +1429,46 @@
                 
                 if (result.success) {
                     allProducts = result.data;
-                    console.log(`✅ تم جلب ${allProducts.length} منتج بنجاح`);
-                    
+                    console.log(`🔍 [DEBUG] ===== DATABASE LOAD SUCCESS in category-other =====`);
+                    console.log(`🔍 [DEBUG] Total products loaded from database:`, allProducts.length);
+
+                    // عرض عينة من البيانات المحملة
+                    if (allProducts.length > 0) {
+                        console.log(`🔍 [DEBUG] Sample product data from database:`, {
+                            firstProduct: {
+                                id: allProducts[0].id,
+                                title: allProducts[0].title,
+                                category: allProducts[0].category,
+                                subcategory: allProducts[0].subcategory,
+                                subcategoryType: typeof allProducts[0].subcategory
+                            },
+                            lastProduct: {
+                                id: allProducts[allProducts.length - 1].id,
+                                subcategory: allProducts[allProducts.length - 1].subcategory,
+                                subcategoryType: typeof allProducts[allProducts.length - 1].subcategory
+                            }
+                        });
+
+                        // إحصائيات التصنيفات الفرعية
+                        const productsWithSubcategories = allProducts.filter(p => p.subcategory && p.subcategory !== '' && p.subcategory !== null);
+                        const productsWithArraySubcategories = allProducts.filter(p => Array.isArray(p.subcategory));
+                        const productsWithStringSubcategories = allProducts.filter(p => typeof p.subcategory === 'string' && p.subcategory !== '' && p.subcategory !== null);
+
+                        console.log(`🔍 [DEBUG] Subcategory statistics:`, {
+                            totalProducts: allProducts.length,
+                            productsWithSubcategories: productsWithSubcategories.length,
+                            productsWithArraySubcategories: productsWithArraySubcategories.length,
+                            productsWithStringSubcategories: productsWithStringSubcategories.length,
+                            productsWithoutSubcategories: allProducts.length - productsWithSubcategories.length
+                        });
+                    }
+
                     // ترتيب المنتجات حسب المعايير المطلوبة
                     sortProductsByCriteria();
                     applyFilters();
                 } else {
                     console.error('❌ خطأ في جلب المنتجات:', result.error);
+                    console.log('🔍 [DEBUG] ❌ loadCategoryProducts failed with error:', result.error);
                     showError('حدث خطأ في تحميل المنتجات: ' + result.error);
                 }
                 
@@ -1825,25 +1858,43 @@
             
             emptyState.classList.add('hidden');
             
-            container.innerHTML = products.map(product => {
-                const imageUrl = product.image_urls && product.image_urls.length > 0 
-                    ? product.image_urls[0] 
+            console.log('🔍 [DEBUG] ===== STARTING renderProducts =====');
+            console.log('🔍 [DEBUG] Total products to render:', products.length);
+
+            container.innerHTML = products.map((product, index) => {
+                console.log(`🔍 [DEBUG] Processing product ${index + 1}/${products.length}:`, {
+                    id: product.id,
+                    title: product.title,
+                    category: product.category,
+                    subcategory: product.subcategory,
+                    subcategoryType: typeof product.subcategory
+                });
+
+                const imageUrl = product.image_urls && product.image_urls.length > 0
+                    ? product.image_urls[0]
                     : 'https://placehold.co/400x300/EEE/31343C?text=لا+توجد+صورة';
-                
+
                 // Get subcategory display name
                 let subcategoryNames = [];
                 let subcategoryColors = [];
-                
+                let processingMethod = 'NONE';
+
                 // Debug: Log the actual subcategory data
-                console.log('🔍 Product subcategory data:', {
-                    productId: product.id,
+                console.log(`🔍 [DEBUG] Raw subcategory data for product ${product.id}:`, {
                     subcategory: product.subcategory,
                     subcategoryType: typeof product.subcategory,
                     isArray: Array.isArray(product.subcategory),
+                    isNull: product.subcategory === null,
+                    isUndefined: product.subcategory === undefined,
+                    isEmptyString: product.subcategory === '',
                     length: product.subcategory ? product.subcategory.length : 'N/A'
                 });
                 
                 if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
+                    console.log(`🔍 [DEBUG] Processing ARRAY subcategories for product ${product.id}`);
+                    console.log(`🔍 [DEBUG] Array content:`, product.subcategory);
+                    processingMethod = 'ARRAY';
+
                     const subcategoryMap = {
                         'other-birthday': { name: 'ديكور عيد ميلاد', color: 'bg-yellow-500' },
                         'other-hospital': { name: 'ديكور استقبال مستشفى', color: 'bg-green-500' },
@@ -1853,21 +1904,34 @@
                         'other-flowers': { name: 'زهور وأزهار', color: 'bg-pink-400' },
                         'other-lights': { name: 'إضاءات ديكور', color: 'bg-yellow-400' }
                     };
-                    
+
+                    console.log(`🔍 [DEBUG] Subcategory map keys:`, Object.keys(subcategoryMap));
+
                     // معالجة جميع التصنيفات الفرعية
-                    product.subcategory.forEach(subcat => {
+                    product.subcategory.forEach((subcat, subIndex) => {
+                        console.log(`🔍 [DEBUG] Processing array item ${subIndex}: "${subcat}"`);
                         const subcategoryInfo = subcategoryMap[subcat];
+                        console.log(`🔍 [DEBUG] Found subcategoryInfo:`, subcategoryInfo);
+
                         if (subcategoryInfo) {
                             subcategoryNames.push(subcategoryInfo.name);
                             subcategoryColors.push(subcategoryInfo.color);
+                            console.log(`🔍 [DEBUG] ✅ Added subcategory: ${subcategoryInfo.name}`);
+                        } else {
+                            console.log(`🔍 [DEBUG] ❌ No mapping found for: "${subcat}"`);
+                            // إذا لم نجد ترجمة، استخدم النص كما هو
+                            subcategoryNames.push(subcat);
+                            subcategoryColors.push('bg-gray-500');
+                            console.log(`🔍 [DEBUG] ⚠️ Used raw text as fallback: "${subcat}"`);
                         }
                     });
-                    
-                    console.log('🔍 All subcategories:', subcategoryNames);
+
+                    console.log(`🔍 [DEBUG] Final subcategories from ARRAY:`, subcategoryNames);
                 } else if (product.subcategory && typeof product.subcategory === 'string') {
-                    // Handle case where subcategory is a JSON string or plain Arabic text
-                    console.log('🔍 Subcategory is a string:', product.subcategory);
-                    
+                    console.log(`🔍 [DEBUG] Processing STRING subcategories for product ${product.id}`);
+                    console.log(`🔍 [DEBUG] String content: "${product.subcategory}"`);
+                    processingMethod = 'STRING';
+
                     // خريطة للنصوص العربية المباشرة
                     const arabicToCodeMap = {
                         'ديكور عيد ميلاد': 'other-birthday',
@@ -1876,7 +1940,9 @@
                         'ديكور حفلات بسيطة': 'other-party',
                         'بالونات وهدايا': 'other-balloons'
                     };
-                    
+
+                    console.log(`🔍 [DEBUG] Arabic to code map:`, arabicToCodeMap);
+
                     // خريطة التصنيفات الفرعية
                     const subcategoryMap = {
                         'other-birthday': { name: 'ديكور عيد ميلاد', color: 'bg-yellow-500' },
@@ -1885,49 +1951,89 @@
                         'other-party': { name: 'ديكور حفلات بسيطة', color: 'bg-purple-500' },
                         'other-balloons': { name: 'بالونات وهدايا', color: 'bg-red-500' }
                     };
-                    
+
+                    console.log(`🔍 [DEBUG] Subcategory map:`, subcategoryMap);
+                    console.log(`🔍 [DEBUG] Attempting JSON.parse on: "${product.subcategory}"`);
+
                     // محاولة معالجة النص كـ JSON أولاً
                     try {
                         const subcategoryArray = JSON.parse(product.subcategory);
-                        console.log('🔍 Parsed subcategory array:', subcategoryArray);
-                        
+                        console.log(`🔍 [DEBUG] ✅ JSON.parse successful:`, subcategoryArray);
+                        console.log(`🔍 [DEBUG] Is array:`, Array.isArray(subcategoryArray));
+
                         if (Array.isArray(subcategoryArray) && subcategoryArray.length > 0) {
+                            console.log(`🔍 [DEBUG] Processing ${subcategoryArray.length} subcategories from JSON array`);
+                            processingMethod = 'JSON_ARRAY';
+
                             // معالجة جميع التصنيفات الفرعية
-                            subcategoryArray.forEach(subcat => {
+                            subcategoryArray.forEach((subcat, subIndex) => {
+                                console.log(`🔍 [DEBUG] Processing JSON array item ${subIndex}: "${subcat}"`);
                                 const subcategoryInfo = subcategoryMap[subcat];
+
                                 if (subcategoryInfo) {
                                     subcategoryNames.push(subcategoryInfo.name);
                                     subcategoryColors.push(subcategoryInfo.color);
+                                    console.log(`🔍 [DEBUG] ✅ Found mapping for "${subcat}" -> "${subcategoryInfo.name}"`);
+                                } else {
+                                    console.log(`🔍 [DEBUG] ❌ No mapping found for "${subcat}", using as raw text`);
+                                    // إذا لم نجد ترجمة، استخدم النص كما هو
+                                    subcategoryNames.push(subcat);
+                                    subcategoryColors.push('bg-gray-500');
                                 }
                             });
-                            
-                            console.log('🔍 All subcategories from parsed array:', subcategoryNames);
+
+                            console.log(`🔍 [DEBUG] Final subcategories from JSON array:`, subcategoryNames);
+                        } else {
+                            console.log(`🔍 [DEBUG] JSON parsed but not a valid array or empty`);
+                            processingMethod = 'JSON_INVALID';
                         }
                     } catch (error) {
-                        // إذا فشل تحليل JSON، قم بمعالجة النص كنص عربي مباشر
-                        console.log('🔍 Treating as direct Arabic text:', product.subcategory);
-                        
+                        console.log(`🔍 [DEBUG] ❌ JSON.parse failed:`, error.message);
+                        console.log(`🔍 [DEBUG] Treating as direct Arabic text: "${product.subcategory}"`);
+                        processingMethod = 'DIRECT_ARABIC';
+
                         // تحويل النص العربي إلى كود
                         const subcategoryCode = arabicToCodeMap[product.subcategory];
+                        console.log(`🔍 [DEBUG] Looking for Arabic mapping:`, {
+                            searchText: product.subcategory,
+                            foundCode: subcategoryCode
+                        });
+
                         if (subcategoryCode) {
                             const subcategoryInfo = subcategoryMap[subcategoryCode];
+                            console.log(`🔍 [DEBUG] Found subcategory info:`, subcategoryInfo);
+
                             if (subcategoryInfo) {
                                 subcategoryNames.push(subcategoryInfo.name);
                                 subcategoryColors.push(subcategoryInfo.color);
+                                console.log(`🔍 [DEBUG] ✅ Added translated subcategory: ${subcategoryInfo.name}`);
                             }
                         } else {
+                            console.log(`🔍 [DEBUG] ⚠️ No Arabic mapping found, using raw text`);
                             // إذا لم يتم العثور على ترجمة، استخدم النص كما هو
                             subcategoryNames.push(product.subcategory);
                             subcategoryColors.push('bg-gray-500');
+                            console.log(`🔍 [DEBUG] Used raw text as fallback: "${product.subcategory}"`);
                         }
                     }
+                } else {
+                    console.log(`🔍 [DEBUG] No valid subcategory data for product ${product.id}`);
+                    processingMethod = 'NO_DATA';
                 }
                 
                 // إذا لم توجد تصنيفات فرعية، استخدم قيم افتراضية
                 if (subcategoryNames.length === 0) {
+                    console.log(`🔍 [DEBUG] ⚠️ No subcategories found, using default for product ${product.id}`);
                     subcategoryNames = ['ديكور'];
                     subcategoryColors = ['bg-blue-500'];
+                    processingMethod = 'DEFAULT';
                 }
+
+                console.log(`🔍 [DEBUG] ===== SUBCATEGORY PROCESSING SUMMARY for product ${product.id} =====`);
+                console.log(`🔍 [DEBUG] Processing method:`, processingMethod);
+                console.log(`🔍 [DEBUG] Final subcategory names:`, subcategoryNames);
+                console.log(`🔍 [DEBUG] Final subcategory colors:`, subcategoryColors);
+                console.log(`🔍 [DEBUG] Number of subcategories:`, subcategoryNames.length);
                 
                 return `
                     <div class="product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300" data-product-id="${product.id}">
@@ -1985,7 +2091,19 @@
                         </div>
                     </div>
                 `;
+
+                console.log(`🔍 [DEBUG] Generated card HTML for product ${product.id}:`, {
+                    hasSubcategories: subcategoryNames.length > 1 || (subcategoryNames.length === 1 && subcategoryNames[0] !== 'ديكور'),
+                    subcategoryCount: subcategoryNames.length,
+                    mainSubcategory: subcategoryNames[0],
+                    processingMethod: processingMethod
+                });
+
+                return cardHtml;
             }).join('');
+
+            console.log('🔍 [DEBUG] ===== renderProducts COMPLETED =====');
+            console.log('🔍 [DEBUG] Total cards generated:', products.length);
         }
 
         // View product details
