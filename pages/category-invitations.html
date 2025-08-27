@@ -1135,6 +1135,20 @@
                             'invitation-engagement-distribution', 'invitation-chocolate', 'invitation-perfumed',
                             'invitation-gift', 'invitation-baby-week', 'invitation-kids', 'invitation-digital'
                         ]);
+                        
+                        // Log detailed subcategory analysis
+                        console.log('🔍 Detailed subcategory analysis:');
+                        allProducts.forEach((product, index) => {
+                            if (product.subcategory) {
+                                console.log(`Product ${index + 1} (ID: ${product.id}):`, {
+                                    subcategory: product.subcategory,
+                                    type: typeof product.subcategory,
+                                    isArray: Array.isArray(product.subcategory),
+                                    length: Array.isArray(product.subcategory) ? product.subcategory.length : 'N/A',
+                                    firstValue: Array.isArray(product.subcategory) ? product.subcategory[0] : product.subcategory
+                                });
+                            }
+                        });
                     }
                     
                     filteredProducts = [...allProducts];
@@ -1200,6 +1214,13 @@
             console.log('🔍 Product subcategory:', product.subcategory);
             console.log('🔍 Subcategory type:', typeof product.subcategory);
             console.log('🔍 Product keys:', Object.keys(product));
+            console.log('🔍 Subcategory value details:', {
+                value: product.subcategory,
+                type: typeof product.subcategory,
+                isArray: Array.isArray(product.subcategory),
+                length: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length : product.subcategory.length) : 'N/A',
+                isEmpty: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length === 0 : product.subcategory.trim() === '') : true
+            });
             
             const card = document.createElement('div');
             card.className = 'product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300';
@@ -1216,15 +1237,16 @@
             
             // Define subcategoryMap at function level so it's accessible to all blocks
             const subcategoryMap = {
+                // دعوات
                 'invitation-wedding': { name: 'دعوة زفاف', color: 'bg-pink-500' },
                 'invitation-engagement': { name: 'دعوة خطوبة', color: 'bg-purple-500' },
-                'invitation-wedding-distribution': { name: 'توزيعات فرح', color: 'bg-rose-500' },
-                'invitation-engagement-distribution': { name: 'توزيعات خطوبة', color: 'bg-violet-500' },
+                'invitation-wedding-distribution': { name: 'توزيعات زفاف', color: 'bg-pink-400' },
+                'invitation-engagement-distribution': { name: 'توزيعات خطوبة', color: 'bg-purple-400' },
                 'invitation-chocolate': { name: 'توزيعات بالشوكولاتة', color: 'bg-yellow-500' },
-                'invitation-perfumed': { name: 'توزيعات بالعطور / البرفان', color: 'bg-indigo-500' },
-                'invitation-gift': { name: 'توزيعات مع هدية صغيره', color: 'bg-red-500' },
-                'invitation-baby-week': { name: 'توزيعات سبوع', color: 'bg-blue-500' },
-                'invitation-kids': { name: 'توزيعات أطفال', color: 'bg-green-500' },
+                'invitation-perfumed': { name: 'توزيعات بالبرفان', color: 'bg-indigo-500' },
+                'invitation-gift': { name: 'توزيعات مع هدية صغيرة', color: 'bg-red-500' },
+                'invitation-baby-week': { name: 'أسبوع المولود', color: 'bg-blue-500' },
+                'invitation-kids': { name: 'دعوات أطفال', color: 'bg-green-500' },
                 'invitation-digital': { name: 'دعوة رقمية', color: 'bg-teal-500' }
             };
             
@@ -1232,6 +1254,14 @@
             console.log('🔍 Product subcategory:', product.subcategory);
             console.log('🔍 Subcategory type:', typeof product.subcategory);
             console.log('🔍 Product keys:', Object.keys(product));
+            console.log('🔍 Subcategory processing details:', {
+                hasSubcategory: !!product.subcategory,
+                subcategoryValue: product.subcategory,
+                subcategoryType: typeof product.subcategory,
+                isArray: Array.isArray(product.subcategory),
+                isEmpty: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length === 0 : product.subcategory.trim() === '') : true,
+                subcategoryMapKeys: Object.keys(subcategoryMap)
+            });
             
             if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
                 console.log('🔍 Processing array subcategory:', product.subcategory);
@@ -1239,14 +1269,21 @@
                 // معالجة جميع التصنيفات الفرعية
                 product.subcategory.forEach(subcat => {
                     console.log('🔍 Processing subcategory:', subcat);
-                    const subcategoryInfo = subcategoryMap[subcat];
-                    console.log('🔍 Found subcategory info:', subcategoryInfo);
-                    if (subcategoryInfo) {
-                        subcategoryNames.push(subcategoryInfo.name);
-                        subcategoryColors.push(subcategoryInfo.color);
+                    if (subcat && subcat.trim() !== '') { // تأكد من أن القيمة ليست فارغة
+                        const subcategoryInfo = subcategoryMap[subcat];
+                        console.log('🔍 Found subcategory info:', subcategoryInfo);
+                        if (subcategoryInfo) {
+                            subcategoryNames.push(subcategoryInfo.name);
+                            subcategoryColors.push(subcategoryInfo.color);
+                        } else {
+                            console.log('🔍 Subcategory not found in map:', subcat);
+                            // محاولة إصلاح البيانات إذا لم يتم العثور عليها في الخريطة
+                            subcategoryNames.push(subcat);
+                            subcategoryColors.push('bg-gray-500');
+                        }
                     }
                 });
-            } else if (product.subcategory && typeof product.subcategory === 'string') {
+            } else if (product.subcategory && typeof product.subcategory === 'string' && product.subcategory.trim() !== '') {
                 console.log('🔍 Processing string subcategory:', product.subcategory);
                 
                 // Check if it's a JSON string first
@@ -1257,11 +1294,18 @@
                         if (Array.isArray(subcategoryArray) && subcategoryArray.length > 0) {
                             subcategoryArray.forEach(subcat => {
                                 console.log('🔍 Processing parsed subcategory:', subcat);
-                                const subcategoryInfo = subcategoryMap[subcat];
-                                console.log('🔍 Found parsed subcategory info:', subcategoryInfo);
-                                if (subcategoryInfo) {
-                                    subcategoryNames.push(subcategoryInfo.name);
-                                    subcategoryColors.push(subcategoryInfo.color);
+                                if (subcat && subcat.trim() !== '') { // تأكد من أن القيمة ليست فارغة
+                                    const subcategoryInfo = subcategoryMap[subcat];
+                                    console.log('🔍 Found parsed subcategory info:', subcategoryInfo);
+                                    if (subcategoryInfo) {
+                                        subcategoryNames.push(subcategoryInfo.name);
+                                        subcategoryColors.push(subcategoryInfo.color);
+                                                            } else {
+                            console.log('🔍 Parsed subcategory not found in map:', subcat);
+                            // محاولة إصلاح البيانات إذا لم يتم العثور عليها في الخريطة
+                            subcategoryNames.push(subcat);
+                            subcategoryColors.push('bg-gray-500');
+                        }
                                 }
                             });
                         }
@@ -1290,23 +1334,80 @@
                         } else {
                             // If still not found, use the original string but format it
                             console.log('🔍 No matching key found, using original string:', product.subcategory);
-                            subcategoryNames = [product.subcategory];
-                            subcategoryColors = ['bg-gray-500'];
+                            if (product.subcategory && product.subcategory.trim() !== '') {
+                                subcategoryNames = [product.subcategory];
+                                subcategoryColors = ['bg-gray-500'];
+                            } else {
+                                console.log('🔍 Subcategory is empty or whitespace only');
+                            }
                         }
                     }
                 }
             } else {
                 console.log('🔍 No subcategory data found or subcategory is null/undefined');
+                console.log('🔍 Product details for debugging:', {
+                    id: product.id,
+                    name: product.name,
+                    subcategory: product.subcategory,
+                    subcategoryType: typeof product.subcategory,
+                    hasSubcategory: !!product.subcategory,
+                    subcategoryValue: product.subcategory,
+                    subcategoryLength: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length : product.subcategory.length) : 'N/A'
+                });
             }
             
             console.log('🔍 Final subcategory names:', subcategoryNames);
             console.log('🔍 Final subcategory colors:', subcategoryColors);
+            console.log('🔍 Final subcategory processing result:', {
+                productId: product.id,
+                productName: product.name,
+                originalSubcategory: product.subcategory,
+                processedNames: subcategoryNames,
+                processedColors: subcategoryColors,
+                namesCount: subcategoryNames.length,
+                colorsCount: subcategoryColors.length
+            });
             
             // إذا لم توجد تصنيفات فرعية، استخدم قيم افتراضية
             if (subcategoryNames.length === 0) {
                 console.log('🔍 No subcategories found, using default');
-                subcategoryNames = ['دعوة'];
-                subcategoryColors = ['bg-gray-500'];
+                console.log('🔍 Product that caused default:', {
+                    id: product.id,
+                    name: product.name,
+                    subcategory: product.subcategory,
+                    subcategoryType: typeof product.subcategory,
+                    subcategoryValue: product.subcategory,
+                    subcategoryLength: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length : product.subcategory.length) : 'N/A'
+                });
+                
+                // محاولة إصلاح البيانات إذا كانت فارغة أو غير صحيحة
+                if (product.subcategory && typeof product.subcategory === 'string' && product.subcategory.trim() !== '') {
+                    console.log('🔍 Attempting to fix subcategory data:', product.subcategory);
+                    // إذا كان التصنيف الفرعي موجود لكن لم يتم العثور عليه في الخريطة
+                    subcategoryNames = [product.subcategory];
+                    subcategoryColors = ['bg-gray-500'];
+                } else if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
+                    console.log('🔍 Attempting to fix array subcategory data:', product.subcategory);
+                    // إذا كان التصنيف الفرعي مصفوفة لكن لم يتم العثور عليها في الخريطة
+                    product.subcategory.forEach(subcat => {
+                        if (subcat && subcat.trim() !== '') {
+                            subcategoryNames.push(subcat);
+                            subcategoryColors.push('bg-gray-500');
+                        }
+                    });
+                } else {
+                    console.log('🔍 Using default subcategory for product:', product.id);
+                    subcategoryNames = ['دعوة'];
+                    subcategoryColors = ['bg-gray-500'];
+                }
+            }
+            
+            // تأكد من أن عدد الألوان يتطابق مع عدد الأسماء
+            while (subcategoryColors.length < subcategoryNames.length) {
+                subcategoryColors.push('bg-gray-500');
+            }
+            while (subcategoryColors.length > subcategoryNames.length) {
+                subcategoryColors.pop();
             }
             
             card.innerHTML = `
