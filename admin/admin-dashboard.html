@@ -10,6 +10,7 @@
     <script src="../js/supabase-config.js?v=2025-08-22-1"></script>
     <script src="../js/admin-security.js?v=2025-08-22-1"></script>
     <script src="../js/product-requests-service.js?v=2025-08-22-1"></script>
+    <script src="../js/cities-service.js?v=2025-08-22-1"></script>
     <script src="../js/advertising-service.js?v=2025-08-22-1"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1994970196400389"
      crossorigin="anonymous"></script>
@@ -386,6 +387,254 @@
             transform: translateY(-1px);
         }
 
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        /* Request Card Styles */
+        .request-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .request-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .request-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .status-pending {
+            background: #f59e0b;
+        }
+
+        .status-approved {
+            background: #10b981;
+        }
+
+        .status-rejected {
+            background: #ef4444;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f3f4f6;
+            flex-wrap: wrap;
+        }
+
+        .request-images {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .request-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .request-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .md\:grid-cols-2 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .space-y-4 > * + * {
+            margin-top: 1rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-gray-500 {
+            color: #6b7280;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+        }
+
+        /* Filter Buttons */
+        .filter-btn {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .filter-btn .count {
+            background: rgba(255,255,255,0.2);
+            color: inherit;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-right: 8px;
+        }
+
+        /* Section Styles */
+        .section-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .recent-activity {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        /* Spacing Utilities */
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .space-y-4 > * + * {
+            margin-top: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .request-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .request-actions .btn {
+                width: 100%;
+            }
+            
+            .grid-cols-1.md\:grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                padding: 20px;
+                width: 95%;
+            }
+        }
+
         .btn-view {
             background: #3b82f6;
             color: white;
@@ -428,6 +677,194 @@
         }
 
         /* ===== تصميم محترف لنافذة إضافة الإعلان ===== */
+        
+        /* Edit Request Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Request Details Modal Styles */
+        .request-details-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .request-details-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .request-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .request-detail-label {
+            font-weight: 600;
+            color: #374151;
+            min-width: 120px;
+        }
+
+        .request-detail-value {
+            color: #6b7280;
+            text-align: left;
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .request-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .request-image-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .request-image-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .request-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .request-image-item:hover .request-image-overlay {
+            opacity: 1;
+        }
+
+        .request-image-overlay button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Cities Filter Styles for Edit Request */
+        .cities-dropdown {
+            display: none;
+        }
+        
+        .cities-dropdown.show {
+            display: block !important;
+        }
+        
+        .cities-trigger.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+        
+        .cities-trigger.active {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+
+        /* Edit Image Styles */
+        .edit-image-item {
+            transition: all 0.3s ease;
+        }
+
+        .edit-image-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .edit-image-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+            z-index: 1000;
+            cursor: grabbing;
+        }
+
+        .edit-image-item.drag-over {
+            border: 2px dashed #d4af37 !important;
+            background: rgba(212, 175, 55, 0.1) !important;
+        }
+
+        .edit-drag-handle {
+            transition: all 0.3s ease;
+        }
+
+        .edit-drag-handle:hover {
+            background: rgba(0, 0, 0, 0.9) !important;
+            transform: scale(1.1);
+        }
+
+        .edit-image-number {
+            transition: all 0.3s ease;
+        }
+
+        .image-sort-instructions-edit {
+            animation: pulse-edit 2s infinite;
+        }
+
+        @keyframes pulse-edit {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
         
         /* خلفية النافذة المنبثقة */
         .modal-overlay {
@@ -1919,11 +2356,185 @@
                 <!-- سيتم ملء هذا القسم بواسطة JavaScript -->
             </div>
             
-            <!-- رسالة عدم وجود طلبات -->
-            <div id="no-requests-message" class="text-center py-8 text-gray-500" style="display: none;">
-                لا توجد طلبات في هذه الفئة
+                    <!-- رسالة عدم وجود طلبات -->
+        <div id="no-requests-message" class="text-center py-8 text-gray-500" style="display: none;">
+            لا توجد طلبات في هذه الفئة
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div id="request-details-modal" class="request-details-modal">
+        <div class="request-details-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; font-size: 1.5em;">تفاصيل الطلب</h3>
+                <button onclick="closeRequestDetails()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 5px;">×</button>
+            </div>
+            <div id="request-details-content">
+                <!-- سيتم ملء هذا القسم بواسطة JavaScript -->
             </div>
         </div>
+    </div>
+
+    <!-- Edit Request Modal -->
+    <div id="editRequestModal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0; font-size: 1.5em;">تعديل الطلب</h3>
+                <button onclick="closeEditRequestModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 5px; min-width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
+            </div>
+            
+            <form id="editRequestForm" style="display: grid; gap: 20px;">
+                <input type="hidden" id="edit-request-id">
+                
+                <!-- Request Details -->
+                <div style="display: grid; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">وصف المنتج</label>
+                        <textarea id="edit-request-description" rows="3" required style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;"></textarea>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">السعر (ج.م)</label>
+                            <input type="number" id="edit-request-price" step="0.01" style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">الفئة</label>
+                            <select id="edit-request-category" required style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                                <option value="koshat">كوشات</option>
+                                <option value="mirr">مرايا</option>
+                                <option value="cake">تورتة</option>
+                                <option value="other">ديكورات متنوعة</option>
+                                <option value="invitations">دعوات وتوزيعات</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Governorates and Subcategories -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">المحافظات</label>
+                        <div id="edit-request-governorate-checkboxes" style="max-height: 150px; overflow-y: auto; border: 2px solid #e1e5e9; border-radius: 8px; padding: 10px; background: white;">
+                            <!-- سيتم توليد المحافظات هنا -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">التصنيف الفرعي</label>
+                        <div id="edit-request-subcategory-checkboxes" style="max-height: 150px; overflow-y: auto; border: 2px solid #e1e5e9; border-radius: 8px; padding: 10px; background: white;">
+                            <!-- سيتم توليد التصنيفات الفرعية هنا -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cities -->
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">المناطق/المدن المتوفرة (اختياري)</label>
+                    <div id="edit-request-cities-container">
+                        <div class="cities-filter-container" style="position: relative; width: 100%; max-width: 400px; font-family: 'Tajawal', sans-serif;">
+                            <div class="cities-header" style="position: relative;">
+                                <div class="cities-trigger" id="edit-request-cities-trigger" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: white; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; min-height: 48px;">
+                                    <div class="trigger-content" style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                                        <svg class="location-icon" style="width: 20px; height: 20px; color: #6b7280; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        <span class="trigger-text" style="color: #374151; font-weight: 500; flex: 1;">اختر المناطق/المدن (اختياري)</span>
+                                        <span class="selected-count" id="edit-request-cities-selected-count" style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; min-width: 20px; text-align: center; display: none;"></span>
+                                    </div>
+                                    <svg class="chevron-icon" style="width: 16px; height: 16px; color: #6b7280; transition: transform 0.3s ease; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6,9 12,15 18,9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <div class="cities-dropdown" id="edit-request-cities-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #e5e7eb; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); z-index: 1000; margin-top: 4px; max-height: 400px; overflow: hidden;">
+                                <div class="dropdown-header" style="padding: 16px; border-bottom: 1px solid #e5e5e7;">
+                                    <div class="search-container" style="position: relative; margin-bottom: 12px;">
+                                        <svg class="search-icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #9ca3af;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <path d="m21 21-4.35-4.35"></path>
+                                        </svg>
+                                        <input type="text" id="edit-request-cities-search" placeholder="ابحث عن منطقة..." style="width: 100%; padding: 8px 12px 8px 36px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.3s ease;">
+                                    </div>
+                                    <div class="actions" style="display: flex; gap: 8px;">
+                                        <button type="button" id="edit-request-select-all-cities-btn" style="padding: 6px 12px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; color: #374151; cursor: pointer; transition: all 0.3s ease;">تحديد الكل</button>
+                                        <button type="button" id="edit-request-clear-all-cities-btn" style="padding: 6px 12px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; color: #374151; cursor: pointer; transition: all 0.3s ease;">إلغاء الكل</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="cities-list" id="edit-request-cities-list" style="max-height: 250px; overflow-y: auto; padding: 8px 0;">
+                                    <!-- Cities will be populated here -->
+                                </div>
+                                
+                                <div class="dropdown-footer" style="padding: 12px 16px; border-top: 1px solid #e5e5e7; background: #f9fafb;">
+                                    <button type="button" id="edit-request-apply-cities-filter" style="width: 100%; padding: 10px 16px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20,6 9,17 4,12"></polyline>
+                                        </svg>
+                                        تطبيق الفلتر
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="edit-request-selected-cities" class="selected-cities" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;"></div>
+                    </div>
+                    <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">اختر المناطق أو المدن المتوفرة داخل المحافظات المختارة (اختياري - يمكنك تخطي هذا الحقل)</p>
+                </div>
+                
+                <!-- Contact Information -->
+                <div style="display: grid; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">رقم الواتساب</label>
+                        <input type="tel" id="edit-request-whatsapp" style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">رابط الفيسبوك (اختياري)</label>
+                        <input type="url" id="edit-request-facebook" placeholder="https://facebook.com/..." style="width: 100%; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">رابط الإنستقرام (اختياري)</label>
+                        <input type="text" id="edit-request-instagram" placeholder="https://instagram.com/username أو @username" style="width: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px;">
+                    </div>
+                </div>
+                
+                <!-- Current Images -->
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">الصور الحالية</label>
+                    <div class="image-sort-instructions-edit" style="margin-bottom: 15px; padding: 10px; background: #dbeafe; border: 1px solid #3b82f6; border-radius: 8px; display: flex; align-items: center; color: #1e40af; font-size: 14px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px; margin-left: 8px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                        </svg>
+                        اسحب الصور لترتيبها - الصورة الأولى ستكون الصورة الرئيسية
+                    </div>
+                    <div id="edit-request-current-images" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; background: #f8f9fa; border-radius: 8px; min-height: 60px;">
+                        <!-- الصور الحالية ستظهر هنا -->
+                    </div>
+                </div>
+                
+                <!-- Add New Images -->
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">إضافة صور جديدة</label>
+                    <div id="edit-request-image-upload-area" style="border: 2px dashed #d1d5db; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="font-size: 24px; color: #9ca3af; margin-bottom: 10px;">📷</div>
+                        <p style="color: #6b7280; margin-bottom: 5px; font-size: 14px;">اسحب الصور هنا أو اضغط للاختيار</p>
+                        <p style="font-size: 12px; color: #9ca3af; text-align: center;">يمكنك اختيار أكثر من صورة في نفس الوقت</p>
+                        <input type="file" id="edit-request-new-images" multiple accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                
+                <!-- Buttons -->
+                <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" onclick="closeEditRequestModal()" class="btn btn-edit">إلغاء</button>
+                    <button type="submit" class="btn btn-view">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
         <!-- قسم التقارير -->
         <div id="reports-section" class="recent-activity" style="display: none;">
@@ -2741,15 +3352,21 @@
             }
         }
 
-        // عرض طلبات المنتجات
-        function showProductRequests() {
-            // إخفاء جميع الأقسام الأخرى
+        // إخفاء جميع الأقسام
+        function hideAllSections() {
             document.querySelector('.welcome-section').style.display = 'none';
             document.querySelector('.stats-grid').style.display = 'none';
             document.querySelector('.quick-actions').style.display = 'none';
             document.querySelector('.recent-activity').style.display = 'none';
             document.getElementById('advertising-panel').style.display = 'none';
             document.getElementById('reports-section').style.display = 'none';
+            document.getElementById('product-requests-section').style.display = 'none';
+        }
+
+        // عرض طلبات المنتجات
+        function showProductRequests() {
+            // إخفاء جميع الأقسام الأخرى
+            hideAllSections();
             
             // إظهار قسم طلبات المنتجات
             document.getElementById('product-requests-section').style.display = 'block';
@@ -2766,6 +3383,11 @@
             
             // تحميل طلبات المنتجات
             loadProductRequests();
+            
+            // تهيئة فلتر المدن
+            setTimeout(() => {
+                initializeEditRequestCitiesFilter();
+            }, 100);
         }
 
         // العودة للوحة الرئيسية
@@ -2776,6 +3398,44 @@
             
             // العودة للصفحة الرئيسية
             showDashboardHome();
+        }
+
+        // عرض الصفحة الرئيسية للوحة
+        function showDashboardHome() {
+            // إخفاء جميع الأقسام
+            hideAllSections();
+            
+            // إظهار الأقسام الرئيسية
+            document.querySelector('.welcome-section').style.display = 'block';
+            document.querySelector('.stats-grid').style.display = 'grid';
+            document.querySelector('.quick-actions').style.display = 'grid';
+            document.querySelector('.recent-activity').style.display = 'block';
+            
+            // تحديث المسار
+            updateURL('dashboard');
+            saveCurrentRoute('dashboard');
+        }
+
+        // تحديث URL بدون إعادة تحميل الصفحة
+        function updateURL(route) {
+            try {
+                const newURL = `/admin/${route === 'dashboard' ? '' : route}`;
+                window.history.pushState({ route }, 'لوحة التحكم', newURL);
+                console.log(`تم تحديث URL إلى: ${newURL}`);
+            } catch (error) {
+                console.error('خطأ في تحديث URL:', error);
+            }
+        }
+
+        // حفظ المسار الحالي في localStorage
+        function saveCurrentRoute(route) {
+            try {
+                localStorage.setItem('adminCurrentRoute', route);
+                localStorage.setItem('adminRouteTimestamp', Date.now().toString());
+                console.log(`تم حفظ المسار: ${route}`);
+            } catch (error) {
+                console.error('خطأ في حفظ المسار:', error);
+            }
         }
 
         // تحميل التقارير
@@ -3213,10 +3873,39 @@
             requestsList.style.display = 'block';
             noRequestsMessage.style.display = 'none';
 
-            // تخزين البيانات للوصول إليها لاحقاً
-            window.currentRequests = requests;
+            // تخزين البيانات للوصول إليها لاحقاً (مع دعم التعديلات)
+            if (!window.currentRequests) {
+                window.currentRequests = [];
+            }
+            
+            // دمج الطلبات الجديدة مع الموجودة (للحفاظ على التعديلات)
+            requests.forEach(newRequest => {
+                const existingIndex = window.currentRequests.findIndex(r => r.id == newRequest.id);
+                if (existingIndex !== -1) {
+                    // تحديث الطلب الموجود مع الحفاظ على التعديلات
+                    window.currentRequests[existingIndex] = {
+                        ...window.currentRequests[existingIndex],
+                        ...newRequest,
+                        // الحفاظ على الحقول المُعدلة
+                        description: window.currentRequests[existingIndex].description || newRequest.description,
+                        price: window.currentRequests[existingIndex].price || newRequest.price,
+                        category: window.currentRequests[existingIndex].category || newRequest.category,
+                        subcategory: window.currentRequests[existingIndex].subcategory || newRequest.subcategory,
+                        governorate: window.currentRequests[existingIndex].governorate || newRequest.governorate,
+                        cities: window.currentRequests[existingIndex].cities || newRequest.cities,
+                        whatsapp: window.currentRequests[existingIndex].whatsapp || newRequest.whatsapp,
+                        facebook: window.currentRequests[existingIndex].facebook || newRequest.facebook,
+                        instagram: window.currentRequests[existingIndex].instagram || newRequest.instagram,
+                        image_urls: window.currentRequests[existingIndex].image_urls || newRequest.image_urls
+                    };
+                } else {
+                    // إضافة طلب جديد
+                    window.currentRequests.push(newRequest);
+                }
+            });
 
-            requestsList.innerHTML = requests.map(request => createRequestCard(request)).join('');
+            // عرض الطلبات المُحدثة
+            requestsList.innerHTML = window.currentRequests.map(request => createRequestCard(request)).join('');
 
             // إضافة مستمعي الأحداث للأزرار
             addRequestEventListeners();
@@ -3228,6 +3917,45 @@
             const statusText = getStatusText(request.status);
             const createdAt = new Date(request.created_at).toLocaleString('ar-EG');
 
+            // معالجة التصنيف الفرعي - دعم البيانات المُعدلة
+            let subcategoryDisplay = 'غير محدد';
+            if (request.subcategory) {
+                if (Array.isArray(request.subcategory)) {
+                    subcategoryDisplay = request.subcategory.join(', ');
+                } else if (typeof request.subcategory === 'string') {
+                    try {
+                        const parsed = JSON.parse(request.subcategory);
+                        if (Array.isArray(parsed)) {
+                            subcategoryDisplay = parsed.join(', ');
+                        } else {
+                            subcategoryDisplay = parsed || 'غير محدد';
+                        }
+                    } catch (e) {
+                        subcategoryDisplay = request.subcategory;
+                    }
+                }
+            }
+
+            // معالجة السعر - دعم البيانات المُعدلة
+            let priceDisplay = 'السعر عند الطلب';
+            if (request.price) {
+                if (typeof request.price === 'number' && request.price > 0) {
+                    priceDisplay = request.price + ' ج.م';
+                } else if (typeof request.price === 'string' && request.price.trim() !== '') {
+                    priceDisplay = request.price + ' ج.م';
+                }
+            }
+
+            // معالجة المحافظات - دعم البيانات المُعدلة
+            let governorateDisplay = 'غير محدد';
+            if (request.governorate) {
+                if (Array.isArray(request.governorate)) {
+                    governorateDisplay = request.governorate.join(', ');
+                } else if (typeof request.governorate === 'string') {
+                    governorateDisplay = request.governorate;
+                }
+            }
+
             return `
                 <div class="request-card" data-request-id="${request.id}">
                     <div class="request-header">
@@ -3238,15 +3966,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <p><strong>التصنيف:</strong> ${getCategoryName(request.category)}</p>
-                            <p><strong>التصنيف الفرعي:</strong> ${request.subcategory || 'غير محدد'}</p>
-                            <p><strong>الوصف:</strong> ${request.description}</p>
-                            <p><strong>السعر:</strong> ${request.price > 0 ? request.price + ' ج.م' : 'السعر عند الطلب'}</p>
-                            <p><strong>المحافظات:</strong> ${request.governorate || 'غير محدد'}</p>
+                            <p><strong>التصنيف الفرعي:</strong> ${subcategoryDisplay}</p>
+                            <p><strong>الوصف:</strong> ${request.description || 'غير محدد'}</p>
+                            <p><strong>السعر:</strong> ${priceDisplay}</p>
+                            <p><strong>المحافظات:</strong> ${governorateDisplay}</p>
                             <p><strong>تاريخ الطلب:</strong> ${createdAt}</p>
                         </div>
                         
                         <div>
-                            <p><strong>الواتساب:</strong> ${request.whatsapp}</p>
+                            <p><strong>الواتساب:</strong> ${request.whatsapp || 'غير محدد'}</p>
                             <p><strong>فيسبوك:</strong> ${request.facebook || 'غير محدد'}</p>
                             <p><strong>إنستجرام:</strong> ${request.instagram || 'غير محدد'}</p>
                         </div>
@@ -3263,6 +3991,7 @@
                     <div class="request-actions">
                         <button class="btn-view" onclick="viewRequestDetails('${request.id}')">عرض التفاصيل</button>
                         ${request.status === 'pending' ? `
+                            <button class="btn-edit" onclick="editRequest('${request.id}')">تعديل</button>
                             <button class="btn-approve" onclick="approveRequest('${request.id}')">موافقة</button>
                             <button class="btn-reject" onclick="rejectRequest('${request.id}')">رفض</button>
                         ` : ''}
@@ -3338,20 +4067,66 @@
             return null;
         }
 
+        // دالة محسنة للحصول على بيانات الطلب مع دعم التعديلات
+        function getRequestDataForEdit(requestId) {
+            // البحث في البيانات المخزنة أولاً (أحدث البيانات)
+            if (window.currentRequests && window.currentRequests.length > 0) {
+                const storedRequest = window.currentRequests.find(req => req.id == requestId);
+                if (storedRequest) {
+                    console.log('🔍 Found request in currentRequests:', storedRequest);
+                    return storedRequest;
+                }
+            }
+            
+            // إذا لم نجد في البيانات المخزنة، نحاول البحث في قاعدة البيانات
+            console.log('🔍 Request not found in currentRequests, searching in database...');
+            return null;
+        }
+
         // تنسيق بيانات الطلب
         function formatRequestData(request) {
             try {
                 const createdAt = new Date(request.created_at).toLocaleString('ar-EG');
                 const statusText = getStatusText(request.status);
                 const categoryName = getCategoryName(request.category);
-                const priceText = request.price > 0 ? request.price + ' ج.م' : 'السعر عند الطلب';
+                
+                // معالجة السعر - دعم البيانات المُعدلة
+                let priceText = 'السعر عند الطلب';
+                if (request.price) {
+                    if (typeof request.price === 'number' && request.price > 0) {
+                        priceText = request.price + ' ج.م';
+                    } else if (typeof request.price === 'string' && request.price.trim() !== '') {
+                        priceText = request.price + ' ج.م';
+                    }
+                }
+                
+                // معالجة التصنيف الفرعي - دعم البيانات المُعدلة
+                let subcategoryText = 'غير محدد';
+                if (request.subcategory) {
+                    if (Array.isArray(request.subcategory)) {
+                        subcategoryText = request.subcategory.join(', ');
+                    } else if (typeof request.subcategory === 'string') {
+                        try {
+                            const parsed = JSON.parse(request.subcategory);
+                            if (Array.isArray(parsed)) {
+                                subcategoryText = parsed.join(', ');
+                            } else {
+                                subcategoryText = parsed || 'غير محدد';
+                            }
+                        } catch (e) {
+                            subcategoryText = request.subcategory;
+                        }
+                    }
+                }
                 
                 return {
                     id: request.id,
                     description: request.description || 'غير محدد',
                     category: categoryName,
+                    subcategory: subcategoryText,
                     price: priceText,
                     governorate: request.governorate || 'غير محدد',
+                    cities: request.cities || 'غير محدد',
                     whatsapp: request.whatsapp || 'غير محدد',
                     facebook: request.facebook || 'غير محدد',
                     instagram: request.instagram || 'غير محدد',
@@ -3374,8 +4149,10 @@
                     id: requestCard.getAttribute('data-request-id'),
                     description: 'غير محدد',
                     category: 'غير محدد',
+                    subcategory: 'غير محدد',
                     price: 'غير محدد',
                     governorate: 'غير محدد',
+                    cities: 'غير محدد',
                     whatsapp: 'غير محدد',
                     facebook: 'غير محدد',
                     instagram: 'غير محدد',
@@ -3395,12 +4172,16 @@
                         
                         if (label.includes('الوصف')) {
                             requestData.description = value;
-                        } else if (label.includes('التصنيف')) {
+                        } else if (label.includes('التصنيف:')) {
                             requestData.category = value;
+                        } else if (label.includes('التصنيف الفرعي:')) {
+                            requestData.subcategory = value;
                         } else if (label.includes('السعر')) {
                             requestData.price = value;
                         } else if (label.includes('المحافظات')) {
                             requestData.governorate = value;
+                        } else if (label.includes('المناطق') || label.includes('المدن')) {
+                            requestData.cities = value;
                         } else if (label.includes('الواتساب')) {
                             requestData.whatsapp = value;
                         } else if (label.includes('فيسبوك')) {
@@ -3582,6 +4363,158 @@
             }
         });
 
+        // تعديل الطلب
+        function editRequest(requestId) {
+            console.log('🔍 [DEBUG] ===== STARTING editRequest =====');
+            console.log('🔍 [DEBUG] Request ID:', requestId);
+
+            // البحث عن الطلب في القائمة المعروضة
+            const requestCard = document.querySelector(`[data-request-id="${requestId}"]`);
+            if (!requestCard) {
+                console.warn('Request card not found in DOM');
+            }
+
+            // الحصول على بيانات الطلب من البيانات المخزنة (أحدث البيانات)
+            const requestData = getRequestDataForEdit(requestId);
+            if (!requestData) {
+                alert('لم يتم العثور على بيانات الطلب. يرجى تحديث الصفحة والمحاولة مرة أخرى.');
+                return;
+            }
+
+            console.log('🔍 [DEBUG] ✅ Request data retrieved for edit:', requestData);
+
+            // عرض النافذة المنبثقة للتعديل
+            showEditRequestModal(requestData);
+        }
+
+        // عرض نافذة تعديل الطلب
+        function showEditRequestModal(requestData) {
+            console.log('🔍 [DEBUG] ===== STARTING showEditRequestModal =====');
+            console.log('🔍 [DEBUG] Request data for edit:', requestData);
+
+            // ملء النموذج بالبيانات الحالية
+            document.getElementById('edit-request-id').value = requestData.id;
+            document.getElementById('edit-request-description').value = requestData.description || '';
+            
+            // معالجة السعر - إزالة "ج.م" إذا كان موجوداً
+            let priceValue = requestData.price || '';
+            if (typeof priceValue === 'string' && priceValue.includes('ج.م')) {
+                priceValue = priceValue.replace('ج.م', '').trim();
+            }
+            document.getElementById('edit-request-price').value = priceValue;
+            
+            // معالجة الفئة - تحويل من العربية إلى الإنجليزية
+            let categoryValue = requestData.category || 'koshat';
+            if (typeof categoryValue === 'string') {
+                const categoryMap = {
+                    'كوشات': 'koshat',
+                    'مرايا': 'mirr',
+                    'تورتة': 'cake',
+                    'ديكورات متنوعة': 'other',
+                    'دعوات وتوزيعات': 'invitations'
+                };
+                categoryValue = categoryMap[categoryValue] || categoryValue;
+            }
+            document.getElementById('edit-request-category').value = categoryValue;
+            
+            document.getElementById('edit-request-whatsapp').value = requestData.whatsapp || '';
+            document.getElementById('edit-request-facebook').value = requestData.facebook || '';
+            document.getElementById('edit-request-instagram').value = requestData.instagram || '';
+
+            // ملء المحافظات
+            let governorates = [];
+            if (requestData.governorate && requestData.governorate !== 'غير محدد') {
+                if (Array.isArray(requestData.governorate)) {
+                    governorates = requestData.governorate;
+                } else if (typeof requestData.governorate === 'string') {
+                    try {
+                        if (requestData.governorate.startsWith('[') && requestData.governorate.endsWith(']')) {
+                            const parsed = JSON.parse(requestData.governorate);
+                            if (Array.isArray(parsed)) {
+                                governorates = parsed;
+                            }
+                        }
+                    } catch (e) {
+                        console.log('🔍 JSON parsing failed for governorate, treating as regular string');
+                    }
+                    
+                    if (governorates.length === 0) {
+                        if (requestData.governorate.includes(',')) {
+                            governorates = requestData.governorate.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else if (requestData.governorate !== 'null' && requestData.governorate !== '') {
+                            governorates = [requestData.governorate];
+                        }
+                    }
+                }
+            }
+            populateEditRequestGovernorates(governorates);
+
+            // ملء التصنيفات الفرعية
+            let subcategories = [];
+            if (requestData.subcategory && requestData.subcategory !== 'غير محدد') {
+                if (Array.isArray(requestData.subcategory)) {
+                    subcategories = requestData.subcategory;
+                } else if (typeof requestData.subcategory === 'string') {
+                    try {
+                        const parsed = JSON.parse(requestData.subcategory);
+                        if (Array.isArray(parsed)) {
+                            subcategories = parsed;
+                        } else {
+                            subcategories = [parsed];
+                        }
+                    } catch (e) {
+                        if (requestData.subcategory.includes(',')) {
+                            subcategories = requestData.subcategory.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else {
+                            subcategories = [requestData.subcategory];
+                        }
+                    }
+                }
+            }
+            populateEditRequestSubcategories(requestData.category, subcategories);
+
+            // ملء المدن
+            let cities = [];
+            if (requestData.cities && requestData.cities !== 'غير محدد') {
+                if (Array.isArray(requestData.cities)) {
+                    cities = requestData.cities;
+                } else if (typeof requestData.cities === 'string') {
+                    try {
+                        if (requestData.cities.startsWith('[') && requestData.cities.endsWith(']')) {
+                            const parsed = JSON.parse(requestData.cities);
+                            if (Array.isArray(parsed)) {
+                                cities = parsed;
+                            }
+                        }
+                    } catch (e) {
+                        if (requestData.cities.includes(',')) {
+                            cities = requestData.cities.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else if (requestData.cities !== 'null' && requestData.cities !== '') {
+                            cities = [requestData.cities];
+                        }
+                    }
+                }
+            }
+            populateEditRequestCities(governorates, cities);
+
+            // عرض الصور الحالية
+            let imageUrls = [];
+            if (requestData.image_urls && requestData.image_urls.length > 0) {
+                imageUrls = requestData.image_urls.map(img => img.url || img);
+            }
+            displayEditRequestCurrentImages(imageUrls);
+
+            console.log('🔍 [DEBUG] ===== showEditRequestModal COMPLETED =====');
+
+            // عرض النافذة المنبثقة
+            document.getElementById('editRequestModal').style.display = 'block';
+            
+            // تهيئة فلتر المدن عند فتح النافذة
+            setTimeout(() => {
+                initializeEditRequestCitiesFilter();
+            }, 100);
+        }
+
         // الموافقة على الطلب
         async function approveRequest(requestId) {
             if (!confirm('هل أنت متأكد من قبول المنتج؟')) {
@@ -3594,10 +4527,20 @@
                     return;
                 }
 
+                // الحصول على أحدث بيانات الطلب (بعد التعديلات)
+                const currentRequest = window.currentRequests.find(r => r.id == requestId);
+                if (!currentRequest) {
+                    alert('لم يتم العثور على بيانات الطلب. يرجى تحديث الصفحة والمحاولة مرة أخرى.');
+                    return;
+                }
+
+                console.log('🔍 [DEBUG] Approving request with latest data:', currentRequest);
+
                 const service = new window.ProductRequestsService();
                 await service.ensureInitialized();
 
-                const result = await service.approveProductRequest(requestId);
+                // تمرير البيانات المُعدلة للموافقة
+                const result = await service.approveProductRequest(requestId, currentRequest);
                 if (result.success) {
                     alert('تم قبول المنتج بنجاح');
                     // إعادة تحميل الطلبات
@@ -3625,10 +4568,20 @@
                     return;
                 }
 
+                // الحصول على أحدث بيانات الطلب (بعد التعديلات)
+                const currentRequest = window.currentRequests.find(r => r.id == requestId);
+                if (!currentRequest) {
+                    alert('لم يتم العثور على بيانات الطلب. يرجى تحديث الصفحة والمحاولة مرة أخرى.');
+                    return;
+                }
+
+                console.log('🔍 [DEBUG] Rejecting request with latest data:', currentRequest);
+
                 const service = new window.ProductRequestsService();
                 await service.ensureInitialized();
 
-                const result = await service.rejectProductRequest(requestId);
+                // تمرير البيانات المُعدلة للرفض
+                const result = await service.rejectProductRequest(requestId, currentRequest);
                 if (result.success) {
                     alert('تم حذف المنتج بنجاح');
                     // إعادة تحميل الطلبات
@@ -3649,7 +4602,9 @@
             const statusMap = {
                 'pending': 'في الانتظار',
                 'approved': 'تمت الموافقة',
-                'rejected': 'مرفوض'
+                'rejected': 'مرفوض',
+                'processing': 'قيد المعالجة',
+                'completed': 'مكتمل'
             };
             return statusMap[status] || status;
         }
@@ -3660,9 +4615,164 @@
                 'koshat': 'كوشات',
                 'mirr': 'مرايا',
                 'cake': 'تورتة',
-                'other': 'ديكورات متنوعة'
+                'other': 'ديكورات متنوعة',
+                'invitations': 'دعوات وتوزيعات'
             };
             return categoryMap[category] || category;
+        }
+
+        // ===== دوال تعديل الطلب =====
+
+        // ملء المحافظات في نموذج التعديل
+        function populateEditRequestGovernorates(selectedGovernorates) {
+            const governorates = [
+                "القاهرة","الجيزة","الإسكندرية","الشرقية","الغربية","المنوفية","القليوبية","البحيرة","كفر الشيخ","دمياط","الدقهلية","المنيا","أسيوط","سوهاج","قنا","الأقصر","أسوان","بني سويف","الفيوم","الوادي الجديد","شمال سيناء","جنوب سيناء","البحر الأحمر","مطروح","بورسعيد","الإسماعيلية","السويس"
+            ];
+            
+            let selected = [];
+            if (selectedGovernorates && selectedGovernorates !== '' && selectedGovernorates !== 'null') {
+                if (Array.isArray(selectedGovernorates)) {
+                    selected = selectedGovernorates;
+                } else if (typeof selectedGovernorates === 'string') {
+                    try {
+                        if (selectedGovernorates.startsWith('[') && selectedGovernorates.endsWith(']')) {
+                            const parsed = JSON.parse(selectedGovernorates);
+                            if (Array.isArray(parsed)) {
+                                selected = parsed;
+                            }
+                        }
+                    } catch (e) {
+                        console.log('🔍 JSON parsing failed for governorates, treating as regular string');
+                    }
+                    
+                    if (selected.length === 0) {
+                        if (selectedGovernorates.includes(',')) {
+                            selected = selectedGovernorates.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else if (selectedGovernorates !== 'null' && selectedGovernorates !== '') {
+                            selected = [selectedGovernorates];
+                        }
+                    }
+                }
+            }
+            
+            console.log('🔍 Processed selected governorates for edit:', selected);
+            
+            const container = document.getElementById('edit-request-governorate-checkboxes');
+            if (container) {
+                container.innerHTML = governorates.map(gov => `
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 5px; cursor: pointer;">
+                        <input type="checkbox" value="${gov}" ${selected.includes(gov) ? 'checked' : ''} style="width: 16px; height: 16px;">
+                        <span style="font-size: 14px;">${gov}</span>
+                    </label>
+                `).join('');
+
+                // إضافة مستمعي الأحداث لتحديث المدن عند تغيير المحافظات
+                const governorateCheckboxes = container.querySelectorAll('input[type="checkbox"]');
+                governorateCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const selectedGovernorates = [];
+                        governorateCheckboxes.forEach(cb => {
+                            if (cb.checked) {
+                                selectedGovernorates.push(cb.value);
+                            }
+                        });
+                        
+                        // تحديث المدن بناءً على المحافظات المختارة
+                        populateEditRequestCities(selectedGovernorates, []);
+                    });
+                });
+            } else {
+                console.error('❌ edit-request-governorate-checkboxes container not found');
+            }
+        }
+
+        // ملء التصنيفات الفرعية في نموذج التعديل
+        function populateEditRequestSubcategories(category, selectedSubcategory) {
+            console.log('🔍 [DEBUG] ===== STARTING populateEditRequestSubcategories =====');
+            console.log('🔍 [DEBUG] Category:', category);
+            console.log('🔍 [DEBUG] Selected subcategory data:', selectedSubcategory);
+
+            const subcategories = {
+                'koshat': [
+                    { value: 'كوشات زفاف', label: 'كوشات زفاف' },
+                    { value: 'كوشات خطوبة', label: 'كوشات خطوبة' }
+                ],
+                'mirr': [
+                    { value: 'مرايا زفاف', label: 'مرايا زفاف' },
+                    { value: 'مرايا خطوبة', label: 'مرايا خطوبة' },
+                    { value: 'مرايا ديكور', label: 'مرايا ديكور' }
+                ],
+                'cake': [
+                    { value: 'تورتة زفاف', label: 'تورتة زفاف' },
+                    { value: 'تورتة خطوبة', label: 'تورتة خطوبة' },
+                    { value: 'تورتة عيد ميلاد', label: 'تورتة عيد ميلاد' },
+                    { value: 'تورتة شوكولاتة', label: 'تورتة شوكولاتة' },
+                    { value: 'تورتة فواكه', label: 'تورتة فواكه' },
+                    { value: 'صينية شوكولاتة', label: 'صينية شوكولاتة' }
+                ],
+                'other': [
+                    { value: 'ديكور عيد ميلاد', label: 'ديكور عيد ميلاد' },
+                    { value: 'استقبال المولود بالمستشفى', label: 'استقبال المولود بالمستشفى' },
+                    { value: 'ديكور استقبال عروسة', label: 'ديكور استقبال عروسة' },
+                    { value: 'ديكور حفلات بسيطة', label: 'ديكور حفلات بسيطة' }
+                ],
+                'invitations': [
+                    { value: 'دعوة زفاف', label: 'دعوة زفاف' },
+                    { value: 'دعوة خطوبة', label: 'دعوة خطوبة' },
+                    { value: 'توزيعات فرح', label: 'توزيعات فرح' },
+                    { value: 'توزيعات خطوبة', label: 'توزيعات خطوبة' },
+                    { value: 'توزيعات بالشوكولاتة', label: 'توزيعات بالشوكولاتة' },
+                    { value: 'توزيعات بالعطور / البرفان', label: 'توزيعات بالعطور / البرفان' },
+                    { value: 'توزيعات مع هدية صغيره', label: 'توزيعات مع هدية صغيره' },
+                    { value: 'توزيعات سبوع', label: 'توزيعات سبوع' },
+                    { value: 'توزيعات أطفال', label: 'توزيعات أطفال' },
+                    { value: 'توزيعات ورد', label: 'توزيعات ورد' },
+                    { value: 'توزيعات شموع', label: 'توزيعات شموع' },
+                    { value: 'دعوة رقمية', label: 'دعوة رقمية' }
+                ]
+            };
+            
+            const categorySubs = subcategories[category] || [];
+            
+            let selected = [];
+            if (selectedSubcategory && selectedSubcategory !== '' && selectedSubcategory !== 'null') {
+                if (Array.isArray(selectedSubcategory)) {
+                    selected = selectedSubcategory;
+                } else if (typeof selectedSubcategory === 'string') {
+                    try {
+                        const parsed = JSON.parse(selectedSubcategory);
+                        if (Array.isArray(parsed)) {
+                            selected = parsed;
+                        } else {
+                            selected = [parsed];
+                        }
+                    } catch (e) {
+                        if (selectedSubcategory.includes(',')) {
+                            selected = selectedSubcategory.split(',').map(item => item.trim()).filter(item => item && item !== 'null' && item !== '');
+                        } else {
+                            selected = [selectedSubcategory];
+                        }
+                    }
+                }
+            }
+            
+            console.log('🔍 Processed selected subcategories for edit:', selected);
+            
+            const container = document.getElementById('edit-request-subcategory-checkboxes');
+            if (container) {
+                container.innerHTML = categorySubs.map(sub => {
+                    const isChecked = selected.includes(sub.value);
+                    return `
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 5px; cursor: pointer;">
+                            <input type="checkbox" value="${sub.value}" ${isChecked ? 'checked' : ''} style="width: 16px; height: 16px;">
+                            <span style="font-size: 14px;">${sub.label}</span>
+                        </label>
+                    `;
+                }).join('');
+                console.log('🔍 [DEBUG] ✅ Successfully populated subcategory checkboxes for edit');
+            } else {
+                console.error('🔍 [DEBUG] ❌ edit-request-subcategory-checkboxes container not found');
+            }
         }
 
         // معالجة تسجيل الخروج
@@ -3682,6 +4792,600 @@
             }
         }
 
+        // ===== باقي دوال تعديل الطلب =====
+
+        // ملء المدن في نموذج التعديل
+        function populateEditRequestCities(selectedGovernorates, currentCities) {
+            console.log('🔍 PopulateEditRequestCities called with:', { selectedGovernorates, currentCities });
+            
+            const citiesList = document.getElementById('edit-request-cities-list');
+            const citiesTrigger = document.getElementById('edit-request-cities-trigger');
+            const citiesSearch = document.getElementById('edit-request-cities-search');
+
+            if (!citiesList || !citiesTrigger || !citiesSearch) {
+                console.error('❌ Cities elements not found in populateEditRequestCities');
+                return;
+            }
+
+            // مسح الاختيارات السابقة
+            if (typeof editRequestSelectedCities !== 'undefined') {
+                editRequestSelectedCities.clear();
+            }
+
+            if (!selectedGovernorates || selectedGovernorates.length === 0) {
+                // إخفاء فلتر المدن إذا لم يتم اختيار محافظات
+                citiesList.innerHTML = '<div style="padding: 16px; text-align: center; color: #666;">اختر المحافظات أولاً</div>';
+                updateEditRequestCitiesDisplay();
+                return;
+            }
+
+            // الحصول على جميع المدن للمحافظات المختارة
+            let allCities = [];
+            selectedGovernorates.forEach(governorate => {
+                if (typeof editRequestCitiesService !== 'undefined' && editRequestCitiesService.getCitiesForGovernorate) {
+                    const cities = editRequestCitiesService.getCitiesForGovernorate(governorate);
+                    allCities = allCities.concat(cities);
+                }
+            });
+
+            // إزالة التكرار
+            allCities = [...new Set(allCities)];
+
+            // تحليل المدن الحالية
+            let currentCitiesArray = [];
+            if (currentCities) {
+                if (Array.isArray(currentCities)) {
+                    currentCitiesArray = currentCities;
+                } else if (typeof currentCities === 'string') {
+                    try {
+                        if (currentCities.startsWith('[') && currentCities.endsWith(']')) {
+                            const parsed = JSON.parse(currentCities);
+                            if (Array.isArray(parsed)) {
+                                currentCitiesArray = parsed;
+                            }
+                        }
+                    } catch (e) {
+                        if (currentCities.includes(',')) {
+                            currentCitiesArray = currentCities.split(',').map(c => c.trim()).filter(c => c && c !== 'null' && c !== '');
+                        } else if (currentCities !== 'null' && currentCities !== '') {
+                            currentCitiesArray = [currentCities];
+                        }
+                    }
+                }
+            }
+
+            console.log('🔍 All cities for governorates:', allCities);
+            console.log('🔍 Current cities array:', currentCitiesArray);
+
+            // ملء قائمة المدن
+            citiesList.innerHTML = allCities.map(city => `
+                <div class="city-item" style="padding: 8px 16px; cursor: pointer; transition: background-color 0.3s ease;">
+                    <label class="city-checkbox" style="display: flex; align-items: center; gap: 8px; cursor: pointer; width: 100%;">
+                        <input type="checkbox" value="${city}" class="city-input" style="width: 16px; height: 16px; accent-color: #3b82f6;" ${currentCitiesArray.includes(city) ? 'checked' : ''}>
+                        <span class="city-name" style="color: #374151; font-size: 14px; flex: 1;">${city}</span>
+                    </label>
+                </div>
+            `).join('');
+
+            // إضافة مستمعي الأحداث للصناديق الجديدة
+            const cityCheckboxes = document.querySelectorAll('#edit-request-cities-list .city-input');
+            cityCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (typeof editRequestSelectedCities !== 'undefined') {
+                        if (this.checked) {
+                            editRequestSelectedCities.add(this.value);
+                        } else {
+                            editRequestSelectedCities.delete(this.value);
+                        }
+                        updateEditRequestCitiesDisplay();
+                    }
+                });
+                
+                // تهيئة المدن المختارة
+                if (checkbox.checked && typeof editRequestSelectedCities !== 'undefined') {
+                    editRequestSelectedCities.add(checkbox.value);
+                }
+            });
+
+            // مسح البحث
+            citiesSearch.value = '';
+            
+            // تحديث العرض
+            if (typeof updateEditRequestCitiesDisplay === 'function') {
+                updateEditRequestCitiesDisplay();
+            }
+        }
+
+        // عرض الصور الحالية في نموذج التعديل
+        function displayEditRequestCurrentImages(imageUrls) {
+            const container = document.getElementById('edit-request-current-images');
+            
+            if (imageUrls.length === 0) {
+                container.innerHTML = '<p style="color: #666; font-size: 14px;">لا توجد صور</p>';
+                const instructions = document.querySelector('.image-sort-instructions-edit');
+                if (instructions) {
+                    instructions.style.display = 'block';
+                }
+                return;
+            }
+
+            container.innerHTML = imageUrls.map((url, index) => `
+                <div class="edit-image-item" data-index="${index}" draggable="true" style="position: relative; display: inline-block; margin: 5px; cursor: grab; transition: all 0.3s ease;">
+                    <div class="edit-drag-handle" style="position: absolute; top: 2px; left: 2px; background: rgba(0, 0, 0, 0.7); color: white; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; cursor: grab; z-index: 10; font-size: 10px;">
+                        ⋮⋮
+                    </div>
+                    <img src="${url}" alt="صورة ${index + 1}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #e1e5e9; cursor: pointer;" onclick="previewEditRequestImage('${url}')">
+                    <div class="edit-image-number" style="position: absolute; bottom: 2px; left: 2px; background: #d4af37; color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; z-index: 10;">
+                        ${index + 1}
+                    </div>
+                    <button onclick="removeEditRequestImage(${index})" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center;">×</button>
+                </div>
+            `).join('');
+
+            // إضافة مستمعي أحداث السحب والإفلات
+            const imageItems = container.querySelectorAll('.edit-image-item');
+            imageItems.forEach(item => {
+                item.addEventListener('dragstart', handleEditRequestDragStart);
+                item.addEventListener('dragover', handleEditRequestDragOver);
+                item.addEventListener('drop', handleEditRequestDrop);
+                item.addEventListener('dragenter', handleEditRequestDragEnter);
+                item.addEventListener('dragleave', handleEditRequestDragLeave);
+            });
+
+            // إخفاء التعليمات عند وجود صور
+            const instructions = document.querySelector('.image-sort-instructions-edit');
+            if (instructions) {
+                instructions.style.display = 'none';
+            }
+        }
+
+        // معاينة صورة في نموذج التعديل
+        function previewEditRequestImage(url) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+                cursor: pointer;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                border-radius: 8px;
+            `;
+            
+            modal.appendChild(img);
+            document.body.appendChild(modal);
+            
+            modal.onclick = () => {
+                document.body.removeChild(modal);
+            };
+        }
+
+        // حذف صورة من نموذج التعديل
+        function removeEditRequestImage(index) {
+            if (confirm('هل أنت متأكد من حذف هذه الصورة؟')) {
+                const requestId = document.getElementById('edit-request-id').value;
+                const request = window.currentRequests.find(r => r.id == requestId);
+                
+                if (request && request.image_urls) {
+                    request.image_urls.splice(index, 1);
+                    displayEditRequestCurrentImages(request.image_urls);
+                    alert('تم حذف الصورة');
+                }
+            }
+        }
+
+        // متغيرات السحب والإفلات لنموذج التعديل
+        let editRequestDraggedElement = null;
+        let editRequestDraggedIndex = null;
+
+        // دوال السحب والإفلات لترتيب الصور في نموذج التعديل
+        function handleEditRequestDragStart(e) {
+            editRequestDraggedElement = this;
+            editRequestDraggedIndex = parseInt(this.getAttribute('data-index'));
+            this.classList.add('dragging');
+            this.style.opacity = '0.5';
+            this.style.transform = 'rotate(5deg)';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleEditRequestDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleEditRequestDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+            this.style.border = '2px dashed #d4af37';
+            this.style.background = 'rgba(212, 175, 55, 0.1)';
+        }
+
+        function handleEditRequestDragLeave(e) {
+            this.classList.remove('drag-over');
+            this.style.border = '';
+            this.style.background = '';
+        }
+
+        function handleEditRequestDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            this.style.border = '';
+            this.style.background = '';
+            
+            if (editRequestDraggedElement !== this) {
+                const dropIndex = parseInt(this.getAttribute('data-index'));
+                const requestId = document.getElementById('edit-request-id').value;
+                const request = window.currentRequests.find(r => r.id == requestId);
+                
+                if (request && request.image_urls) {
+                    // إعادة ترتيب مصفوفة الصور
+                    const draggedImage = request.image_urls[editRequestDraggedIndex];
+                    request.image_urls.splice(editRequestDraggedIndex, 1);
+                    request.image_urls.splice(dropIndex, 0, draggedImage);
+                    
+                    // إعادة عرض الصور بالترتيب الجديد
+                    displayEditRequestCurrentImages(request.image_urls);
+                    
+                    // عرض رسالة نجاح
+                    showEditRequestSortSuccess();
+                }
+            }
+            
+            editRequestDraggedElement.classList.remove('dragging');
+            editRequestDraggedElement.style.opacity = '';
+            editRequestDraggedElement.style.transform = '';
+            editRequestDraggedElement = null;
+            editRequestDraggedIndex = null;
+        }
+
+        function showEditRequestSortSuccess() {
+            const message = document.createElement('div');
+            message.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 12px 16px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 3000;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+            `;
+            message.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px; margin-left: 8px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                تم تغيير ترتيب الصور بنجاح
+            `;
+            
+            document.body.appendChild(message);
+            
+            // إزالة الرسالة بعد 3 ثوانٍ
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 3000);
+        }
+
+        // إغلاق نافذة تعديل الطلب
+        function closeEditRequestModal() {
+            document.getElementById('editRequestModal').style.display = 'none';
+        }
+
+        // متغيرات فلتر المدن لنموذج التعديل
+        let editRequestCitiesService;
+        let editRequestSelectedCities = new Set();
+        let editRequestCurrentGovernorates = [];
+
+        // تهيئة فلتر المدن لنموذج التعديل
+        function initializeEditRequestCitiesFilter() {
+            console.log('🔍 Initializing Edit Request Cities Filter');
+            
+            // التحقق من توفر CitiesService
+            if (typeof CitiesService === 'undefined') {
+                console.error('❌ CitiesService not available');
+                return;
+            }
+            
+            // تهيئة CitiesService
+            editRequestCitiesService = new CitiesService();
+            console.log('✅ CitiesService initialized for edit request');
+            
+            // إعداد وظائف فلتر المدن
+            setupEditRequestCitiesFilter();
+        }
+
+        // إعداد فلتر المدن لنموذج التعديل
+        function setupEditRequestCitiesFilter() {
+            const citiesTrigger = document.getElementById('edit-request-cities-trigger');
+            const citiesDropdown = document.getElementById('edit-request-cities-dropdown');
+            const citiesSearch = document.getElementById('edit-request-cities-search');
+            const selectAllCitiesBtn = document.getElementById('edit-request-select-all-cities-btn');
+            const clearAllCitiesBtn = document.getElementById('edit-request-clear-all-cities-btn');
+            const applyCitiesFilterBtn = document.getElementById('edit-request-apply-cities-filter');
+
+            // التحقق من وجود العناصر
+            if (!citiesTrigger || !citiesDropdown || !citiesSearch || !selectAllCitiesBtn || !clearAllCitiesBtn || !applyCitiesFilterBtn) {
+                console.error('❌ Cities filter elements not found for edit request');
+                return;
+            }
+            
+            console.log('✅ All cities filter elements found for edit request');
+
+            // تبديل القائمة المنسدلة
+            citiesTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔍 Cities trigger clicked for edit request');
+                citiesDropdown.classList.toggle('show');
+                citiesTrigger.classList.toggle('active');
+            });
+
+            // إغلاق القائمة عند النقر خارجها
+            document.addEventListener('click', function(event) {
+                if (!citiesTrigger.contains(event.target) && !citiesDropdown.contains(event.target)) {
+                    citiesDropdown.classList.remove('show');
+                    citiesTrigger.classList.remove('active');
+                }
+            });
+
+            // وظيفة البحث
+            citiesSearch.addEventListener('input', function() {
+                filterEditRequestCities(this.value);
+            });
+
+            // تحديد جميع المدن
+            selectAllCitiesBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('#edit-request-cities-list .city-input');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                    editRequestSelectedCities.add(checkbox.value);
+                });
+                updateEditRequestCitiesDisplay();
+            });
+
+            // إلغاء تحديد جميع المدن
+            clearAllCitiesBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('#edit-request-cities-list .city-input');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                editRequestSelectedCities.clear();
+                updateEditRequestCitiesDisplay();
+            });
+
+            // تطبيق الفلتر
+            applyCitiesFilterBtn.addEventListener('click', function() {
+                citiesDropdown.classList.remove('show');
+                citiesTrigger.classList.remove('active');
+            });
+        }
+
+        // تصفية المدن بناءً على مصطلح البحث
+        function filterEditRequestCities(searchTerm) {
+            const cityItems = document.querySelectorAll('#edit-request-cities-list .city-item');
+            
+            cityItems.forEach(item => {
+                const cityName = item.querySelector('.city-name').textContent.toLowerCase();
+                const matches = cityName.includes(searchTerm.toLowerCase());
+                item.style.display = matches ? 'block' : 'none';
+            });
+        }
+
+        // تحديث عرض المدن
+        function updateEditRequestCitiesDisplay() {
+            const selectedCount = document.getElementById('edit-request-cities-selected-count');
+            const selectedCitiesContainer = document.getElementById('edit-request-selected-cities');
+            const triggerText = document.querySelector('#edit-request-cities-trigger .trigger-text');
+
+            // تحديث العدد
+            if (editRequestSelectedCities.size === 0) {
+                selectedCount.style.display = 'none';
+                triggerText.textContent = 'اختر المناطق/المدن (اختياري)';
+            } else {
+                selectedCount.style.display = 'inline-block';
+                selectedCount.textContent = editRequestSelectedCities.size;
+                triggerText.textContent = `${editRequestSelectedCities.size} منطقة مختارة`;
+            }
+
+            // تحديث علامات المدن المختارة
+            if (editRequestSelectedCities.size === 0) {
+                selectedCitiesContainer.innerHTML = '';
+            } else {
+                selectedCitiesContainer.innerHTML = Array.from(editRequestSelectedCities).map(city => `
+                    <div class="selected-city-tag" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #dbeafe; color: #1e40af; border-radius: 20px; font-size: 12px; font-weight: 500;">
+                        ${city}
+                        <button class="remove-city" onclick="removeEditRequestCity('${city}')" style="background: none; border: none; color: #1e40af; cursor: pointer; font-size: 14px; font-weight: bold; padding: 0; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background-color 0.3s ease;">×</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // إزالة مدينة محددة
+        function removeEditRequestCity(city) {
+            editRequestSelectedCities.delete(city);
+            
+            // إلغاء تحديد الصندوق المقابل
+            const checkbox = document.querySelector(`#edit-request-cities-list .city-input[value="${city}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+            
+            updateEditRequestCitiesDisplay();
+        }
+
+        // الحصول على المدن المختارة لتقديم النموذج
+        function getEditRequestSelectedCities() {
+            return Array.from(editRequestSelectedCities);
+        }
+
+        // ===== دالة حفظ التغييرات =====
+
+        // حفظ التغييرات في الطلب
+        async function saveEditRequestChanges() {
+            const requestId = document.getElementById('edit-request-id').value;
+            
+            if (!requestId) {
+                alert('خطأ في بيانات الطلب');
+                return;
+            }
+
+            // الحصول على بيانات النموذج
+            const description = document.getElementById('edit-request-description').value;
+            const price = document.getElementById('edit-request-price').value;
+            const category = document.getElementById('edit-request-category').value;
+            const whatsapp = document.getElementById('edit-request-whatsapp').value;
+            const facebook = document.getElementById('edit-request-facebook').value;
+            const instagram = document.getElementById('edit-request-instagram').value;
+
+            // الحصول على المحافظات المختارة
+            const selectedGovernorates = [];
+            document.querySelectorAll('#edit-request-governorate-checkboxes input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedGovernorates.push(checkbox.value);
+            });
+
+            // الحصول على التصنيفات الفرعية المختارة
+            const selectedSubcategories = [];
+            document.querySelectorAll('#edit-request-subcategory-checkboxes input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedSubcategories.push(checkbox.value);
+            });
+
+            console.log('🔍 Saving selected subcategories for edit:', selectedSubcategories);
+
+            // تحويل التصنيفات الفرعية إلى JSON string للتخزين المتسق
+            let subcategoryValue = null;
+            if (selectedSubcategories.length > 0) {
+                subcategoryValue = JSON.stringify(selectedSubcategories);
+                console.log('🔍 Subcategory JSON value for edit:', subcategoryValue);
+            }
+
+            // الحصول على المدن المختارة
+            const selectedCitiesArray = getEditRequestSelectedCities();
+
+            // التحقق من صحة البيانات
+            if (!description.trim()) {
+                alert('يرجى إدخال وصف المنتج');
+                return;
+            }
+
+            if (selectedGovernorates.length === 0) {
+                alert('يرجى اختيار محافظة واحدة على الأقل');
+                return;
+            }
+
+            try {
+                // الحصول على الطلب الحالي للحفاظ على ترتيب الصور
+                const currentRequest = window.currentRequests.find(r => r.id == requestId);
+                
+                // إعداد بيانات التحديث
+                const updateData = {
+                    description: description,
+                    price: price || null,
+                    category: category,
+                    subcategory: subcategoryValue,
+                    governorate: selectedGovernorates.join(', '),
+                    cities: selectedCitiesArray.length > 0 ? selectedCitiesArray.join(', ') : null,
+                    whatsapp: whatsapp,
+                    facebook: facebook || null,
+                    instagram: instagram || null,
+                    // الحفاظ على ترتيب الصور المُعدل إذا كانت موجودة
+                    image_urls: currentRequest && currentRequest.image_urls ? currentRequest.image_urls : null,
+                    updated_at: new Date().toISOString()
+                };
+
+                console.log('🔍 [DEBUG] ===== saveEditRequestChanges - UPDATE DATA =====');
+                console.log('🔍 [DEBUG] Request ID:', requestId);
+                console.log('🔍 [DEBUG] Selected subcategories array:', selectedSubcategories);
+                console.log('🔍 [DEBUG] Subcategory JSON value:', subcategoryValue);
+                console.log('🔍 [DEBUG] Full update data:', updateData);
+
+                // تحديث في قاعدة البيانات
+                const { error } = await window.supabaseClient
+                    .from('product_requests')
+                    .update(updateData)
+                    .eq('id', requestId);
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log('🔍 [DEBUG] ✅ Database update successful for request:', requestId);
+
+                // تحديث المصفوفة المحلية بتنسيق البيانات المتسق
+                const requestIndex = window.currentRequests.findIndex(r => r.id == requestId);
+                if (requestIndex !== -1) {
+                    // تحليل التصنيف الفرعي JSON للتخزين المحلي لضمان الاتساق
+                    let parsedSubcategory = null;
+                    if (subcategoryValue) {
+                        try {
+                            parsedSubcategory = JSON.parse(subcategoryValue);
+                            console.log('🔍 [DEBUG] Parsed subcategory for local storage:', parsedSubcategory);
+                        } catch (e) {
+                            console.log('🔍 [DEBUG] Could not parse subcategory for local storage:', e.message);
+                            parsedSubcategory = subcategoryValue;
+                        }
+                    }
+
+                    const oldRequest = window.currentRequests[requestIndex];
+                    
+                    // تحديث البيانات مع الحفاظ على الحقول الموجودة
+                    window.currentRequests[requestIndex] = {
+                        ...window.currentRequests[requestIndex],
+                        description: updateData.description,
+                        price: updateData.price,
+                        category: updateData.category,
+                        subcategory: parsedSubcategory,
+                        governorate: updateData.governorate,
+                        cities: updateData.cities,
+                        whatsapp: updateData.whatsapp,
+                        facebook: updateData.facebook,
+                        instagram: updateData.instagram,
+                        image_urls: updateData.image_urls,
+                        updated_at: updateData.updated_at
+                    };
+
+                    console.log('🔍 [DEBUG] Updated local request data:', {
+                        requestId: requestId,
+                        oldSubcategory: oldRequest.subcategory,
+                        newSubcategory: parsedSubcategory,
+                        updateData: updateData
+                    });
+                } else {
+                    console.log('🔍 [DEBUG] ⚠️ Request not found in local array for update');
+                }
+
+                alert('تم تحديث الطلب بنجاح');
+                closeEditRequestModal();
+
+                // تحديث العرض بالبيانات المُعدلة
+                console.log('🔄 Refreshing display after request update...');
+                await loadProductRequests(); // إعادة تحميل البيانات من قاعدة البيانات
+
+                console.log('✅ Request update completed - Subcategories should now display correctly in request cards');
+
+            } catch (error) {
+                console.error('Error updating request:', error);
+                alert('حدث خطأ في تحديث الطلب: ' + error.message);
+            }
+        }
+
         // تحميل البيانات عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', async function() {
             // انتظار تحميل Supabase
@@ -3691,7 +5395,80 @@
             await loadUserInfo();
             await loadDashboardData();
             await loadRecentActivity();
+
+            // ===== ربط نموذج تعديل الطلب =====
+            
+            // ربط تقديم النموذج
+            const editRequestForm = document.getElementById('editRequestForm');
+            if (editRequestForm) {
+                editRequestForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    await saveEditRequestChanges();
+                });
+            }
+
+            // تغيير الفئة في نموذج التعديل
+            const editRequestCategory = document.getElementById('edit-request-category');
+            if (editRequestCategory) {
+                editRequestCategory.addEventListener('change', function() {
+                    populateEditRequestSubcategories(this.value, []);
+                });
+            }
+
+            // رفع الصور في نموذج التعديل
+            const editRequestImageUploadArea = document.getElementById('edit-request-image-upload-area');
+            const editRequestNewImagesInput = document.getElementById('edit-request-new-images');
+            
+            if (editRequestImageUploadArea && editRequestNewImagesInput) {
+                editRequestImageUploadArea.addEventListener('click', () => editRequestNewImagesInput.click());
+                
+                editRequestNewImagesInput.addEventListener('change', function(e) {
+                    handleEditRequestNewImages(e.target.files);
+                });
+            }
+
+            // إغلاق النوافذ المنبثقة عند النقر خارجها
+            window.onclick = function(event) {
+                const editRequestModal = document.getElementById('editRequestModal');
+                
+                if (event.target === editRequestModal) {
+                    closeEditRequestModal();
+                }
+            }
+
+            // تهيئة فلتر المدن عند تحميل الصفحة
+            console.log('🔍 DOM Content Loaded - Initializing cities filter for edit request');
+            setTimeout(() => {
+                initializeEditRequestCitiesFilter();
+            }, 100);
         });
+
+        // ===== معالجة الصور الجديدة في نموذج التعديل =====
+
+        // معالجة الصور الجديدة في نموذج التعديل
+        function handleEditRequestNewImages(files) {
+            const container = document.getElementById('edit-request-current-images');
+            
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imgDiv = document.createElement('div');
+                        imgDiv.style.cssText = `
+                            position: relative;
+                            display: inline-block;
+                            margin: 5px;
+                        `;
+                        imgDiv.innerHTML = `
+                            <img src="${e.target.result}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #e1e5e9; cursor: pointer;" onclick="previewEditRequestImage('${e.target.result}')">
+                            <button onclick="this.parentElement.remove()" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center;">×</button>
+                        `;
+                        container.appendChild(imgDiv);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
 
         // تحديث البيانات كل 5 دقائق
         setInterval(async function() {
@@ -3699,6 +5476,14 @@
             await loadDashboardData();
             await loadRecentActivity();
         }, 5 * 60 * 1000);
+
+        // تهيئة فلتر المدن عند تحميل النافذة
+        window.addEventListener('load', function() {
+            console.log('🔍 Window Loaded - Initializing cities filter for edit request');
+            setTimeout(() => {
+                initializeEditRequestCitiesFilter();
+            }, 200);
+        });
 
         // ===== نظام المسارات الجديد =====
         
