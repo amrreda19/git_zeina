@@ -4518,9 +4518,6 @@
 
         // الموافقة على الطلب
         async function approveRequest(requestId) {
-            if (!confirm('هل أنت متأكد من قبول المنتج؟')) {
-                return;
-            }
 
             try {
                 if (!window.ProductRequestsService) {
@@ -4543,10 +4540,8 @@
                 // تمرير البيانات المُعدلة للموافقة
                 const result = await service.approveProductRequest(requestId, currentRequest);
                 if (result.success) {
-                    alert('تم قبول المنتج بنجاح');
-                    // إعادة تحميل الطلبات
+                    // إعادة تحميل الطلبات مباشرة
                     loadProductRequests();
-                    // تحديث الإحصائيات
                     loadDashboardData();
                 } else {
                     alert('خطأ في قبول المنتج: ' + result.error);
