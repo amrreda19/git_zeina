@@ -875,10 +875,6 @@
         <!-- Filter Bar -->
         <div class="filter-bar">
             <div class="filter-buttons">
-                <button class="filter-btn active" data-category="all">
-                    <span class="count" id="count-all">0</span>
-                    جميع المنتجات
-                </button>
                 <button class="filter-btn" data-category="koshat">
                     <span class="count" id="count-koshat">0</span>
                     كوشات
@@ -1122,7 +1118,7 @@
         // =================================================================
 
         let allProducts = [];
-        let currentFilter = 'all';
+        let currentFilter = 'koshat';
         let productToDelete = null;
 
         // Check admin authentication
@@ -1162,6 +1158,9 @@
             
             await loadAllProducts();
             await loadStatistics();
+            
+            // Set initial filter to koshat
+            applyFilter('koshat');
         };
 
         // Load all products from all tables
@@ -1321,13 +1320,12 @@
 
         // Update product counts
         function updateProductCounts() {
-            const categories = ['all', 'koshat', 'cake', 'mirr', 'other', 'invitations'];
+            const categories = ['koshat', 'cake', 'mirr', 'other', 'invitations'];
             
             categories.forEach(category => {
                 const countElement = document.getElementById(`count-${category}`);
                 if (countElement) {
-                    const count = category === 'all' ? allProducts.length : 
-                                 allProducts.filter(product => product.category === category).length;
+                                const count = allProducts.filter(product => product.category === category).length;
                     countElement.textContent = count;
                 }
             });
@@ -1341,12 +1339,13 @@
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            const activeButton = document.querySelector(`[data-category="${category}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
             
             // Filter products
-            const filteredProducts = category === 'all' ? 
-                allProducts : 
-                allProducts.filter(product => product.category === category);
+            const filteredProducts = allProducts.filter(product => product.category === category);
             
             displayProducts(filteredProducts);
         }
@@ -2256,6 +2255,9 @@
                 // Refresh the page data
                 await loadAllProducts();
                 await loadStatistics();
+                
+                // Re-apply current filter to maintain user's view
+                applyFilter(currentFilter);
 
             } catch (error) {
                 console.error('❌ Error deleting product:', error);
