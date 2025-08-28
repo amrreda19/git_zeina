@@ -6255,8 +6255,11 @@
             const adType = document.getElementById('edit-ad-type').value;
             const positionSelect = document.getElementById('edit-ad-position');
             
+            // إعادة تعيين الحقل
+            positionSelect.innerHTML = '<option value="">اختر الموضع</option>';
+            positionSelect.disabled = true; // تعطيل الحقل أولاً
+            
             if (!adType) {
-                positionSelect.innerHTML = '<option value="">اختر نوع الإعلان أولاً</option>';
                 return;
             }
 
@@ -6279,6 +6282,9 @@
             const availablePositions = positions[adType] || [];
             positionSelect.innerHTML = '<option value="">اختر الموضع</option>' +
                 availablePositions.map(p => `<option value="${p.value}">${p.text}</option>`).join('');
+            
+            // تفعيل الحقل بعد إضافة الخيارات
+            positionSelect.disabled = false;
         }
 
         // تحميل طلبات الإعلانات
@@ -6381,6 +6387,7 @@
                 const positionSelect = document.getElementById('ad-position');
                 if (positionSelect) {
                     positionSelect.innerHTML = '<option value="">اختر النوع أولاً</option>';
+                    positionSelect.disabled = true; // تعطيل الحقل
                 }
                 
                 console.log('تم فتح النافذة المنبثقة بنجاح');
@@ -6546,15 +6553,24 @@
             const adType = document.getElementById('ad-type').value;
             const positionSelect = document.getElementById('ad-position');
             
+            // إعادة تعيين الحقل
             positionSelect.innerHTML = '<option value="">اختر الموضع</option>';
+            positionSelect.disabled = true; // تعطيل الحقل أولاً
+            
+            if (!adType) {
+                return; // لا تفعل الحقل إذا لم يتم اختيار نوع
+            }
             
             if (adType === 'featured') {
                 positionSelect.innerHTML += '<option value="homepage_featured">الصفحة الرئيسية - مميز</option>';
                 positionSelect.innerHTML += '<option value="category_featured">صفحة التصنيف - مميز</option>';
+                positionSelect.disabled = false; // تفعيل الحقل
             } else if (adType === 'recommended') {
                 positionSelect.innerHTML += '<option value="homepage_recommended">الصفحة الرئيسية - موصى به</option>';
+                positionSelect.disabled = false; // تفعيل الحقل
             } else if (adType === 'banner') {
                 positionSelect.innerHTML += '<option value="sidebar">الشريط الجانبي</option>';
+                positionSelect.disabled = false; // تفعيل الحقل
             } else if (adType === 'category_sections') {
                 // للنوع الجديد - استخدام موضع صحيح من قاعدة البيانات
                 positionSelect.innerHTML += '<option value="homepage_featured">أقسام التصنيفات في الصفحة الرئيسية</option>';
