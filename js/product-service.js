@@ -294,20 +294,38 @@ class ProductService {
                 return { success: false, error: 'ProductService not initialized' };
             }
 
-            const tableName = this.getTableName(category);
-            console.log(`🔍 Fetching products from table: ${tableName}`);
+            console.log(`🔍 Fetching products for category: ${category} from all tables`);
 
-            const { data, error } = await this.supabase
-                .from(tableName)
-                .select('*')
-                .order('created_at', { ascending: false });
+            // Get products from ALL tables and filter by category
+            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
+            let allProducts = [];
 
-            if (error) {
-                console.error(`Error fetching products from ${tableName}:`, error);
-                return { success: false, error: error.message };
+            for (const table of tables) {
+                const { data, error } = await this.supabase
+                    .from(table)
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error(`Error fetching products from ${table}:`, error);
+                    continue;
+                }
+
+                // Add table name to each product for identification
+                const productsWithTable = (data || []).map(product => ({
+                    ...product,
+                    source_table: table
+                }));
+
+                allProducts = allProducts.concat(productsWithTable);
             }
 
-            return { success: true, data: data || [] };
+            // Filter products by the requested category
+            const categoryProducts = allProducts.filter(product => product.category === category);
+            
+            console.log(`🔍 Found ${categoryProducts.length} products for category ${category} out of ${allProducts.length} total products`);
+
+            return { success: true, data: categoryProducts };
         } catch (error) {
             console.error('Error in getProductsByCategory:', error);
             return { success: false, error: error.message };

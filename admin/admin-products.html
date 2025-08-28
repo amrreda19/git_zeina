@@ -1282,6 +1282,30 @@
                     });
                 }
 
+                // Check for category-table mismatches and fix them
+                console.log('🔍 [DEBUG] ===== CHECKING FOR CATEGORY-TABLE MISMATCHES =====');
+                let mismatchCount = 0;
+                allProducts.forEach(product => {
+                    const expectedTable = getTableNameForCategory(product.category);
+                    if (product.sourceTable !== expectedTable) {
+                        console.log(`🔍 [DEBUG] ⚠️ Category-table mismatch found:`, {
+                            productId: product.id,
+                            category: product.category,
+                            currentTable: product.sourceTable,
+                            expectedTable: expectedTable
+                        });
+                        mismatchCount++;
+                        // Fix the mismatch by updating sourceTable
+                        product.sourceTable = expectedTable;
+                    }
+                });
+                
+                if (mismatchCount > 0) {
+                    console.log(`🔍 [DEBUG] ✅ Fixed ${mismatchCount} category-table mismatches`);
+                } else {
+                    console.log('🔍 [DEBUG] ✅ No category-table mismatches found');
+                }
+
                 updateProductCounts();
                 applyFilter(currentFilter);
                 displayProducts(allProducts);
@@ -1350,7 +1374,7 @@
             displayProducts(filteredProducts);
         }
 
-        // Display products
+        // عرض المنتجات
         function displayProducts(products) {
             const loadingState = document.getElementById('loading-state');
             const emptyState = document.getElementById('empty-state');
@@ -1367,6 +1391,9 @@
 
             emptyState.style.display = 'none';
             productsContainer.style.display = 'block';
+
+            console.log('🔍 [DEBUG] Displaying products:', products.length);
+            console.log('🔍 [DEBUG] Sample product data:', products[0]);
 
             console.log('🔍 [DEBUG] ===== STARTING displayProducts =====');
             console.log('🔍 [DEBUG] Total products to display:', products.length);
@@ -1636,13 +1663,22 @@
             console.log('🔍 [DEBUG] Product ID:', productId);
             console.log('🔍 [DEBUG] Table name:', tableName);
 
-            // Find the product in allProducts array
+            // البحث عن المنتج في مصفوفة allProducts
             const product = allProducts.find(p => p.id === productId && p.sourceTable === tableName);
             if (!product) {
                 console.log('🔍 [DEBUG] ❌ Product not found in allProducts array');
                 alert('لم يتم العثور على المنتج');
                 return;
             }
+
+            console.log('🔍 [DEBUG] ✅ Product found:', {
+                id: product.id,
+                title: product.title,
+                description: product.description,
+                price: product.price,
+                category: product.category,
+                subcategory: product.subcategory
+            });
 
             console.log('🔍 [DEBUG] ✅ Product found in allProducts');
             console.log('🔍 [DEBUG] Raw product data:', product);
@@ -1665,7 +1701,7 @@
                 image_urls: product.image_urls
             });
 
-            // Fill form with product data
+            // ملء النموذج ببيانات المنتج
             document.getElementById('edit-product-id').value = product.id;
             document.getElementById('edit-product-table').value = product.sourceTable;
             document.getElementById('edit-description').value = product.description || '';
@@ -1674,6 +1710,15 @@
             document.getElementById('edit-whatsapp').value = product.whatsapp || '';
             document.getElementById('edit-facebook').value = product.facebook || '';
             document.getElementById('edit-instagram').value = product.instagram || '';
+
+            console.log('🔍 [DEBUG] Form filled with product data:', {
+                description: product.description,
+                price: product.price,
+                category: product.category,
+                whatsapp: product.whatsapp,
+                facebook: product.facebook,
+                instagram: product.instagram
+            });
 
             // Populate governorates with better data handling
             let governorates = [];
@@ -2242,8 +2287,22 @@
 
                 console.log('✅ ProductService available, proceeding with deletion');
 
+                // Find the product in allProducts to get the correct table
+                const product = allProducts.find(p => p.id === productToDelete.id);
+                if (!product) {
+                    throw new Error('لم يتم العثور على المنتج في الذاكرة المحلية');
+                }
+
+                console.log('🔍 [DEBUG] ===== DELETE PRODUCT DEBUG =====');
+                console.log('🔍 [DEBUG] Product to delete:', {
+                    id: product.id,
+                    category: product.category,
+                    sourceTable: product.sourceTable,
+                    title: product.title
+                });
+
                 // Use ProductService to delete product (this will also delete images from storage)
-                const result = await window.ProductService.deleteProduct(productToDelete.id, productToDelete.table);
+                const result = await window.ProductService.deleteProduct(productToDelete.id, product.sourceTable);
 
                 if (!result.success) {
                     throw new Error(result.error);
@@ -2417,8 +2476,20 @@
                 // Get current product to preserve image order
                 const currentProduct = allProducts.find(p => p.id === productId && p.sourceTable === tableName);
                 
+                // Check if category has changed
+                const categoryChanged = currentProduct && currentProduct.category !== category;
+                const newTableName = categoryChanged ? getTableNameForCategory(category) : tableName;
+                
+                console.log('🔍 [DEBUG] ===== saveEditChanges - CATEGORY CHANGE CHECK =====');
+                console.log('🔍 [DEBUG] Old category:', currentProduct ? currentProduct.category : 'N/A');
+                console.log('🔍 [DEBUG] New category:', category);
+                console.log('🔍 [DEBUG] Category changed:', categoryChanged);
+                console.log('🔍 [DEBUG] Old table:', tableName);
+                console.log('🔍 [DEBUG] New table:', newTableName);
+                
                 // Prepare update data
                 const updateData = {
+                    title: currentProduct.title || 'منتج بدون عنوان',
                     description: description,
                     price: price || null,
                     category: category,
@@ -2428,76 +2499,179 @@
                     whatsapp: whatsapp,
                     facebook: facebook || null,
                     instagram: instagram || null,
-                    // Preserve the reordered image_urls if they exist
-                    image_urls: currentProduct && currentProduct.image_urls ? currentProduct.image_urls : null
+                    image_urls: currentProduct && currentProduct.image_urls ? currentProduct.image_urls : null,
+                    user_id: currentProduct.user_id || null,
+                    created_at: currentProduct.created_at || new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                 };
 
                 console.log('🔍 [DEBUG] ===== saveEditChanges - UPDATE DATA =====');
                 console.log('🔍 [DEBUG] Product ID:', productId);
-                console.log('🔍 [DEBUG] Table:', tableName);
+                console.log('🔍 [DEBUG] Old table:', tableName);
+                console.log('🔍 [DEBUG] New table:', newTableName);
                 console.log('🔍 [DEBUG] Selected subcategories array:', selectedSubcategories);
                 console.log('🔍 [DEBUG] Subcategory JSON value:', subcategoryValue);
                 console.log('🔍 [DEBUG] Full update data:', updateData);
-                console.log('🔍 [DEBUG] Current product subcategory:', currentProduct ? currentProduct.subcategory : 'N/A');
 
-                // Update in database
-                const { error } = await window.supabaseClient
-                    .from(tableName)
-                    .update(updateData)
-                    .eq('id', productId);
+                if (categoryChanged) {
+                    // Category changed - need to move product to new table
+                    console.log('🔍 [DEBUG] 🚀 Category changed - moving product to new table');
+                    
+                    // 1. Insert into new table
+                    const { data: newProduct, error: insertError } = await window.supabaseClient
+                        .from(newTableName)
+                        .insert([updateData])
+                        .select();
 
-                if (error) {
-                    throw error;
-                }
-
-                console.log('🔍 [DEBUG] ✅ Database update successful for product:', productId);
-
-                // Update local array with consistent data format
-                const productIndex = allProducts.findIndex(p => p.id === productId && p.sourceTable === tableName);
-                if (productIndex !== -1) {
-                    // Parse the subcategory JSON for local storage to ensure consistency
-                    let parsedSubcategory = null;
-                    if (subcategoryValue) {
-                        try {
-                            parsedSubcategory = JSON.parse(subcategoryValue);
-                            console.log('🔍 [DEBUG] Parsed subcategory for local storage:', parsedSubcategory);
-                        } catch (e) {
-                            console.log('🔍 [DEBUG] Could not parse subcategory for local storage:', e.message);
-                            parsedSubcategory = subcategoryValue;
-                        }
+                    if (insertError) {
+                        throw new Error(`Failed to insert into new table ${newTableName}: ${insertError.message}`);
                     }
 
-                    const oldProduct = allProducts[productIndex];
-                    allProducts[productIndex] = {
-                        ...allProducts[productIndex],
-                        ...updateData,
-                        subcategory: parsedSubcategory  // Store parsed array locally for consistency
-                    };
+                    console.log('🔍 [DEBUG] ✅ Product inserted into new table:', newProduct[0]);
 
-                    console.log('🔍 [DEBUG] Updated local product data:', {
-                        productId: productId,
-                        oldSubcategory: oldProduct.subcategory,
-                        newSubcategory: parsedSubcategory,
-                        updateData: updateData
-                    });
+                    // 2. Delete from old table
+                    const { error: deleteError } = await window.supabaseClient
+                        .from(tableName)
+                        .delete()
+                        .eq('id', productId);
+
+                    if (deleteError) {
+                        console.warn('⚠️ Warning: Could not delete from old table:', deleteError.message);
+                        // Continue anyway as the product is now in the new table
+                    } else {
+                        console.log('🔍 [DEBUG] ✅ Product deleted from old table');
+                    }
+
+                    // 3. تحديث المصفوفة المحلية
+                    const productIndex = allProducts.findIndex(p => p.id === productId && p.sourceTable === tableName);
+                    if (productIndex !== -1) {
+                        // معالجة التصنيفات الفرعية
+                        let parsedSubcategory = null;
+                        if (subcategoryValue) {
+                            try {
+                                parsedSubcategory = JSON.parse(subcategoryValue);
+                                console.log('🔍 [DEBUG] Parsed subcategory for local storage:', parsedSubcategory);
+                            } catch (e) {
+                                console.log('🔍 [DEBUG] Could not parse subcategory for local storage:', e.message);
+                                parsedSubcategory = subcategoryValue;
+                            }
+                        }
+
+                        // تحديث المنتج في المصفوفة المحلية مع الجدول الجديد
+                        allProducts[productIndex] = {
+                            ...allProducts[productIndex],
+                            description: description,
+                            price: price || null,
+                            category: category,
+                            subcategory: parsedSubcategory,
+                            governorate: selectedGovernorates.join(', '),
+                            cities: selectedCitiesArray.length > 0 ? selectedCitiesArray.join(', ') : null,
+                            whatsapp: whatsapp,
+                            facebook: facebook || null,
+                            instagram: instagram || null,
+                            sourceTable: newTableName,  // تحديث الجدول المصدر
+                            updated_at: new Date().toISOString()
+                        };
+
+                        console.log('🔍 [DEBUG] ✅ Updated local product with new table:', newTableName);
+                    }
+
                 } else {
-                    console.log('🔍 [DEBUG] ⚠️ Product not found in local array for update');
+                    // Category didn't change - just update in current table
+                    console.log('🔍 [DEBUG] 🔄 Category unchanged - updating in current table');
+                    
+                    // تحديث البيانات في قاعدة البيانات
+                    const { error } = await window.supabaseClient
+                        .from(tableName)
+                        .update(updateData)
+                        .eq('id', productId);
+
+                    if (error) {
+                        throw error;
+                    }
+
+                    console.log('🔍 [DEBUG] ✅ Database update successful for product:', productId);
+
+                    // تحديث المصفوفة المحلية
+                    const productIndex = allProducts.findIndex(p => p.id === productId && p.sourceTable === tableName);
+                    if (productIndex !== -1) {
+                        // معالجة التصنيفات الفرعية
+                        let parsedSubcategory = null;
+                        if (subcategoryValue) {
+                            try {
+                                parsedSubcategory = JSON.parse(subcategoryValue);
+                                console.log('🔍 [DEBUG] Parsed subcategory for local storage:', parsedSubcategory);
+                            } catch (e) {
+                                console.log('🔍 [DEBUG] Could not parse subcategory for local storage:', e.message);
+                                parsedSubcategory = subcategoryValue;
+                            }
+                        }
+
+                        // تحديث المنتج في المصفوفة المحلية
+                        allProducts[productIndex] = {
+                            ...allProducts[productIndex],
+                            description: description,
+                            price: price || null,
+                            category: category,
+                            subcategory: parsedSubcategory,
+                            governorate: selectedGovernorates.join(', '),
+                            cities: selectedCitiesArray.length > 0 ? selectedCitiesArray.join(', ') : null,
+                            whatsapp: whatsapp,
+                            facebook: facebook || null,
+                            instagram: instagram || null,
+                            updated_at: new Date().toISOString()
+                        };
+
+                        console.log('🔍 [DEBUG] ✅ Local product updated successfully:', {
+                            productId: productId,
+                            oldSubcategory: allProducts[productIndex].subcategory,
+                            newSubcategory: parsedSubcategory,
+                            newDescription: description,
+                            newPrice: price
+                        });
+                    } else {
+                        console.log('🔍 [DEBUG] ⚠️ Product not found in local array for update');
+                    }
                 }
 
                 alert('تم تحديث المنتج بنجاح');
                 closeEditModal();
 
-                // Refresh display with updated data
-                console.log('🔄 Refreshing display after product update...');
-                await loadAllProducts(); // إعادة تحميل البيانات من قاعدة البيانات
+                // تحديث العرض مباشرة بدون إعادة تحميل كامل
+                console.log('🔄 Updating display after product update...');
+                
+                // تحديث الإحصائيات
+                await loadStatistics();
+                
+                // إعادة تطبيق الفلتر الحالي لعرض البيانات المحدثة
                 applyFilter(currentFilter);
 
-                console.log('✅ Product update completed - Subcategories should now display correctly in product cards');
+                console.log('✅ Product update completed - Display updated successfully');
 
             } catch (error) {
                 console.error('Error updating product:', error);
                 alert('حدث خطأ في تحديث المنتج: ' + error.message);
             }
+        }
+
+        // Helper function to get table name for category
+        function getTableNameForCategory(category) {
+            const tableMap = {
+                'cake': 'products_cake',
+                'koshat': 'products_koshat', 
+                'mirr': 'products_mirr',
+                'other': 'products_other',
+                'invitations': 'products_invitations'
+            };
+            
+            const tableName = tableMap[category];
+            if (!tableName) {
+                console.warn(`⚠️ Unknown category: ${category}, defaulting to products_other`);
+                return 'products_other';
+            }
+            
+            console.log(`📋 Mapping category "${category}" to table "${tableName}"`);
+            return tableName;
         }
 
         // Cities Filter Variables for Edit Modal
@@ -2612,10 +2786,8 @@
                 return;
             }
 
-            // Clear previous selections
-            if (typeof editSelectedCities !== 'undefined') {
-                editSelectedCities.clear();
-            }
+            // Clear previous selections and reinitialize editSelectedCities
+            editSelectedCities = new Set();
 
             if (!selectedGovernorates || selectedGovernorates.length === 0) {
                 // Hide cities filter if no governorates selected
