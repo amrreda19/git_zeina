@@ -533,7 +533,7 @@
 
         /* تحسين عرض الإعلانات المميزة */
         #featured-ads-container {
-            scroll-behavior: smooth;
+            scroll-behavior: auto;
             scroll-snap-type: x mandatory;
             /* تحسين التمرير على الأجهزة المحمولة */
             -webkit-overflow-scrolling: touch;
@@ -544,13 +544,13 @@
         /* تحسين التمرير في جميع العناصر */
         * {
             /* ضمان عمل التمرير */
-            scroll-behavior: smooth;
+            scroll-behavior: auto;
         }
         
         /* تحسين التمرير على المتصفحات المختلفة */
-        @supports (scroll-behavior: smooth) {
+        @supports (scroll-behavior: auto) {
             html {
-                scroll-behavior: smooth;
+                scroll-behavior: auto;
             }
         }
         
@@ -612,6 +612,7 @@
         #featured-ads-container > div {
             transition: all 0.3s ease;
             scroll-snap-align: start;
+            /* إزالة scroll-snap-align لمنع مشاكل التمرير */
         }
 
         #featured-ads-container > div:hover {
@@ -3151,7 +3152,7 @@
     </script>
     
     <!-- ملف التمرير السلس -->
-            <script src="../js/scroll-optimization.js?v=2025-08-22-1" defer></script>
+    <script src="../js/scroll-optimization.js?v=2025-08-22-1" defer></script>
     <script src="../js/smooth-scroll.js" defer></script>
         
         <script>
@@ -3159,62 +3160,35 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 تحسين التمرير...');
             
-            // تحسين التمرير بالموس
-            document.addEventListener('wheel', function(e) {
-                // منع التمرير الأفقي غير المرغوب
-                if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-                    e.preventDefault();
+            // إزالة CSS المتضارب
+            const conflictingStyles = document.querySelectorAll('style');
+            conflictingStyles.forEach(style => {
+                if (style.textContent.includes('scroll-behavior: smooth')) {
+                    style.textContent = style.textContent.replace(/scroll-behavior:\s*smooth/g, 'scroll-behavior: auto');
                 }
-            }, { passive: false });
+            });
             
-            // تحسين التمرير باللمس
-            let touchStartY = 0;
-            let touchStartX = 0;
-            
-            document.addEventListener('touchstart', function(e) {
-                touchStartY = e.touches[0].clientY;
-                touchStartX = e.touches[0].clientX;
-            }, { passive: true });
-            
-            document.addEventListener('touchmove', function(e) {
-                const touchY = e.touches[0].clientY;
-                const touchX = e.touches[0].clientX;
-                const deltaY = Math.abs(touchY - touchStartY);
-                const deltaX = Math.abs(touchX - touchStartX);
-                
-                // منع التمرير الأفقي إذا كان التمرير العمودي أكبر
-                if (deltaX > deltaY) {
-                    e.preventDefault();
+            // تطبيق CSS محسن للتمرير
+            const scrollStyle = document.createElement('style');
+            scrollStyle.textContent = `
+                html, body {
+                    scroll-behavior: auto !important;
+                    -webkit-overflow-scrolling: touch !important;
+                    overflow-x: hidden !important;
                 }
-            }, { passive: false });
-            
-            // تحسين التمرير على الأجهزة المحمولة
-            if ('ontouchstart' in window) {
-                document.body.style.webkitOverflowScrolling = 'touch';
-                document.documentElement.style.webkitOverflowScrolling = 'touch';
                 
-                // إضافة CSS إضافي للأجهزة المحمولة
-                const mobileStyle = document.createElement('style');
-                mobileStyle.textContent = `
-                    body, html {
-                        -webkit-overflow-scrolling: touch !important;
-                        overflow-x: hidden !important;
-                    }
-                `;
-                document.head.appendChild(mobileStyle);
-            }
-            
-            console.log('✅ تم تحسين التمرير بنجاح');
-            
-            // إضافة تحسين إضافي للتمرير
-            setTimeout(() => {
-                // إعادة تطبيق CSS للتأكد من عمل التمرير
-                document.body.style.overflowX = 'hidden';
-                document.body.style.overflowY = 'auto';
-                document.documentElement.style.overflowX = 'hidden';
+                #featured-ads-container {
+                    scroll-behavior: auto !important;
+                    scroll-snap-type: none !important;
+                }
                 
-                console.log('🔄 تم تطبيق تحسينات التمرير الإضافية');
-            }, 1000);
+                #featured-ads-container > div {
+                    scroll-snap-align: none !important;
+                }
+            `;
+            document.head.appendChild(scrollStyle);
+            
+            console.log('✅ تم إصلاح التمرير بنجاح');
         });
         </script>
         
