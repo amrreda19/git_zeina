@@ -283,6 +283,22 @@
             transform: translateY(-1px);
         }
 
+        .close-filters-btn {
+            background: #6b7280;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-filters-btn:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
         .active-filters {
             display: flex;
             flex-wrap: wrap;
@@ -761,11 +777,7 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
-        <!-- Category Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-4">دعوات وتوزيعات</h1>
-            <p class="text-gray-600 text-lg">اكتشف أجمل دعوات الخطوبة والمناسبات والتوزيعات المميزة</p>
-        </div>
+
 
         <!-- Advanced Filters -->
         <div class="filter-section">
@@ -776,7 +788,10 @@
                     </svg>
                     <span id="toggle-text" class="text-sm sm:text-base">فلاتر اختيار المنتج والمحافظة</span>
                 </button>
-                <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
+                <div class="flex flex-col items-end gap-2">
+                    <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
+                    <button id="close-filters-btn" class="close-filters-btn hidden sm:hidden">إغلاق النافذة</button>
+                </div>
             </div>
 
             <div id="filters-content" class="filter-grid hidden transition-all duration-300 ease-in-out">
@@ -1958,6 +1973,7 @@
         let currentFilter = 'all';
         let governorateFilter;
         let subcategoryFilter;
+        let filtersOpen = false; // متغير لتتبع حالة الفلاتر
         
         let activeFilters = {
             subcategory: [],
@@ -2213,24 +2229,59 @@
             const filtersContent = document.getElementById('filters-content');
             const toggleIcon = document.getElementById('toggle-icon');
             const toggleText = document.getElementById('toggle-text');
+            const closeFiltersBtn = document.getElementById('close-filters-btn');
             
             if (!toggleBtn || !filtersContent) return;
             
-            let isOpen = false;
-            
             toggleBtn.addEventListener('click', function() {
-                isOpen = !isOpen;
+                filtersOpen = !filtersOpen;
                 
-                if (isOpen) {
+                if (filtersOpen) {
                     // Open filters
                     filtersContent.classList.remove('hidden');
                     if (toggleIcon) toggleIcon.classList.add('rotated');
                     if (toggleText) toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
+                    // إظهار زر الإغلاق في الشاشة الصغيرة
+                    if (closeFiltersBtn && window.innerWidth < 640) {
+                        closeFiltersBtn.classList.remove('hidden');
+                    }
                 } else {
                     // Close filters
                     filtersContent.classList.add('hidden');
                     if (toggleIcon) toggleIcon.classList.remove('rotated');
                     if (toggleText) toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
+                    // إخفاء زر الإغلاق
+                    if (closeFiltersBtn) {
+                        closeFiltersBtn.classList.add('hidden');
+                    }
+                }
+            });
+            
+            // إضافة وظيفة زر الإغلاق
+            if (closeFiltersBtn) {
+                closeFiltersBtn.addEventListener('click', function() {
+                    // إغلاق الفلاتر
+                    filtersContent.classList.add('hidden');
+                    if (toggleIcon) toggleIcon.classList.remove('rotated');
+                    if (toggleText) toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
+                    // إخفاء زر الإغلاق
+                    closeFiltersBtn.classList.add('hidden');
+                    filtersOpen = false;
+                });
+            }
+            
+            // مراقبة تغيير حجم النافذة
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 640) {
+                    // في الشاشات الكبيرة، إخفاء زر الإغلاق
+                    if (closeFiltersBtn) {
+                        closeFiltersBtn.classList.add('hidden');
+                    }
+                } else if (filtersOpen && window.innerWidth < 640) {
+                    // في الشاشات الصغيرة، إظهار زر الإغلاق إذا كانت الفلاتر مفتوحة
+                    if (closeFiltersBtn) {
+                        closeFiltersBtn.classList.remove('hidden');
+                    }
                 }
             });
         }
@@ -2523,6 +2574,15 @@
             updateGovernorateFilter();
             updateCitiesFilter();
             applyFilters();
+            
+            // إخفاء زر الإغلاق بعد مسح الفلاتر
+            const closeFiltersBtn = document.getElementById('close-filters-btn');
+            if (closeFiltersBtn) {
+                closeFiltersBtn.classList.add('hidden');
+            }
+            
+            // تحديث حالة الفلاتر
+            filtersOpen = false;
         }
 
         // Update active filters display

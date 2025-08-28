@@ -279,6 +279,20 @@
             background: #dc2626;
             transform: translateY(-1px);
         }
+        .close-filters-btn {
+            background: #6b7280;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .close-filters-btn:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
 
         .active-filters {
             display: flex;
@@ -784,11 +798,7 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
-        <!-- Category Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-4">كوشات أفراح</h1>
-            <p class="text-gray-600 text-lg">اكتشف أجمل كوشات الخطوبة والمناسبات</p>
-        </div>
+
 
         <!-- Advanced Filters -->
         <div class="filter-section">
@@ -799,7 +809,10 @@
                     </svg>
                     <span id="toggle-text" class="text-sm sm:text-base">فلاتر اختيار المنتج والمحافظة</span>
                 </button>
-                <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
+                <div class="flex flex-col items-end gap-2">
+                    <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
+                    <button id="close-filters-btn" class="close-filters-btn hidden sm:hidden">إغلاق النافذة</button>
+                </div>
             </div>
 
             <div id="filters-content" class="filter-grid hidden transition-all duration-300 ease-in-out">
@@ -1281,22 +1294,47 @@
             const filtersContent = document.getElementById('filters-content');
             const toggleIcon = document.getElementById('toggle-icon');
             const toggleText = document.getElementById('toggle-text');
+            const closeFiltersBtn = document.getElementById('close-filters-btn');
             
-            let isOpen = false;
+            let filtersOpen = false;
             
             toggleBtn.addEventListener('click', function() {
-                isOpen = !isOpen;
+                filtersOpen = !filtersOpen;
                 
-                if (isOpen) {
+                if (filtersOpen) {
                     // Open filters
                     filtersContent.classList.remove('hidden');
                     toggleIcon.classList.add('rotated');
                     toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
+                    
+                    // Show close button on small screens
+                    if (window.innerWidth < 640) {
+                        closeFiltersBtn.classList.remove('hidden');
+                    }
                 } else {
                     // Close filters
                     filtersContent.classList.add('hidden');
                     toggleIcon.classList.remove('rotated');
                     toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
+                    closeFiltersBtn.classList.add('hidden');
+                }
+            });
+            
+            // Close filters button functionality
+            closeFiltersBtn.addEventListener('click', function() {
+                filtersContent.classList.add('hidden');
+                toggleIcon.classList.remove('rotated');
+                toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
+                closeFiltersBtn.classList.add('hidden');
+                filtersOpen = false;
+            });
+            
+            // Handle resize events
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 640) {
+                    closeFiltersBtn.classList.add('hidden');
+                } else if (filtersOpen) {
+                    closeFiltersBtn.classList.remove('hidden');
                 }
             });
         }
@@ -1856,6 +1894,10 @@
             document.getElementById('cities-placeholder').textContent = 'اختر المدن/المناطق';
             document.getElementById('selected-cities').innerHTML = '';
             updateCitiesOptions();
+
+            // Hide close filters button
+            const closeFiltersBtn = document.getElementById('close-filters-btn');
+            closeFiltersBtn.classList.add('hidden');
 
             // Apply filters
             applyFilters();
