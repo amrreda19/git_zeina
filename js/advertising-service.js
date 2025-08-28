@@ -999,6 +999,37 @@ class AdvertisingService {
     }
 
     /**
+     * دالة مساعدة لمعالجة الصور
+     */
+    _getProductImageUrl(productData) {
+        if (!productData) {
+            console.log('🚨 DEBUG: لا توجد بيانات منتج');
+            return null;
+        }
+        
+        console.log('🚨 DEBUG: معالجة صور المنتج:', {
+            id: productData.id,
+            image_urls: productData.image_urls,
+            image_url: productData.image_url
+        });
+        
+        // نستخدم image_urls أولاً
+        if (productData.image_urls && Array.isArray(productData.image_urls) && productData.image_urls.length > 0) {
+            console.log('🚨 DEBUG: تم العثور على صورة من image_urls:', productData.image_urls[0]);
+            return productData.image_urls[0];
+        }
+        
+        // إذا لم توجد image_urls، نستخدم image_url (إذا كان موجوداً)
+        if (productData.image_url) {
+            console.log('🚨 DEBUG: تم العثور على صورة من image_url:', productData.image_url);
+            return productData.image_url;
+        }
+        
+        console.log('🚨 DEBUG: لم يتم العثور على أي صورة');
+        return null;
+    }
+
+    /**
      * جلب إعلان مع تفاصيل المنتج المرتبط
      */
     async getAdvertisementWithProduct(adId) {
@@ -1043,9 +1074,10 @@ class AdvertisingService {
                 }
                 
                 // جلب بيانات المنتج الحقيقي مع التأكد من جلب جميع الحقول
+                // نستخدم image_urls فقط لأن image_url قد لا يكون موجوداً في جميع الجداول
                 const { data: product, error: productError } = await this.supabase
                     .from(tableName)
-                    .select('id, description, price, image_urls, image_url, category, subcategory, governorate, cities, whatsapp, facebook, instagram, created_at, updated_at')
+                    .select('id, description, price, image_urls, category, subcategory, governorate, cities, whatsapp, facebook, instagram, created_at, updated_at')
                     .eq('id', ad.product_id)
                     .single();
                 
@@ -1085,7 +1117,7 @@ class AdvertisingService {
                     description: productData.description,
                     price: productData.price || 0,
                     image_urls: productData.image_urls || [],
-                    image_url: productData.image_urls?.[0] || productData.image_url,
+                    image_url: this._getProductImageUrl(productData),
                     category: productData.category,
                     subcategory: productData.subcategory,
                     governorate: productData.governorate,
