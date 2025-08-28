@@ -665,7 +665,8 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <label for="request-whatsapp" class="block text-sm font-medium text-gray-600 mb-2">رقم الواتساب</label>
-                                    <input type="tel" id="request-whatsapp" name="whatsapp" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="+20 123 456 7890">
+                                    <input type="tel" id="request-whatsapp" name="whatsapp" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="01234567890" pattern="[0-9]+" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    <p class="text-xs text-gray-500 mt-1">أرقام فقط - بدون رموز أو حروف</p>
                                     <div id="request-whatsapp-error" class="validation-error hidden"></div>
                                 </div>
                                 
@@ -677,8 +678,9 @@
                                 </div>
                                 
                                 <div>
-                                    <label for="request-instagram" class="block text-sm font-medium text-gray-600 mb-2">اسم المستخدم في الإنستجرام</label>
-                                    <input type="text" id="request-instagram" name="instagram" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="username">
+                                    <label for="request-instagram" class="block text-sm font-medium text-gray-600 mb-2">رابط الإنستجرام</label>
+                                    <input type="text" id="request-instagram" name="instagram" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="username أو @username أو https://instagram.com/username">
+                                    <p class="text-xs text-gray-500 mt-1">يقبل username أو @username أو روابط الإنستجرام: https://instagram.com/username</p>
                                     <div id="request-instagram-error" class="validation-error hidden"></div>
                                 </div>
                             </div>
@@ -913,6 +915,30 @@
                     updateValidationErrors();
                 });
             });
+            
+            // إضافة تحقق خاص لروابط وسائل التواصل الاجتماعي
+            const facebookField = document.getElementById('request-facebook');
+            const instagramField = document.getElementById('request-instagram');
+            
+            if (facebookField) {
+                facebookField.addEventListener('input', function() {
+                    validateFacebookField();
+                });
+                
+                facebookField.addEventListener('blur', function() {
+                    validateFacebookField();
+                });
+            }
+            
+            if (instagramField) {
+                instagramField.addEventListener('input', function() {
+                    validateInstagramField();
+                });
+                
+                instagramField.addEventListener('blur', function() {
+                    validateInstagramField();
+                });
+            }
 
             // Add event listeners to checkboxes and radio buttons
             const checkboxes = form.querySelectorAll('input[type="checkbox"], input[type="radio"]');
@@ -946,7 +972,93 @@
             // Don't initialize validation on page load - only show errors when user tries to submit or interacts with fields
 
             
-                        function validateForm() {
+                        // دالة للتحقق من صحة روابط وسائل التواصل الاجتماعي
+            function validateSocialMediaLinks() {
+                const errors = [];
+                
+                const facebook = document.getElementById('request-facebook').value.trim();
+                const instagram = document.getElementById('request-instagram').value.trim();
+                
+                // التحقق من رابط الفيسبوك
+                if (facebook) {
+                    if (!isValidFacebookLink(facebook)) {
+                        errors.push('رابط الفيسبوك غير صحيح - يجب أن يكون رابط فيسبوك فقط');
+                    }
+                }
+                
+                // التحقق من رابط الإنستجرام
+                if (instagram) {
+                    if (!isValidInstagramLink(instagram)) {
+                        errors.push('رابط الإنستجرام غير صحيح - يجب أن يكون رابط إنستجرام فقط');
+                    }
+                }
+                
+                return errors;
+            }
+            
+            // دالة للتحقق من صحة رابط الفيسبوك
+            function isValidFacebookLink(url) {
+                // يقبل روابط الفيسبوك فقط
+                const facebookPatterns = [
+                    /^https?:\/\/(www\.)?facebook\.com\//,
+                    /^https?:\/\/(www\.)?fb\.com\//,
+                    /^https?:\/\/(www\.)?fb\.me\//,
+                    /^https?:\/\/(www\.)?m\.facebook\.com\//
+                ];
+                
+                return facebookPatterns.some(pattern => pattern.test(url));
+            }
+            
+            // دالة للتحقق من صحة رابط الإنستجرام
+            function isValidInstagramLink(url) {
+                // يقبل username أو @username أو روابط الإنستجرام
+                const instagramPatterns = [
+                    /^https?:\/\/(www\.)?instagram\.com\//,
+                    /^https?:\/\/(www\.)?instagr\.am\//,
+                    /^@?[a-zA-Z0-9._]+$/,  // username أو @username
+                    /^[a-zA-Z0-9._]+$/      // username بدون @
+                ];
+                
+                return instagramPatterns.some(pattern => pattern.test(url));
+            }
+            
+            // دالة للتحقق المباشر من حقل الفيسبوك
+            function validateFacebookField() {
+                const facebookField = document.getElementById('request-facebook');
+                const facebookError = document.getElementById('request-facebook-error');
+                const value = facebookField.value.trim();
+                
+                if (facebookError) {
+                    if (value && !isValidFacebookLink(value)) {
+                        facebookError.textContent = '❌ هذا ليس رابط فيسبوك صحيح. يرجى إدخال رابط فيسبوك فقط';
+                        facebookError.classList.remove('hidden');
+                        facebookField.classList.add('field-error');
+                    } else {
+                        facebookError.classList.add('hidden');
+                        facebookField.classList.remove('field-error');
+                    }
+                }
+            }
+            
+            // دالة للتحقق المباشر من حقل الإنستجرام
+            function validateInstagramField() {
+                const instagramField = document.getElementById('request-instagram');
+                const instagramError = document.getElementById('request-instagram-error');
+                const value = instagramField.value.trim();
+                
+                if (instagramError) {
+                    if (value && !isValidInstagramLink(value)) {
+                        instagramError.textContent = '❌ هذا ليس رابط إنستجرام صحيح. يرجى إدخال رابط إنستجرام فقط';
+                        instagramError.classList.remove('hidden');
+                        instagramField.classList.add('field-error');
+                    } else {
+                        instagramError.classList.add('hidden');
+                        instagramField.classList.remove('field-error');
+                    }
+                }
+            }
+            
+            function validateForm() {
                 const errors = [];
 
                 // Validate description
@@ -986,6 +1098,10 @@
                 if (!whatsapp && !facebook && !instagram) {
                     errors.push('وسائل التواصل الاجتماعي');
                 }
+                
+                // التحقق من صحة روابط وسائل التواصل الاجتماعي
+                const socialMediaErrors = validateSocialMediaLinks();
+                errors.push(...socialMediaErrors);
 
                 return errors;
             }
@@ -1083,6 +1199,19 @@
                 
                 // Hide general error alert
                 hideGeneralError();
+            }
+            
+            // دالة لإزالة أخطاء وسائل التواصل الاجتماعي
+            function clearSocialMediaErrors() {
+                const facebookError = document.getElementById('request-facebook-error');
+                const instagramError = document.getElementById('request-instagram-error');
+                const facebookField = document.getElementById('request-facebook');
+                const instagramField = document.getElementById('request-instagram');
+                
+                if (facebookError) facebookError.classList.add('hidden');
+                if (instagramError) instagramError.classList.add('hidden');
+                if (facebookField) facebookField.classList.remove('field-error');
+                if (instagramField) instagramField.classList.remove('field-error');
             }
             
             function showError(fieldId, message) {
@@ -1448,6 +1577,9 @@
                 }
 
                 // Don't update validation errors after clearing - let user start fresh
+                
+                // إزالة أخطاء وسائل التواصل الاجتماعي
+                clearSocialMediaErrors();
 
                             console.log('✅ Form cleared successfully');
         }
