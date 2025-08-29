@@ -2369,8 +2369,27 @@
 
         // تبديل المفضلة من النافذة المنبثقة
         function toggleFavoriteFromModal(productId) {
-            const product = allProducts.find(p => p.id === productId);
-            if (!product) return;
+            // البحث عن المنتج في القائمة الرئيسية
+            let product = allProducts.find(p => p.id === productId);
+            
+            // إذا لم يتم العثور على المنتج، البحث في المنتجات المميزة
+            if (!product) {
+                const featuredAdsContainer = document.getElementById('featured-ads-container');
+                if (featuredAdsContainer) {
+                    const featuredAd = featuredAdsContainer.querySelector(`[data-ad-id="${productId}"]`);
+                    if (featuredAd) {
+                        const adData = JSON.parse(featuredAd.getAttribute('data-ad-info') || '{}');
+                        if (adData.id) {
+                            product = adData;
+                        }
+                    }
+                }
+            }
+            
+            if (!product) {
+                console.error('❌ المنتج غير موجود:', productId);
+                return;
+            }
             
             // استخدام نفس منطق toggleFavorite
             const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -2382,12 +2401,13 @@
             } else {
                 const productData = {
                     id: productId,
-                    title: product.name || product.description || 'منتج',
-                    imageUrl: product.image_urls && product.image_urls.length > 0 ? product.image_urls[0] : '',
+                    title: product.name || product.title || product.description || 'منتج',
+                    imageUrl: product.image_urls && product.image_urls.length > 0 ? product.image_urls[0] : (product.image_url || ''),
                     price: product.price || 0,
                     governorate: product.governorate || '',
                     cities: product.cities || '',
-                    subcategories: product.subcategory || '',
+                    subcategories: product.subcategory || product.subcategories || '',
+                    category: 'other', // إضافة التصنيف الرئيسي
                     addedAt: new Date().toISOString()
                 };
                 favorites.push(productData);
@@ -2396,6 +2416,7 @@
             
             localStorage.setItem('favorites', JSON.stringify(favorites));
             updateFavoriteIcon(productId);
+            updateFeaturedAdFavoriteIcon(productId);
             updateFavoritesCountBadge();
             
             // تحديث زر المفضلة في النافذة المنبثقة
