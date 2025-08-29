@@ -83,7 +83,7 @@ class AdvertisingService {
                 return new Date(ad.end_date) > now;
             }) || [];
             
-            console.log(`✅ تم جلب ${activeAds.length} إعلان نشط (بعد فلترة الإعلانات المنتهية)`);
+            // console.log(`✅ تم جلب ${activeAds.length} إعلان نشط (بعد فلترة الإعلانات المنتهية)`);
             return activeAds;
         } catch (error) {
             console.error('❌ خطأ في جلب الإعلانات النشطة:', error);
@@ -96,7 +96,7 @@ class AdvertisingService {
      */
     async getFeaturedProducts(limit = 8) {
         try {
-            console.log('🔍 جلب المنتجات المميزة...');
+    
             
             // جلب الإعلانات المميزة من موقع الصفحة الرئيسية
             const { data, error } = await this.supabase
@@ -111,8 +111,8 @@ class AdvertisingService {
 
             if (error) throw error;
             
-            console.log(`✅ تم جلب ${data?.length || 0} منتج مميز`);
-            console.log('📊 البيانات الخام:', data);
+
+            // console.log('📊 البيانات الخام:', data);
             
             // تحويل الإعلانات إلى تنسيق المنتجات مع ربط المنتجات الحقيقية
             const featuredProducts = [];
@@ -228,18 +228,16 @@ class AdvertisingService {
                 }
             }
             
-            console.log('🎯 المنتجات المميزة النهائية:', featuredProducts);
+
             
             // إذا لم نصل إلى الحد المطلوب، نضيف منتجات عشوائية
             if (featuredProducts.length < limit) {
                 const remainingSlots = limit - featuredProducts.length;
-                console.log(`🔄 إضافة ${remainingSlots} منتج عشوائي للمنتجات المميزة...`);
                 
                 const randomProducts = await this.getRandomProducts(remainingSlots);
                 
                 if (randomProducts && randomProducts.length > 0) {
                     featuredProducts.push(...randomProducts);
-                    console.log(`✅ تم إضافة ${randomProducts.length} منتج عشوائي للمنتجات المميزة. المجموع: ${featuredProducts.length}`);
                 } else {
                     console.warn('⚠️ لم يتم العثور على منتجات عشوائية للمنتجات المميزة');
                     
@@ -251,8 +249,6 @@ class AdvertisingService {
                             .limit(remainingSlots);
                         
                         if (!fallbackError && fallbackData && fallbackData.length > 0) {
-                            console.log(`✅ تم جلب ${fallbackData.length} منتج احتياطي للمنتجات المميزة من products_other`);
-                            
                             const fallbackProducts = fallbackData.map(product => ({
                                 ...product,
                                 source_table: 'products_other',
@@ -273,7 +269,6 @@ class AdvertisingService {
                             }));
                             
                             featuredProducts.push(...fallbackProducts);
-                            console.log(`✅ تم إضافة ${fallbackProducts.length} منتج احتياطي للمنتجات المميزة. المجموع النهائي: ${featuredProducts.length}`);
                         }
                     } catch (fallbackError) {
                         console.warn('⚠️ فشلت المحاولة الاحتياطية للمنتجات المميزة:', fallbackError);
@@ -324,7 +319,7 @@ class AdvertisingService {
 
             if (regularError) throw regularError;
             
-            console.log(`✅ تم جلب ${paidAd?.length || 0} إعلان مدفوع و ${regularAds?.length || 0} إعلان عادي`);
+            // console.log(`✅ تم جلب ${paidAd?.length || 0} إعلان مدفوع و ${regularAds?.length || 0} إعلان عادي`);
             
             // تحويل الإعلانات إلى تنسيق المنتجات مع ربط المنتجات الحقيقية
             const recommendedProducts = [];
@@ -623,7 +618,7 @@ class AdvertisingService {
      */
     async getCategoryFeaturedProducts(category, limit = 4) {
         try {
-            console.log(`🔍 جلب الإعلانات المميزة للتصنيف: ${category}`);
+    
             
             // جلب الإعلانات المميزة من موقع التصنيف
             const { data, error } = await this.supabase
@@ -638,8 +633,8 @@ class AdvertisingService {
 
             if (error) throw error;
             
-            console.log(`✅ تم جلب ${data?.length || 0} إعلان مميز للتصنيف ${category}`);
-            console.log('📊 البيانات الخام:', data);
+
+            // console.log('📊 البيانات الخام:', data);
             
             // تحويل الإعلانات إلى تنسيق المنتجات مع ربط المنتجات الحقيقية
             const categoryFeaturedProducts = [];
@@ -650,7 +645,6 @@ class AdvertisingService {
                     
                     // إذا كان الإعلان مرتبط بمنتج حقيقي
                     if (ad.product_id && ad.product_category) {
-                        console.log(`🔗 ربط الإعلان ${ad.id} بالمنتج ${ad.product_id} من ${ad.product_category}`);
                         
                         // تحديد اسم الجدول
                         let tableName = 'products_other';
@@ -681,7 +675,6 @@ class AdvertisingService {
                         
                         if (!productError && product) {
                             productData = product;
-                            console.log(`✅ تم العثور على المنتج:`, product);
                         } else {
                             console.warn(`⚠️ لم يتم العثور على المنتج ${ad.product_id} في ${tableName}:`, productError);
                         }
@@ -755,7 +748,6 @@ class AdvertisingService {
                 }
             }
             
-            console.log('🎯 المنتجات المميزة في التصنيف النهائية:', categoryFeaturedProducts);
             return categoryFeaturedProducts;
             
         } catch (error) {
@@ -796,8 +788,6 @@ class AdvertisingService {
 
             if (updateError) {
                 console.warn(`⚠️ خطأ في تحديث عداد الظهورات: ${updateError.message}`);
-            } else {
-                console.log(`✅ تم تحديث عداد الظهورات: ${currentCount} → ${newCount}`);
             }
 
         } catch (error) {
@@ -812,7 +802,7 @@ class AdvertisingService {
         try {
             if (!adId) return;
 
-            console.log(`🖱️ تسجيل النقر على الإعلان: ${adId}`);
+
 
             // جلب العداد الحالي أولاً
             const { data: currentAd, error: fetchError } = await this.supabase
@@ -841,8 +831,6 @@ class AdvertisingService {
 
             if (updateError) {
                 console.warn(`⚠️ خطأ في تحديث عداد النقرات: ${updateError.message}`);
-            } else {
-                console.log(`✅ تم تحديث عداد النقرات: ${currentCount} → ${newCount}`);
             }
 
         } catch (error) {
@@ -1159,7 +1147,7 @@ class AdvertisingService {
             
             if (adsError) throw adsError;
             
-            console.log(`✅ تم جلب ${ads?.length || 0} إعلان`);
+            // console.log(`✅ تم جلب ${ads?.length || 0} إعلان`);
             
             // ربط كل إعلان بمنتجه
             const adsWithProducts = [];
@@ -1194,8 +1182,6 @@ class AdvertisingService {
      */
     async getRandomProducts(limit = 4) {
         try {
-            console.log(`🎲 جلب ${limit} منتج عشوائي...`);
-            
             const allProducts = [];
             
             // جلب منتجات من جميع الجداول
@@ -1203,8 +1189,6 @@ class AdvertisingService {
             
             for (const table of tables) {
                 try {
-                    console.log(`🔍 جلب منتجات من ${table}...`);
-                    
                     // محاولة جلب المنتجات مع معالجة أفضل للأخطاء
                     const { data, error } = await this.supabase
                         .from(table)
@@ -1217,7 +1201,6 @@ class AdvertisingService {
                     }
                     
                     if (data && data.length > 0) {
-                        console.log(`✅ تم جلب ${data.length} منتج من ${table}`);
                         
                         // إضافة معرف الجدول لكل منتج
                         const productsWithTable = data.map(product => ({
@@ -1250,8 +1233,6 @@ class AdvertisingService {
                 }
             }
             
-            console.log(`📊 إجمالي المنتجات المجمعة: ${allProducts.length}`);
-            
             if (allProducts.length === 0) {
                 console.warn('⚠️ لم يتم العثور على أي منتجات عشوائية، محاولة جلب من جدول واحد...');
                 
@@ -1263,7 +1244,6 @@ class AdvertisingService {
                         .limit(limit);
                     
                     if (!fallbackError && fallbackData && fallbackData.length > 0) {
-                        console.log(`✅ تم جلب ${fallbackData.length} منتج احتياطي من products_other`);
                         
                         const fallbackProducts = fallbackData.map(product => ({
                             ...product,
@@ -1294,8 +1274,6 @@ class AdvertisingService {
             // خلط المنتجات واختيار عشوائي
             const shuffled = allProducts.sort(() => 0.5 - Math.random());
             const selectedProducts = shuffled.slice(0, Math.min(limit, allProducts.length));
-            
-            console.log(`✅ تم اختيار ${selectedProducts.length} منتج عشوائي من ${allProducts.length} منتج متاح`);
             return selectedProducts;
             
         } catch (error) {
@@ -1359,8 +1337,6 @@ class AdvertisingService {
             // دمج جميع النتائج
             allProducts = results.flat();
 
-            console.log(`📊 إجمالي المنتجات المجمعة: ${allProducts.length}`);
-
             if (allProducts.length === 0) {
                 console.warn('⚠️ لم يتم العثور على أي منتجات عشوائية، محاولة جلب من جدول واحد...');
                 
@@ -1372,7 +1348,6 @@ class AdvertisingService {
                         .limit(limit);
                     
                     if (!fallbackError && fallbackData && fallbackData.length > 0) {
-                        console.log(`✅ تم جلب ${fallbackData.length} منتج احتياطي من products_other`);
                         
                         const fallbackProducts = fallbackData.map(product => ({
                             ...product,
@@ -1681,7 +1656,7 @@ class AdvertisingService {
      * بدء فحص الإعلانات المنتهية تلقائياً
      */
     startExpiredAdsCleanup() {
-        console.log('🚀 بدء فحص الإعلانات المنتهية تلقائياً...');
+
         
         // فحص فوري عند بدء الخدمة
         this.cleanupExpiredAds();
@@ -1691,7 +1666,7 @@ class AdvertisingService {
             this.cleanupExpiredAds();
         }, 60 * 60 * 1000); // كل ساعة
         
-        console.log('✅ تم إعداد الفحص التلقائي للإعلانات المنتهية');
+
     }
 
     /**
@@ -1699,7 +1674,7 @@ class AdvertisingService {
      */
     async cleanupExpiredAds() {
         try {
-            console.log('🔍 فحص الإعلانات المنتهية...');
+    
             
             const now = new Date().toISOString();
             
@@ -1717,7 +1692,7 @@ class AdvertisingService {
             }
 
             if (!expiredAds || expiredAds.length === 0) {
-                console.log('✅ لا توجد إعلانات منتهية');
+    
                 return;
             }
 
@@ -1818,7 +1793,7 @@ class AdvertisingService {
 
             if (error) throw error;
             
-            console.log(`✅ تم جلب ${data?.length || 0} إعلان لأقسام التصنيفات للتصنيف ${category}`);
+            // console.log(`✅ تم جلب ${data?.length || 0} إعلان لأقسام التصنيفات للتصنيف ${category}`);
             
             // تحويل الإعلانات إلى تنسيق المنتجات
             const categoryProducts = [];
@@ -1829,8 +1804,6 @@ class AdvertisingService {
                     
                     // إذا كان الإعلان مرتبط بمنتج حقيقي
                     if (ad.product_id && ad.product_category) {
-                        console.log(`🔗 ربط الإعلان ${ad.id} بالمنتج ${ad.product_id} من ${ad.product_category}`);
-                        
                         // تحديد اسم الجدول
                         let tableName = 'products_other';
                         switch (ad.product_category) {
@@ -1860,7 +1833,6 @@ class AdvertisingService {
                         
                         if (!productError && product) {
                             productData = product;
-                            console.log(`✅ تم العثور على المنتج:`, product);
                         } else {
                             console.warn(`⚠️ لم يتم العثور على المنتج ${ad.product_id} في ${tableName}:`, productError);
                         }
@@ -1899,8 +1871,6 @@ class AdvertisingService {
                         product_id: ad.product_id,
                         product_category: ad.product_category
                     };
-                    
-                    console.log('🔄 تحويل إعلان أقسام التصنيفات إلى منتج:', ad, '→', product);
                     categoryProducts.push(product);
                     
                 } catch (productError) {
@@ -1908,7 +1878,7 @@ class AdvertisingService {
                 }
             }
             
-            console.log(`✅ تم تحويل ${categoryProducts.length} إعلان إلى منتجات لأقسام التصنيفات`);
+            // console.log(`✅ تم تحويل ${categoryProducts.length} إعلان إلى منتجات لأقسام التصنيفات`);
             return categoryProducts;
             
         } catch (error) {
@@ -1923,8 +1893,6 @@ class AdvertisingService {
      */
     async getProductsByCategory(categoryType, limit = 9) {
         try {
-            console.log(`🔍 جلب المنتجات للتصنيف: ${categoryType} (الحد: ${limit})`);
-            
             // تحويل اسم التصنيف إلى القيمة المستخدمة في قاعدة البيانات
             let dbCategory = categoryType;
             switch (categoryType) {
@@ -1938,11 +1906,8 @@ class AdvertisingService {
                     dbCategory = categoryType;
                     break;
                 default:
-                    console.warn(`⚠️ تصنيف غير معروف: ${categoryType}`);
                     dbCategory = categoryType;
             }
-            
-            console.log(`🔄 تم تحويل التصنيف: ${categoryType} → ${dbCategory}`);
             
             // جلب الإعلانات النشطة للتصنيف المحدد
             const { data: ads, error: adsError } = await this.supabase
@@ -1959,7 +1924,7 @@ class AdvertisingService {
                 throw adsError;
             }
             
-            console.log(`✅ تم جلب ${ads?.length || 0} إعلان للتصنيف ${dbCategory}`);
+
             
             // تحويل الإعلانات إلى منتجات
             const categoryProducts = [];
@@ -1970,8 +1935,6 @@ class AdvertisingService {
                     
                     // إذا كان الإعلان مرتبط بمنتج حقيقي
                     if (ad.product_id && ad.product_category) {
-                        console.log(`🔗 ربط الإعلان ${ad.id} بالمنتج ${ad.product_id} من ${ad.product_category}`);
-                        
                         // تحديد اسم الجدول
                         let tableName = 'products_other';
                         switch (ad.product_category) {
@@ -2001,7 +1964,6 @@ class AdvertisingService {
                         
                         if (!productError && product) {
                             productData = product;
-                            console.log(`✅ تم العثور على المنتج:`, product);
                         } else {
                             console.warn(`⚠️ لم يتم العثور على المنتج ${ad.product_id} في ${tableName}:`, productError);
                         }
@@ -2040,8 +2002,6 @@ class AdvertisingService {
                         product_id: ad.product_id,
                         product_category: ad.product_category
                     };
-                    
-                    console.log('🔄 تحويل إعلان أقسام التصنيفات إلى منتج:', ad, '→', product);
                     categoryProducts.push(product);
                     
                 } catch (productError) {
@@ -2049,7 +2009,7 @@ class AdvertisingService {
                 }
             }
             
-            console.log(`✅ تم تحويل ${categoryProducts.length} إعلان إلى منتجات لأقسام التصنيفات`);
+            // console.log(`✅ تم تحويل ${categoryProducts.length} إعلان إلى منتجات لأقسام التصنيفات`);
             return categoryProducts;
             
         } catch (error) {

@@ -15,12 +15,12 @@ class SmartCategoryAdvertisingService {
      */
     async initialize() {
         try {
-            console.log('🚀 تهيئة خدمة الإعلانات الذكية لأقسام التصنيفات...');
+            // console.log('🚀 تهيئة خدمة الإعلانات الذكية لأقسام التصنيفات...');
             
             // إعداد مراقبة التغييرات في الإعلانات
             await this.setupRealTimeUpdates();
             
-            console.log('✅ تم تهيئة خدمة الإعلانات الذكية بنجاح');
+            // console.log('✅ تم تهيئة خدمة الإعلانات الذكية بنجاح');
         } catch (error) {
             console.error('❌ خطأ في تهيئة خدمة الإعلانات الذكية:', error);
         }
@@ -72,7 +72,7 @@ class SmartCategoryAdvertisingService {
                 )
                 .subscribe();
                 
-            console.log('✅ تم إعداد المراقبة الفورية للإعلانات');
+            // console.log('✅ تم إعداد المراقبة الفورية للإعلانات');
         } catch (error) {
             console.error('❌ خطأ في إعداد المراقبة الفورية:', error);
         }
@@ -83,19 +83,14 @@ class SmartCategoryAdvertisingService {
      */
     async loadCategorySection(categoryId, gridElementId) {
         try {
-            console.log(`🎯 تحميل قسم التصنيف: ${categoryId}`);
-            
             // جلب الإعلانات النشطة للتصنيف
             const ads = await this.getActiveAdvertisements(categoryId);
-            console.log(`📊 الإعلانات النشطة: ${ads.length}`);
             
             // جلب المنتجات العادية للتصنيف
             const products = await this.getRegularProducts(categoryId);
-            console.log(`📦 المنتجات العادية: ${products.length}`);
             
             // تطبيق منطق التعبئة الذكي
             const finalItems = this.applySmartFillingLogic(ads, products);
-            console.log(`✅ العناصر النهائية: ${finalItems.length}`);
             
             // تخزين حالة القسم
             this.categorySections.set(categoryId, {
@@ -198,7 +193,7 @@ class SmartCategoryAdvertisingService {
             });
         }
         
-        console.log(`🎯 منطق التعبئة: ${adCount} إعلانات + ${Math.min(remainingSlots, products.length)} منتجات = ${finalItems.length} عنصر`);
+
         
         return finalItems;
     }

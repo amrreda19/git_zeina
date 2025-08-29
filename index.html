@@ -2354,12 +2354,10 @@
                     try {
                         // Wait for AuthService to be available
                         if (!window.AuthService) {
-                            console.log('⏳ Waiting for AuthService to load...');
                             await new Promise((resolve) => {
                                 const checkInterval = setInterval(() => {
                                     if (window.AuthService) {
                                         clearInterval(checkInterval);
-                                        console.log('✅ AuthService loaded');
                                         resolve();
                                     }
                                 }, 100);
@@ -2404,7 +2402,7 @@
                         if (adminDashboardBtnDesktop) {
                             if (isAdmin) {
                                 adminDashboardBtnDesktop.classList.remove('hidden');
-                                console.log('✅ Admin dashboard button shown in desktop header');
+
                             } else {
                                 adminDashboardBtnDesktop.classList.add('hidden');
                             }
@@ -2415,7 +2413,7 @@
                         if (adminDashboardBtnMobile) {
                             if (isAdmin) {
                                 adminDashboardBtnMobile.classList.remove('hidden');
-                                console.log('✅ Admin dashboard button shown in mobile header');
+
                             } else {
                                 adminDashboardBtnMobile.classList.add('hidden');
                             }
@@ -2426,7 +2424,7 @@
                         if (adminMenuMobile) {
                             if (isAdmin) {
                                 adminMenuMobile.classList.remove('hidden');
-                                console.log('✅ Admin menu shown in mobile menu');
+
                             } else {
                                 adminMenuMobile.classList.add('hidden');
                             }
@@ -2434,7 +2432,7 @@
                         
                         // Mobile navigation is now handled by the buttons in header
                         
-                        console.log('✅ Navigation updated successfully');
+
                     } catch (error) {
                         console.error('❌ Error updating navigation:', error);
                     }
@@ -2442,7 +2440,6 @@
                 
                 // Show success message
                 showSuccess(message) {
-                    console.log('✅ Success:', message);
                     
                     // Create success notification
                     const successDiv = document.createElement('div');
@@ -2525,8 +2522,7 @@
             const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
             const count = favorites.length;
             
-            console.log('🔄 Updating favorites count badge:', count);
-            console.log('📋 Favorites:', favorites);
+
             
             // Update all badges
             const badges = [
@@ -2540,17 +2536,12 @@
             badges.forEach(badgeId => {
                 const badge = document.getElementById(badgeId);
                 if (badge) {
-                    console.log(`✅ Found badge: ${badgeId}`);
                     if (count > 0) {
                         badge.textContent = count;
                         badge.classList.remove('hidden');
-                        console.log(`📊 Updated ${badgeId} to show: ${count}`);
                     } else {
                         badge.classList.add('hidden');
-                        console.log(`📊 Hidden ${badgeId} (count: 0)`);
                     }
-                } else {
-                    console.log(`❌ Badge not found: ${badgeId}`);
                 }
             });
         }
@@ -2559,12 +2550,10 @@
         async function updateMobileAuthButtons() {
                 // Wait for AuthService to be available
                 if (!window.AuthService) {
-                    console.log('⏳ Waiting for AuthService to load...');
                     await new Promise((resolve) => {
                         const checkInterval = setInterval(() => {
                             if (window.AuthService) {
                                 clearInterval(checkInterval);
-                                console.log('✅ AuthService loaded');
                                 resolve();
                             }
                         }, 100);
@@ -2654,7 +2643,6 @@
             // Load and display products
             async function loadProducts() {
                 try {
-                    console.log('🎯 loadProducts() called - Starting to load featured products...');
                     
                     // العناصر المطلوبة
                     const featuredLoading = document.getElementById('products-loading');
@@ -2676,10 +2664,7 @@
                         throw new Error('AdvertisingService not available');
                     }
                     
-                    console.log('✅ AdvertisingService is available, proceeding...');
-                    
                     // جلب المنتجات المميزة
-                    console.log('🔍 Loading featured products...');
                     const featuredAds = await window.advertisingService.getFeaturedProducts(9); // 3x3 grid
                     
                     // إخفاء مؤشر التحميل
@@ -2687,7 +2672,6 @@
                     
                     // عرض المنتجات المميزة
                     if (featuredAds && featuredAds.length > 0) {
-                        console.log(`✅ Successfully loaded ${featuredAds.length} featured products`);
                         displayCategoryProducts(document.getElementById('featured-products-grid'), featuredAds, 'featured');
                         
                         // تسجيل ظهور الإعلانات
@@ -2697,7 +2681,6 @@
                             }
                         });
                     } else {
-                        console.log('⚠️ No featured products found');
                         if (featuredNoProducts) featuredNoProducts.style.display = 'block';
                     }
 
@@ -2719,8 +2702,6 @@
             
             // خلط المنتجات عشوائياً (جميع المنتجات من جميع الفئات)
             function shuffleProducts() {
-                console.log('🔄 Starting shuffleProducts, initial count:', allProducts ? allProducts.length : 0);
-                
                 if (allProducts && allProducts.length > 1) {
                     // خلط جميع المنتجات عشوائياً
                     const shuffled = [...allProducts];
@@ -2729,9 +2710,6 @@
                         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
                     }
                     allProducts = shuffled;
-                    console.log('🔄 تم خلط جميع المنتجات عشوائياً');
-                } else {
-                    console.log('⚠️ No products to shuffle or only one product');
                 }
             }
 
@@ -2747,8 +2725,6 @@
 
             // Display products in grid
             function displayProducts(products, containerId) {
-                console.log('🎨 Displaying products:', products ? products.length : 0, 'in container:', containerId);
-                console.log('📋 Products data:', products);
                 
                 const container = document.getElementById(containerId);
                 let noProductsMessage;
@@ -2775,10 +2751,7 @@
                     return;
                 }
                 
-                console.log('📦 Container found:', container);
-                
                 if (!products || products.length === 0) {
-                    console.log('⚠️ No products to display');
                     container.style.display = 'none';
                     if (noProductsMessage) {
                         noProductsMessage.style.display = 'block';
@@ -2809,8 +2782,6 @@
              */
             async function loadCategorySectionProducts() {
                 try {
-                    console.log('🎯 تحميل المنتجات والإعلانات لأقسام التصنيفات...');
-                    
                     // التحقق من خدمة الإعلانات الذكية
                     if (!window.smartCategoryAdvertisingService) {
                         console.error('❌ خدمة الإعلانات الذكية غير متوفرة');
@@ -2832,8 +2803,6 @@
                     // تحميل المنتجات والإعلانات لكل تصنيف باستخدام الخدمة الذكية
                     for (const category of categories) {
                         try {
-                            console.log(`🔍 تحميل ${category.name} باستخدام الخدمة الذكية...`);
-                            
                             // استخدام الخدمة الذكية لتحميل القسم
                             await window.smartCategoryAdvertisingService.loadCategorySection(
                                 category.id, 
@@ -2842,9 +2811,6 @@
                             
                             // الحصول على إحصائيات القسم
                             const stats = window.smartCategoryAdvertisingService.getCategorySectionStats(category.id);
-                            if (stats) {
-                                console.log(`📊 إحصائيات ${category.name}:`, stats);
-                            }
                             
                         } catch (error) {
                             console.error(`❌ خطأ في تحميل ${category.name}:`, error);
@@ -2858,8 +2824,6 @@
                             }
                         }
                     }
-                    
-                    console.log('✅ تم تحميل جميع أقسام التصنيفات بنجاح');
                     
                 } catch (error) {
                     console.error('❌ خطأ في تحميل أقسام التصنيفات:', error);
@@ -2919,14 +2883,10 @@
             
             // Open product details page
             function openProductDetails(productId, adId = null) {
-                console.log('🖱️ تم النقر على المنتج:', productId);
-                
                 // تسجيل النقر على الإعلان إذا كان موجوداً
                 if (adId && window.advertisingService) {
-                    console.log('📢 تسجيل النقر على الإعلان:', adId);
                     try {
                         window.advertisingService.recordClick(adId);
-                        console.log('✅ تم تسجيل النقر بنجاح!');
                     } catch (error) {
                         console.error('❌ خطأ في تسجيل النقر:', error);
                     }
@@ -2936,10 +2896,8 @@
                     if (productElement) {
                         const elementAdId = productElement.getAttribute('data-ad-id');
                         if (elementAdId && window.advertisingService) {
-                            console.log('📢 تم العثور على معرف الإعلان من العنصر:', elementAdId);
                             try {
                                 window.advertisingService.recordClick(elementAdId);
-                                console.log('✅ تم تسجيل النقر بنجاح!');
                             } catch (error) {
                                 console.error('❌ خطأ في تسجيل النقر:', error);
                             }
@@ -2971,14 +2929,10 @@
 
             // Apply filter and update display
             function applyFilter(category) {
-                console.log('🔍 Applying filter:', category);
-                console.log('📊 All products count:', allProducts ? allProducts.length : 0);
-                
                 currentFilter = category;
                 
                 // Filter and display products
                 const filteredProducts = filterProducts(category);
-                console.log('📊 Filtered products count:', filteredProducts ? filteredProducts.length : 0);
                 
                 displayProducts(filteredProducts, 'featured-products-grid');
             }
@@ -2990,8 +2944,6 @@
 
             // تحميل المنتجات عند تحميل الصفحة
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('🚀 DOM Content Loaded - Starting to load products...');
-                
                 // انتظار تحميل خدمة الإعلانات ثم تحميل المنتجات
                 waitForAdvertisingService();
                 
@@ -3001,15 +2953,10 @@
             // انتظار تحميل خدمة الإعلانات
             async function waitForAdvertisingService() {
                 try {
-                    console.log('⏳ Waiting for AdvertisingService...');
-                    
                     // انتظار خدمة الإعلانات
                     while (!window.advertisingService) {
                         await new Promise(resolve => setTimeout(resolve, 100));
-                        console.log('⏳ Still waiting for AdvertisingService...');
                     }
-                    
-                    console.log('✅ AdvertisingService loaded, now loading products...');
                     
                     // تحميل المنتجات المميزة (الإعلانات)
                     await loadProducts();
@@ -3048,7 +2995,7 @@
                     reloadButton.className = 'fixed bottom-4 right-32 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
                     reloadButton.onclick = async function() {
                         try {
-                            console.log('🔄 Manual reload triggered...');
+
                             await loadProducts();
                         } catch (error) {
                             console.error('❌ Error in manual reload:', error);
@@ -3064,7 +3011,7 @@
                     cleanupButton.onclick = async function() {
                         try {
                             if (window.advertisingService) {
-                                console.log('🧹 بدء التنظيف الفوري...');
+
                                 await window.advertisingService.autoCleanup();
                                 alert('تم التنظيف! سيتم تحديث الصفحة تلقائياً');
                                 setTimeout(() => location.reload(), 2000);
@@ -3223,7 +3170,7 @@
                 header.style.top = '0';
                 header.style.zIndex = '50';
                 header.style.backgroundColor = 'white';
-                console.log('✅ تم ضمان ظهور الهيدر');
+
             }
         }
         
@@ -3344,13 +3291,13 @@
             // Force update after a short delay to ensure DOM is ready
             setTimeout(() => {
                 updateFavoritesCountBadge();
-                console.log('🔄 Force update after delay');
+
             }, 500);
             
             // تهيئة المفضلة بعد تحميل الصفحة
             setTimeout(() => {
                 // تم إزالة دوال المفضلة والسلايدر
-                console.log('🔄 تم إزالة دوال المفضلة والسلايدر');
+
             }, 1000);
             
             // Listen for changes in localStorage (favorites)
@@ -3362,7 +3309,7 @@
             
             // مستمع للحدث المخصص لضمان التزامن
             window.addEventListener('favoritesChanged', function(e) {
-                console.log('🔄 Favorites changed via custom event, updating favorites...');
+
                 updateFavoritesCountBadge();
             });
 
@@ -3380,15 +3327,12 @@
         
         // إعداد أزرار الهيدر
         function setupHeaderButtons() {
-            console.log('🔄 Setting up header buttons...');
             
             // زر "أضف منتجك" في الهيدر - الآن يعمل كرابط عادي
             const addProductRequestBtn = document.getElementById('add-product-request-btn');
             if (addProductRequestBtn) {
-                console.log('✅ Found add product request button - now working as normal link');
                 // إزالة preventDefault للسماح بالانتقال الطبيعي
                 addProductRequestBtn.addEventListener('click', function(e) {
-                    console.log('🖱️ Button clicked, navigating to add-product-request.html...');
                     // السماح بالانتقال الطبيعي إلى الصفحة
                 });
             } else {
@@ -3397,10 +3341,8 @@
             
             // أزرار "أضف منتجك" في القائمة المتحركة - الآن تعمل كروابط عادية
             const mobileAddProductRequestBtns = document.querySelectorAll('a[href="pages/add-product-request.html"]');
-            console.log(`📱 Found ${mobileAddProductRequestBtns.length} mobile buttons - now working as normal links`);
             mobileAddProductRequestBtns.forEach((btn, index) => {
                 btn.addEventListener('click', function(e) {
-                    console.log(`🖱️ Mobile button ${index + 1} clicked, navigating to add-product-request.html...`);
                     // السماح بالانتقال الطبيعي إلى الصفحة
                 });
             });
@@ -3417,7 +3359,6 @@
         let draggedIndex = null;
 
         function setupProductRequestForm() {
-            console.log('🚀 Setting up Product Request Form...');
             
             // Wait for all required services to be available
             waitForServices().then(() => {
@@ -3436,7 +3377,7 @@
                 // Setup global error banner
                 setupGlobalErrorBanner();
                 
-                console.log('✅ Product Request Form setup completed');
+
             }).catch(error => {
                 console.error('❌ Failed to setup Product Request Form:', error);
             });
@@ -3457,12 +3398,9 @@
                         'Supabase': typeof supabaseClient !== 'undefined'
                     };
                     
-                    console.log(`🔍 Checking services (attempt ${attempts}):`, services);
-                    
                     const allAvailable = Object.values(services).every(available => available);
                     
                     if (allAvailable) {
-                        console.log('✅ All required services are available');
                         resolve();
                     } else if (attempts >= maxAttempts) {
                         console.error('❌ Timeout waiting for services');
@@ -3687,27 +3625,12 @@
         
         // Setup Advanced Governorate Filter
         function setupAdvancedGovernorateFilter() {
-            console.log('🔍 setupAdvancedGovernorateFilter called');
-            console.log('🔍 Stack trace:', new Error().stack);
-            
             const dropdownBtn = document.getElementById('request-governorate-dropdown-btn');
             const dropdownContent = document.getElementById('request-governorate-dropdown-content');
             const checkboxes = document.querySelectorAll('.governorate-checkbox');
             const selectAllBtn = document.getElementById('request-select-all-governorates');
             const clearAllBtn = document.getElementById('request-clear-all-governorates');
             const selectedContainer = document.getElementById('request-selected-governorates');
-
-            console.log('🔍 Setting up Advanced Governorate Filter...');
-            console.log('📱 Elements found:', {
-                dropdownBtn: !!dropdownBtn,
-                dropdownBtnId: dropdownBtn?.id,
-                dropdownContent: !!dropdownContent,
-                dropdownContentId: dropdownContent?.id,
-                checkboxes: checkboxes.length,
-                selectAllBtn: !!selectAllBtn,
-                clearAllBtn: !!clearAllBtn,
-                selectedContainer: !!selectedContainer
-            });
 
             // Toggle dropdown
             dropdownBtn.addEventListener('click', function() {
@@ -3818,14 +3741,12 @@
             try {
                 // Wait for CitiesService to be available
                 if (typeof CitiesService === 'undefined') {
-                    console.log('⏳ Waiting for CitiesService to load...');
                     setTimeout(() => initializeCitiesFilter(), 100);
                     return;
                 }
                 
                 // Initialize CitiesService
                 citiesService = new CitiesService();
-                console.log('✅ CitiesService initialized successfully');
                 
                 // Setup cities filter functionality
                 setupCitiesFilter();
@@ -3895,7 +3816,6 @@
         
         // Update Cities Filter based on selected governorates
         function updateCitiesFilter(selectedGovernorates) {
-            console.log('🔄 Updating Cities Filter for governorates:', selectedGovernorates);
             
             const citiesGroup = document.getElementById('request-cities-group');
             const citiesList = document.getElementById('request-cities-list');
@@ -3916,8 +3836,6 @@
             // Check if citiesService is available
             if (!citiesService) {
                 console.error('❌ CitiesService not available');
-                console.log('🔍 Current citiesService:', citiesService);
-                console.log('🔍 Window CitiesService:', typeof window.CitiesService);
                 return;
             }
 
@@ -3937,7 +3855,7 @@
             // Remove duplicates
             allCities = [...new Set(allCities)];
 
-            console.log('Available cities for selected governorates:', allCities);
+
 
             // Populate cities list
             citiesList.innerHTML = allCities.map(city => `
@@ -4782,7 +4700,6 @@
         
         // Function to load products for each category
         async function loadCategoryProducts() {
-            console.log('🎯 Loading category products...');
             
             // Load products for each category
             await Promise.all([
@@ -4797,7 +4714,6 @@
         // Function to load products for a specific category
         async function loadCategoryProductsByType(categoryType, sectionId) {
             try {
-                console.log(`🔄 Loading ${categoryType} products...`);
                 
                 const loadingElement = document.getElementById(`${sectionId}-loading`);
                 const gridElement = document.getElementById(`${sectionId}-products-grid`);
@@ -4822,22 +4738,18 @@
                         const ads = await window.advertisingService.getProductsByCategory(categoryType, 9);
                         if (ads && ads.length > 0) {
                             products = ads;
-                            console.log(`✅ Found ${ads.length} ads for ${categoryType}`);
                         }
                     } catch (error) {
-                        console.log(`No ads found for ${categoryType}:`, error);
+                        console.error(`No ads found for ${categoryType}:`, error);
                     }
                 }
                 
                 // تم إزالة المنتجات العادية - الإعلانات فقط
-                console.log(`🎯 Showing only ads for ${categoryType} - no regular products`);
                 
                 // Hide loading
                 loadingElement.classList.add('hidden');
                 
                 if (products.length > 0) {
-                    console.log(`✅ Found ${products.length} products for ${categoryType}`);
-                    
                     // إخفاء رسالة "لا توجد منتجات" عند وجود منتجات
                     if (noProductsElement) {
                         noProductsElement.classList.add('hidden');
@@ -4848,8 +4760,6 @@
                     gridElement.classList.remove('hidden');
                     
                 } else {
-                    console.log(`⚠️ No products found for ${categoryType}`);
-                    
                     // إخفاء شبكة المنتجات عند عدم وجود منتجات
                     if (gridElement) {
                         gridElement.classList.add('hidden');

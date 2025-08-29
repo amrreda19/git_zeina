@@ -13,10 +13,8 @@ class AuthService {
             if (window.supabaseClient) {
                 this.supabase = window.supabaseClient;
                 this.initialized = true;
-                console.log('✅ AuthService: Supabase client already available');
+                // console.log('✅ AuthService: Supabase client already available');
             } else {
-                console.log('⏳ AuthService: Waiting for Supabase client...');
-                
                 // Wait for initialization
                 if (window.initializeSupabase) {
                     this.supabase = await window.initializeSupabase();
@@ -28,7 +26,6 @@ class AuthService {
                                 clearInterval(checkInterval);
                                 this.supabase = window.supabaseClient;
                                 this.initialized = true;
-                                console.log('✅ AuthService: Supabase client loaded');
                                 resolve();
                             }
                         }, 100);
@@ -43,7 +40,7 @@ class AuthService {
             }
             
             if (this.supabase) {
-                console.log('✅ AuthService initialized successfully');
+                // AuthService initialized successfully
             } else {
                 console.error('❌ AuthService: Failed to initialize Supabase client');
             }
@@ -107,7 +104,7 @@ class AuthService {
                 return { success: false, error: error.message };
             }
 
-            console.log('✅ User signed out successfully');
+
             return { success: true };
         } catch (error) {
             console.error('Error in signOut:', error);
@@ -133,7 +130,7 @@ class AuthService {
                 return { success: false, error: error.message };
             }
 
-            console.log('✅ User signed in successfully');
+
             return { success: true, data: data.user };
         } catch (error) {
             console.error('Error in signIn:', error);
@@ -162,7 +159,7 @@ class AuthService {
                 return { success: false, error: error.message };
             }
 
-            console.log('✅ User signed up successfully');
+
             return { success: true, data: data.user };
         } catch (error) {
             console.error('Error in signUp:', error);
@@ -206,14 +203,14 @@ class AuthService {
 window.AuthService = new AuthService();
 
 // Verify that AuthService is properly defined
-console.log('🔧 AuthService initialized:', {
-    instance: window.AuthService,
-    methods: Object.getOwnPropertyNames(Object.getPrototypeOf(window.AuthService)),
-    isLoggedIn: typeof window.AuthService.isLoggedIn,
-    getCurrentUser: typeof window.AuthService.getCurrentUser,
-    signOut: typeof window.AuthService.signOut,
-    supabase: typeof window.AuthService.supabase
-});
+// console.log('🔧 AuthService initialized:', {
+//     instance: window.AuthService,
+//     methods: Object.getOwnPropertyNames(Object.getPrototypeOf(window.AuthService)),
+//     isLoggedIn: typeof window.AuthService.isLoggedIn,
+//     getCurrentUser: typeof window.AuthService.getCurrentUser,
+//     signOut: typeof window.AuthService.signOut,
+//     supabase: typeof window.AuthService.supabase
+// });
 
 // Also create after DOM is loaded for consistency
 document.addEventListener('DOMContentLoaded', () => {

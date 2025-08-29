@@ -11,7 +11,6 @@ class EnhancedAutoSlideshow {
         this.addEnhancedStyles();
         this.setupSlideshows();
         this.observeDOMChanges();
-        console.log('تم تهيئة العرض المتحرك التلقائي المحسن');
     }
 
     addEnhancedStyles() {

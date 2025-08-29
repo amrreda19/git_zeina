@@ -160,7 +160,7 @@ function addScrollStyles() {
 
 // تهيئة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Initializing smooth scroll...');
+
     
     addScrollStyles();
     
@@ -174,12 +174,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // إعداد أزرار "أضف منتجك"
 function setupAddProductButtons() {
     const addProductButtons = document.querySelectorAll('[onclick*="scrollToProductRequestSection"]');
-    console.log(`🔘 Found ${addProductButtons.length} add product buttons`);
+
     
     addProductButtons.forEach((button, index) => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log(`🖱️ Button ${index + 1} clicked`);
+
             scrollToProductRequestSection();
         });
     });
@@ -189,7 +189,7 @@ function setupAddProductButtons() {
 function checkForScrollOnLoad() {
     // التحقق من وجود hash في URL
     if (window.location.hash === '#product-request-section') {
-        console.log('🔗 Hash detected, will scroll to section');
+
         setTimeout(() => {
             scrollToSectionInCurrentPage();
         }, 500);
@@ -199,7 +199,7 @@ function checkForScrollOnLoad() {
     // التحقق من sessionStorage
     const scrollToSection = sessionStorage.getItem('scrollToSection');
     if (scrollToSection === 'product-request-section') {
-        console.log('💾 Session storage indicates need to scroll');
+
         sessionStorage.removeItem('scrollToSection'); // تنظيف
         
         setTimeout(() => {
@@ -211,7 +211,7 @@ function checkForScrollOnLoad() {
 // معالجة التغييرات في hash
 window.addEventListener('hashchange', function() {
     if (window.location.hash === '#product-request-section') {
-        console.log('🔄 Hash changed, scrolling to section');
+
         setTimeout(() => {
             scrollToSectionInCurrentPage();
         }, 100);
@@ -223,7 +223,7 @@ window.addEventListener('load', function() {
     // تأخير إضافي للتأكد من اكتمال تحميل الصفحة
     setTimeout(() => {
         if (window.location.hash === '#product-request-section') {
-            console.log('📄 Page loaded with hash, scrolling to section');
+
             scrollToSectionInCurrentPage();
         }
     }, 200);

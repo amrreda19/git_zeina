@@ -274,7 +274,7 @@ function initializeAdminSecurity() {
         }
         
         if (window.supabaseClient && window.supabaseClient.auth) {
-            console.log('✅ Initializing AdminSecurity with Supabase client');
+            // console.log('✅ Initializing AdminSecurity with Supabase client');
             window.adminSecurity = new AdminSecurity();
         } else {
             console.log('⏳ Waiting for Supabase client to load...');

@@ -1639,23 +1639,18 @@
         // Load products by category
         async function loadCategoryProducts() {
             try {
-                console.log('🔄 بدء تحميل منتجات التورتات...');
-                
                 // Wait for ProductService to load
                 if (!window.ProductService) {
-                    console.log('⏳ Waiting for ProductService to load...');
                     await new Promise((resolve) => {
                         const checkInterval = setInterval(() => {
                             if (window.ProductService) {
                                 clearInterval(checkInterval);
-                                console.log('✅ ProductService loaded');
                                 resolve();
                             }
                         }, 100);
                         
                         setTimeout(() => {
                             clearInterval(checkInterval);
-                            console.log('❌ ProductService not loaded after 5 seconds');
                             resolve();
                         }, 5000);
                     });
@@ -1665,15 +1660,10 @@
                     throw new Error('ProductService not available');
                 }
                 
-                console.log('✅ ProductService متاح، جاري جلب المنتجات...');
-                
                 const result = await window.ProductService.getProductsByCategory('cake');
-                
-                console.log('📊 نتيجة جلب المنتجات:', result);
                 
                 if (result.success) {
                     allProducts = result.data;
-                    console.log(`✅ تم جلب ${allProducts.length} منتج بنجاح`);
                     
                     // ترتيب المنتجات حسب المعايير المطلوبة
                     sortProductsByCriteria();
@@ -1714,8 +1704,6 @@
                     // إذا كان كلاهما بدون سعر، ترتيب حسب تاريخ الإنشاء
                     return new Date(b.created_at) - new Date(a.created_at);
                 });
-                
-                console.log('✅ تم ترتيب المنتجات: منتجات بسعر أولاً (تصاعدياً) ثم منتجات بدون سعر');
             }
         }
 
@@ -2267,14 +2255,7 @@
                 let subcategoryNames = [];
                 let subcategoryColors = [];
                 
-                // تسجيل بيانات التصنيف الفرعي للتشخيص
-                console.log('🔍 Product subcategory debug:', {
-                    productId: product.id,
-                    subcategory: product.subcategory,
-                    subcategoryType: typeof product.subcategory,
-                    isArray: Array.isArray(product.subcategory),
-                    stringified: product.subcategory ? JSON.stringify(product.subcategory) : 'null'
-                });
+
                 
                 if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
                     const subcategoryMap = {
@@ -2369,11 +2350,7 @@
                     }
                 }
                 
-                console.log('🔍 Final subcategory result:', {
-                    productId: product.id,
-                    subcategoryNames,
-                    subcategoryColors
-                });
+
                 
 
                 
@@ -2441,8 +2418,6 @@
 
         // عرض تفاصيل المنتج
         function viewProductDetails(productId) {
-            console.log('🔍 محاولة عرض تفاصيل المنتج:', productId);
-            
             // البحث عن المنتج في القائمة
             let product = allProducts.find(p => p.id === productId);
             
@@ -2457,14 +2432,11 @@
                         const adData = JSON.parse(featuredAd.getAttribute('data-ad-info') || '{}');
                         if (adData.id) {
                             product = adData;
-                            console.log('✅ تم العثور على المنتج المميز:', product);
                             
                             // تسجيل النقر على الإعلان إذا كان موجوداً
                             if (product.ad_id && window.advertisingService) {
-                                console.log('📢 تسجيل النقر على الإعلان المميز:', product.ad_id);
                                 try {
                                     window.advertisingService.recordClick(product.ad_id);
-                                    console.log('✅ تم تسجيل النقر بنجاح!');
                                 } catch (error) {
                                     console.error('❌ خطأ في تسجيل النقر:', error);
                                 }
@@ -2929,7 +2901,6 @@
             updateFeaturedAdFavoriteIcon(productId);
             
             // تحديث عداد المفضلة
-            console.log('🔄 Calling updateFavoritesCountBadge from toggleFavorite');
             updateFavoritesCountBadge();
         }
 
@@ -2996,8 +2967,6 @@
             const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
             const count = favorites.length;
             
-            console.log('🔄 Updating favorites count badge:', count);
-            
             // تحديث جميع العدادات
             const badges = [
                 'favorites-count-badge',
@@ -3007,17 +2976,12 @@
             badges.forEach(badgeId => {
                 const badge = document.getElementById(badgeId);
                 if (badge) {
-                    console.log(`✅ Found badge: ${badgeId}`);
                     if (count > 0) {
                         badge.textContent = count;
                         badge.classList.remove('hidden');
-                        console.log(`📊 Updated ${badgeId} to show: ${count}`);
                     } else {
                         badge.classList.add('hidden');
-                        console.log(`📊 Hidden ${badgeId} (count: 0)`);
                     }
-                } else {
-                    console.log(`❌ Badge not found: ${badgeId}`);
                 }
             });
         }
@@ -3026,12 +2990,10 @@
         async function loadCategoryFeaturedAds() {
             try {
                 if (!window.advertisingService) {
-                    console.log('⏳ انتظار خدمة الإعلانات...');
                     setTimeout(loadCategoryFeaturedAds, 1000);
                     return;
                 }
 
-                console.log('🔍 جلب الإعلانات المميزة للتصنيف: cake');
                 const featuredAds = await window.advertisingService.getCategoryFeaturedProducts('cake', 4);
                 
                 displayCategoryFeaturedAds(featuredAds);
@@ -3107,29 +3069,23 @@
             `).join('');
             
             container.innerHTML = adsHTML;
-            console.log(`✅ تم عرض ${ads.length} إعلان مميز في التصنيف`);
         }
 
         // تهيئة خدمة الإعلانات الذكية
         async function initializeSmartAdvertising() {
             try {
-                console.log('🚀 تهيئة خدمة الإعلانات الذكية...');
-                
                 // انتظار تحميل Supabase
                 if (!window.supabaseClient) {
-                    console.log('⏳ انتظار تحميل Supabase...');
                     await new Promise((resolve) => {
                         const checkInterval = setInterval(() => {
                             if (window.supabaseClient) {
                                 clearInterval(checkInterval);
-                                console.log('✅ Supabase loaded');
                                 resolve();
                             }
                         }, 100);
                         
                         setTimeout(() => {
                             clearInterval(checkInterval);
-                            console.log('❌ Supabase not loaded after 5 seconds');
                             resolve();
                         }, 5000);
                     });
@@ -3138,8 +3094,6 @@
                 // إنشاء خدمة الإعلانات الذكية
                 window.smartCategoryAdvertising = new SmartCategoryAdvertisingService();
                 await window.smartCategoryAdvertising.initialize();
-                
-                console.log('✅ تم تهيئة خدمة الإعلانات الذكية بنجاح');
                 
                 // تحميل قسم التصنيف مع الإعلانات
                 await loadCategorySectionWithAds();
@@ -3153,19 +3107,14 @@
         async function loadCategorySectionWithAds() {
             try {
                 if (!window.smartCategoryAdvertising) {
-                    console.log('⏳ انتظار خدمة الإعلانات الذكية...');
                     setTimeout(loadCategorySectionWithAds, 1000);
                     return;
                 }
-                
-                console.log('🎯 تحميل قسم التصنيف مع الإعلانات: cake');
                 
                 // تحميل قسم التصنيف مع دمج الإعلانات والمنتجات
                 const finalItems = await window.smartCategoryAdvertising.loadCategorySection('cake', 'products-container');
                 
                 if (finalItems && finalItems.length > 0) {
-                    console.log(`✅ تم تحميل ${finalItems.length} عنصر (إعلانات + منتجات)`);
-                    
                     // تحديث المتغير العام للمنتجات
                     allProducts = finalItems.filter(item => !item.is_ad);
                     
@@ -3185,7 +3134,6 @@
                     }, 500);
                     
                 } else {
-                    console.log('⚠️ لم يتم العثور على عناصر للعرض');
                     // استخدام الطريقة القديمة إذا لم تنجح الطريقة الجديدة
                     loadCategoryProducts();
                 }

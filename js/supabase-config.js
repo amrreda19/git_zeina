@@ -12,18 +12,12 @@ function initializeSupabase() {
             attempts++;
             
             if (typeof window.supabase !== 'undefined' && window.supabase) {
-                console.log('✅ Supabase library loaded successfully');
+
                 try {
                     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                     window.supabaseClient = supabase;
                     
-                    console.log('🔧 Supabase client initialized successfully:', {
-                        url: SUPABASE_URL,
-                        client: supabase,
-                        auth: typeof supabase.auth,
-                        from: typeof supabase.from,
-                        storage: typeof supabase.storage
-                    });
+
                     
                     resolve(supabase);
                 } catch (error) {
@@ -32,7 +26,7 @@ function initializeSupabase() {
                 }
             } else {
                 if (attempts % 10 === 0) { // طباعة كل 10 محاولات
-                    console.log(`⏳ Waiting for Supabase library to load... (attempt ${attempts}/${maxAttempts})`);
+                    
                 }
                 
                 if (attempts >= maxAttempts) {

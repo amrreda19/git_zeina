@@ -768,9 +768,9 @@ class GovernorateDisplay {
 window.GovernorateDisplay = GovernorateDisplay;
 
 // Verify that GovernorateDisplay is properly defined
-console.log('🔧 GovernorateDisplay created:', {
-    instance: window.GovernorateDisplay,
-    methods: Object.getOwnPropertyNames(Object.getPrototypeOf(window.GovernorateDisplay)),
-    createBadge: typeof window.GovernorateDisplay.createBadge,
-    addStyles: typeof window.GovernorateDisplay.addStyles
-}); 
+// console.log('🔧 GovernorateDisplay created:', {
+//     instance: window.GovernorateDisplay,
+//     methods: Object.getOwnPropertyNames(Object.getPrototypeOf(window.GovernorateDisplay)),
+//     createBadge: typeof window.GovernorateDisplay.createBadge,
+//     addStyles: typeof window.GovernorateDisplay.addStyles
+// }); 

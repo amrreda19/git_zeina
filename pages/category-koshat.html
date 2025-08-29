@@ -1217,38 +1217,14 @@
                 
                 if (result.success) {
                     allProducts = result.data;
-                    console.log(`🔍 [DEBUG] ===== DATABASE LOAD SUCCESS in category-koshat =====`);
-                    console.log(`🔍 [DEBUG] Total products loaded from database:`, allProducts.length);
+                    
 
                     // عرض عينة من البيانات المحملة
                     if (allProducts.length > 0) {
-                        console.log(`🔍 [DEBUG] Sample product data from database:`, {
-                            firstProduct: {
-                                id: allProducts[0].id,
-                                title: allProducts[0].title,
-                                category: allProducts[0].category,
-                                subcategory: allProducts[0].subcategory,
-                                subcategoryType: typeof allProducts[0].subcategory
-                            },
-                            lastProduct: {
-                                id: allProducts[allProducts.length - 1].id,
-                                subcategory: allProducts[allProducts.length - 1].subcategory,
-                                subcategoryType: typeof allProducts[allProducts.length - 1].subcategory
-                            }
-                        });
-
                         // إحصائيات التصنيفات الفرعية
                         const productsWithSubcategories = allProducts.filter(p => p.subcategory && p.subcategory !== '' && p.subcategory !== null);
                         const productsWithArraySubcategories = allProducts.filter(p => Array.isArray(p.subcategory));
                         const productsWithStringSubcategories = allProducts.filter(p => typeof p.subcategory === 'string' && p.subcategory !== '' && p.subcategory !== null);
-
-                        console.log(`🔍 [DEBUG] Subcategory statistics:`, {
-                            totalProducts: allProducts.length,
-                            productsWithSubcategories: productsWithSubcategories.length,
-                            productsWithArraySubcategories: productsWithArraySubcategories.length,
-                            productsWithStringSubcategories: productsWithStringSubcategories.length,
-                            productsWithoutSubcategories: allProducts.length - productsWithSubcategories.length
-                        });
                     }
 
                     // ترتيب المنتجات حسب المعايير المطلوبة
@@ -1256,7 +1232,6 @@
                     applyFilters();
                 } else {
                     console.error('❌ خطأ في جلب المنتجات:', result.error);
-                    console.log('🔍 [DEBUG] ❌ loadCategoryProducts failed with error:', result.error);
                     showError('حدث خطأ في تحميل المنتجات: ' + result.error);
                 }
                 
@@ -1291,7 +1266,7 @@
                     return new Date(b.created_at) - new Date(a.created_at);
                 });
                 
-                console.log('✅ تم ترتيب المنتجات: منتجات بسعر أولاً (تصاعدياً) ثم منتجات بدون سعر');
+
             }
         }
 
@@ -1578,7 +1553,6 @@
                     }
                 });
                 activeFilters.cities = selected;
-                console.log('🏙️ Selected cities updated:', activeFilters.cities);
                 displaySelectedCities();
             }
 
@@ -1591,11 +1565,9 @@
                 } else {
                     placeholder.textContent = `${activeFilters.cities.length} مدينة مختارة`;
                 }
-                console.log('🏷️ Updated cities placeholder:', placeholder.textContent);
             }
 
             function displaySelectedCities() {
-                console.log('🏷️ Displaying selected cities:', activeFilters.cities);
                 if (activeFilters.cities.length === 0) {
                     selectedContainer.innerHTML = '';
                     return;
@@ -2033,17 +2005,7 @@
             
             emptyState.classList.add('hidden');
             
-            console.log('🔍 [DEBUG] ===== STARTING renderProducts in category-koshat =====');
-            console.log('🔍 [DEBUG] Total products to render:', products.length);
-
             container.innerHTML = products.map((product, index) => {
-                console.log(`🔍 [DEBUG] Processing product ${index + 1}/${products.length}:`, {
-                    id: product.id,
-                    title: product.title,
-                    category: product.category,
-                    subcategory: product.subcategory,
-                    subcategoryType: typeof product.subcategory
-                });
 
                 const imageUrl = product.image_urls && product.image_urls.length > 0
                     ? product.image_urls[0]
@@ -2054,19 +2016,7 @@
                 let subcategoryColors = [];
                 let processingMethod = 'NONE';
 
-                console.log(`🔍 [DEBUG] Raw subcategory data for product ${product.id}:`, {
-                    subcategory: product.subcategory,
-                    subcategoryType: typeof product.subcategory,
-                    isArray: Array.isArray(product.subcategory),
-                    isNull: product.subcategory === null,
-                    isUndefined: product.subcategory === undefined,
-                    isEmptyString: product.subcategory === '',
-                    length: product.subcategory ? product.subcategory.length : 'N/A'
-                });
-
                 if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
-                    console.log(`🔍 [DEBUG] Processing ARRAY subcategories for product ${product.id}`);
-                    console.log(`🔍 [DEBUG] Array content:`, product.subcategory);
                     processingMethod = 'ARRAY';
                     const subcategoryMap = {
                         'koshat-wedding': { name: 'كوشة زفاف', color: 'bg-pink-500' },
@@ -2075,27 +2025,18 @@
                     
                     // معالجة جميع التصنيفات الفرعية
                     product.subcategory.forEach((subcat, subIndex) => {
-                        console.log(`🔍 [DEBUG] Processing array item ${subIndex}: "${subcat}"`);
                         const subcategoryInfo = subcategoryMap[subcat];
-                        console.log(`🔍 [DEBUG] Found subcategoryInfo:`, subcategoryInfo);
 
                         if (subcategoryInfo) {
                             subcategoryNames.push(subcategoryInfo.name);
                             subcategoryColors.push(subcategoryInfo.color);
-                            console.log(`🔍 [DEBUG] ✅ Added subcategory: ${subcategoryInfo.name}`);
                         } else {
-                            console.log(`🔍 [DEBUG] ❌ No mapping found for: "${subcat}"`);
                             // إذا لم نجد ترجمة، استخدم النص كما هو
                             subcategoryNames.push(subcat);
                             subcategoryColors.push('bg-gray-500');
-                            console.log(`🔍 [DEBUG] ⚠️ Used raw text as fallback: "${subcat}"`);
                         }
                     });
-
-                    console.log(`🔍 [DEBUG] Final subcategories from ARRAY:`, subcategoryNames);
                 } else if (product.subcategory && typeof product.subcategory === 'string') {
-                    console.log(`🔍 [DEBUG] Processing STRING subcategories for product ${product.id}`);
-                    console.log(`🔍 [DEBUG] String content: "${product.subcategory}"`);
                     processingMethod = 'STRING';
                     // Handle case where subcategory is a JSON string or Arabic text
                     
@@ -2105,15 +2046,12 @@
                         'كوشات خطوبة': 'koshat-engagement'
                     };
 
-                    console.log(`🔍 [DEBUG] Arabic to code map:`, arabicToCodeMap);
+
 
                     const subcategoryMap = {
                         'koshat-wedding': { name: 'كوشة زفاف', color: 'bg-pink-500' },
                         'koshat-engagement': { name: 'كوشة خطوبة', color: 'bg-purple-500' }
                     };
-
-                    console.log(`🔍 [DEBUG] Subcategory map:`, subcategoryMap);
-                    console.log(`🔍 [DEBUG] Attempting JSON.parse on: "${product.subcategory}"`);
 
                     try {
                         let subcategoryArray = [];
@@ -2121,58 +2059,37 @@
                         // محاولة تحليل JSON أولاً
                         try {
                             subcategoryArray = JSON.parse(product.subcategory);
-                            console.log(`🔍 [DEBUG] ✅ JSON.parse successful:`, subcategoryArray);
-                            console.log(`🔍 [DEBUG] Is array:`, Array.isArray(subcategoryArray));
                             processingMethod = 'JSON_ARRAY';
                         } catch (parseError) {
-                            console.log(`🔍 [DEBUG] ❌ JSON.parse failed:`, parseError.message);
-                            console.log(`🔍 [DEBUG] Treating as direct Arabic text: "${product.subcategory}"`);
                             processingMethod = 'DIRECT_ARABIC';
 
                             // إذا فشل JSON، تحقق من النص العربي المباشر
                             const subcategoryCode = arabicToCodeMap[product.subcategory];
-                            console.log(`🔍 [DEBUG] Looking for Arabic mapping:`, {
-                                searchText: product.subcategory,
-                                foundCode: subcategoryCode
-                            });
 
                             if (subcategoryCode) {
                                 subcategoryArray = [subcategoryCode];
-                                console.log(`🔍 [DEBUG] ✅ Found Arabic mapping:`, subcategoryArray);
                             } else {
                                 // استخدم النص كما هو
                                 subcategoryArray = [product.subcategory];
-                                console.log(`🔍 [DEBUG] ⚠️ No Arabic mapping found, using raw text:`, subcategoryArray);
                             }
                         }
 
                         if (Array.isArray(subcategoryArray) && subcategoryArray.length > 0) {
-                            console.log(`🔍 [DEBUG] Processing ${subcategoryArray.length} subcategories from array`);
-
                             // معالجة جميع التصنيفات الفرعية
                             subcategoryArray.forEach((subcat, subIndex) => {
-                                console.log(`🔍 [DEBUG] Processing subcategory ${subIndex}: "${subcat}"`);
                                 const subcategoryInfo = subcategoryMap[subcat];
-                                console.log(`🔍 [DEBUG] Found subcategoryInfo:`, subcategoryInfo);
 
                                 if (subcategoryInfo) {
                                     subcategoryNames.push(subcategoryInfo.name);
                                     subcategoryColors.push(subcategoryInfo.color);
-                                    console.log(`🔍 [DEBUG] ✅ Added translated subcategory: ${subcategoryInfo.name}`);
                                 } else {
                                     // إذا لم يتم العثور على ترجمة، استخدم النص كما هو
                                     subcategoryNames.push(subcat);
                                     subcategoryColors.push('bg-gray-500');
-                                    console.log(`🔍 [DEBUG] ⚠️ Used raw text as fallback: "${subcat}"`);
                                 }
                             });
-
-                            console.log(`🔍 [DEBUG] Final subcategories from STRING processing:`, subcategoryNames);
-                        } else {
-                            console.log(`🔍 [DEBUG] No valid array or empty array from string processing`);
                         }
                     } catch (error) {
-                        console.log(`🔍 [DEBUG] ❌ Error in string processing:`, error.message);
                         processingMethod = 'ERROR';
                     }
                 }
@@ -2232,19 +2149,8 @@
                     </div>
                 `;
 
-                console.log(`🔍 [DEBUG] Generated card HTML for product ${product.id}:`, {
-                    hasSubcategories: subcategoryNames.length > 1 || (subcategoryNames.length === 1 && subcategoryNames[0] !== 'كوشة'),
-                    subcategoryCount: subcategoryNames.length,
-                    mainSubcategory: subcategoryNames[0],
-                    processingMethod: processingMethod,
-                    rawData: product.subcategory
-                });
-
                 return cardHtml;
             }).join('');
-
-            console.log('🔍 [DEBUG] ===== renderProducts COMPLETED in category-koshat =====');
-            console.log('🔍 [DEBUG] Total cards generated:', products.length);
         }
 
         // View product details
@@ -2254,7 +2160,6 @@
 
         // عرض تفاصيل المنتج
         function viewProductDetails(productId) {
-            console.log('🔍 محاولة عرض تفاصيل المنتج:', productId);
             
             // البحث عن المنتج في القائمة
             let product = allProducts.find(p => p.id === productId);
@@ -2270,14 +2175,11 @@
                         const adData = JSON.parse(featuredAd.getAttribute('data-ad-info') || '{}');
                         if (adData.id) {
                             product = adData;
-                            console.log('✅ تم العثور على المنتج المميز:', product);
                             
                             // تسجيل النقر على الإعلان إذا كان موجوداً
                             if (product.ad_id && window.advertisingService) {
-                                console.log('📢 تسجيل النقر على الإعلان المميز:', product.ad_id);
                                 try {
                                     window.advertisingService.recordClick(product.ad_id);
-                                    console.log('✅ تم تسجيل النقر بنجاح!');
                                 } catch (error) {
                                     console.error('❌ خطأ في تسجيل النقر:', error);
                                 }
@@ -2608,7 +2510,6 @@
             updateFeaturedAdFavoriteIcon(productId);
             
             // تحديث عداد المفضلة
-            console.log('🔄 Calling updateFavoritesCountBadge from toggleFavorite');
             updateFavoritesCountBadge();
         }
 
@@ -2675,7 +2576,7 @@
             const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
             const count = favorites.length;
             
-            console.log('🔄 Updating favorites count badge:', count);
+
             
             // تحديث جميع العدادات
             const badges = [
@@ -2686,17 +2587,12 @@
             badges.forEach(badgeId => {
                 const badge = document.getElementById(badgeId);
                 if (badge) {
-                    console.log(`✅ Found badge: ${badgeId}`);
                     if (count > 0) {
                         badge.textContent = count;
                         badge.classList.remove('hidden');
-                        console.log(`📊 Updated ${badgeId} to show: ${count}`);
                     } else {
                         badge.classList.add('hidden');
-                        console.log(`📊 Hidden ${badgeId} (count: 0)`);
                     }
-                } else {
-                    console.log(`❌ Badge not found: ${badgeId}`);
                 }
             });
         }
@@ -2705,12 +2601,12 @@
         async function loadCategoryFeaturedAds() {
             try {
                 if (!window.advertisingService) {
-                    console.log('⏳ انتظار خدمة الإعلانات...');
+    
                     setTimeout(loadCategoryFeaturedAds, 1000);
                     return;
                 }
 
-                console.log('🔍 جلب الإعلانات المميزة للتصنيف: koshat');
+
                 const featuredAds = await window.advertisingService.getCategoryFeaturedProducts('koshat', 4);
                 
                 displayCategoryFeaturedAds(featuredAds);
@@ -2786,7 +2682,7 @@
             `).join('');
             
             container.innerHTML = adsHTML;
-            console.log(`✅ تم عرض ${ads.length} إعلان مميز في التصنيف`);
+
         }
 
         // إظهار رسالة عدم وجود إعلانات مميزة
@@ -2864,7 +2760,7 @@
         function updateAllFavoriteIcons() {
             const productCards = document.querySelectorAll('.product-card');
             if (productCards.length > 0) {
-                console.log('🔄 تحديث أيقونات المفضلة لـ', productCards.length, 'منتج');
+
                 productCards.forEach(card => {
                     const productId = card.getAttribute('data-product-id');
                     if (productId) {
@@ -2872,7 +2768,7 @@
                     }
                 });
             } else {
-                console.log('⏳ لم يتم العثور على بطاقات المنتجات بعد، إعادة المحاولة...');
+
                 // إعادة المحاولة بعد نصف ثانية
                 setTimeout(updateAllFavoriteIcons, 500);
             }
@@ -2888,7 +2784,7 @@
                     );
                     
                     if (hasNewProducts) {
-                        console.log('✅ تم العثور على منتجات جديدة، تحديث أيقونات المفضلة...');
+
                         setTimeout(updateAllFavoriteIcons, 100);
                     }
                 }
@@ -2907,7 +2803,7 @@
                     childList: true,
                     subtree: true
                 });
-                console.log('👁️ بدء مراقبة التغييرات في المنتجات');
+
             }
             
             // محاولة تحديث أيقونات المفضلة بعد تحميل الصفحة

@@ -8,15 +8,15 @@ class ProductService {
 
     async initialize() {
         try {
-            console.log('🔄 ProductService: Starting initialization...');
+    
             
             // Wait for Supabase client to be available
             if (window.supabaseClient) {
                 this.supabase = window.supabaseClient;
                 this.initialized = true;
-                console.log('✅ ProductService: Supabase client already available');
+    
             } else {
-                console.log('⏳ ProductService: Waiting for Supabase client...');
+
                 
                 // Wait for initialization
                 if (window.initializeSupabase) {
@@ -56,7 +56,7 @@ class ProductService {
             
             if (this.supabase) {
                 this.initialized = true;
-                console.log('✅ ProductService initialized successfully with Supabase client');
+    
             } else {
                 console.error('❌ ProductService: Failed to initialize Supabase client');
             }
@@ -294,7 +294,7 @@ class ProductService {
                 return { success: false, error: 'ProductService not initialized' };
             }
 
-            console.log(`🔍 Fetching products for category: ${category} from all tables`);
+    
 
             // Get products from ALL tables and filter by category
             const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
@@ -322,8 +322,6 @@ class ProductService {
 
             // Filter products by the requested category
             const categoryProducts = allProducts.filter(product => product.category === category);
-            
-            console.log(`🔍 Found ${categoryProducts.length} products for category ${category} out of ${allProducts.length} total products`);
 
             return { success: true, data: categoryProducts };
         } catch (error) {
@@ -1158,21 +1156,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.ProductService = new ProductService();
     
     // Verify that ProductService is properly defined
-    console.log('🔧 ProductService created:', {
-        instance: window.ProductService,
-        methods: Object.getOwnPropertyNames(Object.getPrototypeOf(window.ProductService)),
-        addProduct: typeof window.ProductService.addProduct,
-        getProductById: typeof window.ProductService.getProductById
-    });
+
 });
 
 // Also create immediately for backward compatibility
 window.ProductService = new ProductService();
 
 // Verify that ProductService is properly defined
-console.log('🔧 ProductService created immediately:', {
-    instance: window.ProductService,
-    methods: Object.getOwnPropertyNames(Object.getPrototypeOf(window.ProductService)),
-    addProduct: typeof window.ProductService.addProduct,
-    getProductById: typeof window.ProductService.getProductById
-}); 
+ 

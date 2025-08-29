@@ -340,14 +340,11 @@
         function waitForProductService() {
             return new Promise((resolve) => {
                 if (window.ProductService && window.supabaseClient) {
-                    console.log('✅ ProductService and Supabase already loaded');
                     resolve(window.ProductService);
                 } else {
-                    console.log('⏳ Waiting for ProductService and Supabase to load...');
                     const checkInterval = setInterval(() => {
                         if (window.ProductService && window.supabaseClient) {
                             clearInterval(checkInterval);
-                            console.log('✅ ProductService and Supabase loaded successfully');
                             resolve(window.ProductService);
                         }
                     }, 100);
@@ -370,8 +367,6 @@
                 'ProductService.addProduct': typeof window.ProductService?.addProduct === 'function',
                 'ProductService.supabase': typeof window.ProductService?.supabase !== 'undefined'
             };
-            
-            console.log('🔍 Checking required services:', services);
             
             // Check if all services are available
             const allAvailable = Object.values(services).every(available => available);
@@ -415,7 +410,6 @@
                 
                 // Check all required services
                 const servicesStatus = checkRequiredServices();
-                console.log('✅ ProductService loaded successfully');
                 
             } catch (error) {
                 console.error('Authentication check failed:', error);
@@ -1308,7 +1302,7 @@
                  if (!session) {
                      throw new Error('يجب تسجيل الدخول لإضافة منتج. الرجاء تسجيل الدخول أولاً.');
                  }
-                 console.log('✅ User authenticated:', session.user.email);
+ 
                  
                  // Get selected cities
                  const selectedCitiesArray = getSelectedCities();

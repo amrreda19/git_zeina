@@ -132,7 +132,7 @@ function removeProblematicCSS() {
 
 // تهيئة التحسينات
 function initScrollOptimization() {
-    console.log('🚀 Initializing scroll optimization...');
+    // console.log('🚀 Initializing scroll optimization...');
     
     // إضافة CSS المحسن
     addScrollOptimizationStyles();
@@ -146,7 +146,7 @@ function initScrollOptimization() {
     // إزالة CSS المسبب للمشاكل
     removeProblematicCSS();
     
-    console.log('✅ Scroll optimization completed');
+    // console.log('✅ Scroll optimization completed');
 }
 
 // تشغيل التحسينات عند تحميل الصفحة
