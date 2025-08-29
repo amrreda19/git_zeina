@@ -76,6 +76,15 @@
             background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
             color: white;
         }
+
+        .image-fallback {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +149,11 @@
                 <div class="relative">
                     <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                          alt="زِينَة" 
-                         class="rounded-lg shadow-lg">
+                         class="rounded-lg shadow-lg w-full h-64 md:h-80 object-cover"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="image-fallback rounded-lg shadow-lg w-full h-64 md:h-80" style="display: none;">
+                        <span>صورة زِينَة</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -234,7 +247,7 @@
                 <!-- Koshat Category -->
                 <a href="category-koshat.html" class="group">
                     <div class="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                        <img src="../assets/images/koshat.jpg" 
+                        <img src="../assets/images/koshat.JPG" 
                              alt="كوشات" 
                              class="w-full h-48 md:h-80 object-cover object-center group-hover:scale-110 transition-transform duration-300" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -248,7 +261,7 @@
                 <!-- Cake Category -->
                 <a href="category-cake.html" class="group">
                     <div class="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                        <img src="../assets/images/cake.jpg" 
+                        <img src="../assets/images/cake.JPG" 
                              alt="تورتة" 
                              class="w-full h-48 md:h-80 object-cover object-center group-hover:scale-110 transition-transform duration-300" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -262,7 +275,7 @@
                 <!-- Mirror Category -->
                 <a href="category-mirr.html" class="group">
                     <div class="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                        <img src="../assets/images/sarah-penney-1Yk6CJyIjE8-unsplash.jpg"  
+                        <img src="../assets/images/mirr.JPG" 
                              alt="مرايا ذهبية مزخرفة" 
                              class="w-full h-48 md:h-80 object-cover object-center group-hover:scale-110 transition-transform duration-300" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -276,7 +289,7 @@
                 <!-- Other Category -->
                 <a href="category-other.html" class="group">
                     <div class="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                        <img src="../assets/images/decorations.jpg" 
+                        <img src="../assets/images/other.PNG" 
                              alt="ديكورات متنوعة" 
                              class="w-full h-48 md:h-80 object-cover object-center group-hover:scale-110 transition-transform duration-300" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -296,7 +309,7 @@
                 <!-- Invitations Category -->
                 <a href="category-invitations.html" class="group">
                     <div class="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                        <img src="../assets/images/f.jpg" 
+                        <img src="../assets/images/invitations.JPG" 
                              alt="دعوات الأفراح والخطوبة" 
                              class="w-full h-48 md:h-80 object-cover object-center group-hover:scale-110 transition-transform duration-300" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -347,6 +360,25 @@
                     <p class="text-gray-700 leading-relaxed">
                         فريق دعم متخصص متاح على مدار الساعة لمساعدتك في جميع استفساراتك وطلباتك.
                     </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legal Notice Section -->
+        <section class="mb-16">
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                    </div>
+                    <div class="mr-3">
+                        <h3 class="text-lg font-semibold text-yellow-800 mb-2">تنويه مهم</h3>
+                        <p class="text-yellow-700 text-sm leading-relaxed">
+                            نوفر منصة سهلة لعرض المنتجات وربط البائعين بالمشترين. لسنا متجرًا ولا طرفًا في أي معاملة، وجميع الاتفاقات والمسؤوليات تقع على الأطراف المتعاملة مباشرة.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -404,9 +436,9 @@
                 <div>
                     <h4 class="font-semibold mb-4">السياسات</h4>
                     <ul class="space-y-2 text-sm text-gray-300">
-                        <li><a href="privacy-policy.html" class="hover:text-white transition-colors">سياسة الخصوصية</a></li>
-                        <li><a href="terms-of-use.html" class="hover:text-white transition-colors">شروط الاستخدام</a></li>
-                        <li><a href="cookies-policy.html" class="hover:text-white transition-colors">سياسة الكوكيز</a></li>
+                        <li><a href="../legal/privacy-policy.html" class="hover:text-white transition-colors">سياسة الخصوصية</a></li>
+                        <li><a href="../legal/terms-of-use.html" class="hover:text-white transition-colors">شروط الاستخدام</a></li>
+                        <li><a href="../legal/cookies-policy.html" class="hover:text-white transition-colors">سياسة الكوكيز</a></li>
                     </ul>
                 </div>
                 <div>
@@ -427,8 +459,15 @@
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-300">
-                <p>&copy; 2024 زِينَة. جميع الحقوق محفوظة.</p>
+            <div class="border-t border-gray-700 mt-8 pt-8">
+                <div class="text-center text-sm text-gray-300 mb-4">
+                    <p>&copy; 2024 زِينَة. جميع الحقوق محفوظة.</p>
+                </div>
+                <div class="bg-gray-700 rounded-lg p-4 text-center">
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        تنبيه قانوني: يقتصر دور الموقع على عرض المنتجات وربط الأطراف، ولا يشارك في البيع أو الدفع أو التوصيل. لا تتحمل إدارة الموقع أي مسؤولية عن الاتفاقات أو المعاملات التي تتم بين المستخدمين.
+                    </p>
+                </div>
             </div>
         </div>
     </footer>
