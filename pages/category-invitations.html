@@ -1073,24 +1073,20 @@
         // تحميل المنتجات من Supabase
         async function loadProducts() {
             try {
-                console.log('🔄 بدء تحميل منتجات الدعوات...');
                 showLoadingState();
                 
                 // Wait for ProductService to load
                 if (!window.ProductService) {
-                    console.log('⏳ Waiting for ProductService to load...');
                     await new Promise((resolve) => {
                         const checkInterval = setInterval(() => {
                             if (window.ProductService) {
                                 clearInterval(checkInterval);
-                                console.log('✅ ProductService loaded');
                                 resolve();
                             }
                         }, 100);
                         
                         setTimeout(() => {
                             clearInterval(checkInterval);
-                            console.log('❌ ProductService not loaded after 5 seconds');
                             resolve();
                         }, 5000);
                     });
@@ -1100,28 +1096,13 @@
                     throw new Error('ProductService not available');
                 }
                 
-                console.log('✅ ProductService متاح، جاري جلب المنتجات...');
-                
                 const result = await window.ProductService.getProductsByCategory('invitations');
-                
-                console.log('📊 نتيجة جلب المنتجات:', result);
                 
                 if (result.success) {
                     allProducts = result.data || [];
                     
                     // Log first few products to debug subcategory format
                     if (allProducts.length > 0) {
-                        console.log('🔍 Sample products for debugging:');
-                        allProducts.slice(0, 5).forEach((product, index) => {
-                            console.log(`Product ${index + 1}:`, {
-                                id: product.id,
-                                description: product.description,
-                                subcategory: product.subcategory,
-                                subcategoryType: typeof product.subcategory,
-                                rawSubcategory: JSON.stringify(product.subcategory)
-                            });
-                        });
-                        
                         // Log all unique subcategory values
                         const uniqueSubcategories = new Set();
                         allProducts.forEach(product => {
@@ -1144,32 +1125,16 @@
                                 }
                             }
                         });
-                        console.log('🔍 All unique subcategories in database:', Array.from(uniqueSubcategories));
-                        console.log('🔍 Filter subcategories available:', [
-                            'invitation-wedding', 'invitation-engagement', 'invitation-wedding-distribution',
-                            'invitation-engagement-distribution', 'invitation-chocolate', 'invitation-perfumed',
-                            'invitation-gift', 'invitation-baby-week', 'invitation-kids', 'invitation-digital'
-                        ]);
                         
                         // Log detailed subcategory analysis
-                        console.log('🔍 Detailed subcategory analysis:');
                         allProducts.forEach((product, index) => {
                             if (product.subcategory) {
-                                console.log(`Product ${index + 1} (ID: ${product.id}):`, {
-                                    subcategory: product.subcategory,
-                                    type: typeof product.subcategory,
-                                    isArray: Array.isArray(product.subcategory),
-                                    length: Array.isArray(product.subcategory) ? product.subcategory.length : 'N/A',
-                                    firstValue: Array.isArray(product.subcategory) ? product.subcategory[0] : product.subcategory
-                                });
+                                // Detailed subcategory analysis logic
                             }
                         });
                     }
                     
                     filteredProducts = [...allProducts];
-                    
-                    console.log(`✅ تم جلب ${allProducts.length} منتج بنجاح`);
-                    console.log('🔍 تفاصيل المنتجات:', allProducts);
                     
                     // ترتيب المنتجات حسب المعايير المطلوبة
                     sortProductsByCriteria();
@@ -1185,11 +1150,9 @@
                         showEmptyState();
                     }
                 } else {
-                    console.error('❌ خطأ في جلب المنتجات:', result.error);
                     throw new Error(result.error);
                 }
             } catch (error) {
-                console.error('❌ خطأ في loadProducts:', error);
                 hideLoadingState();
                 showEmptyState();
             }
@@ -1224,18 +1187,6 @@
 
         // إنشاء بطاقة منتج
         function createProductCard(product) {
-            // إضافة debugging لمعرفة محتوى المنتج
-            console.log('🔍 Product data:', product);
-            console.log('🔍 Product subcategory:', product.subcategory);
-            console.log('🔍 Subcategory type:', typeof product.subcategory);
-            console.log('🔍 Product keys:', Object.keys(product));
-            console.log('🔍 Subcategory value details:', {
-                value: product.subcategory,
-                type: typeof product.subcategory,
-                isArray: Array.isArray(product.subcategory),
-                length: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length : product.subcategory.length) : 'N/A',
-                isEmpty: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length === 0 : product.subcategory.trim() === '') : true
-            });
             
             const card = document.createElement('div');
             card.className = 'product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300';
@@ -1265,33 +1216,18 @@
                 'invitation-digital': { name: 'دعوة رقمية', color: 'bg-teal-500' }
             };
             
-            console.log('🔍 Product object:', product);
-            console.log('🔍 Product subcategory:', product.subcategory);
-            console.log('🔍 Subcategory type:', typeof product.subcategory);
-            console.log('🔍 Product keys:', Object.keys(product));
-            console.log('🔍 Subcategory processing details:', {
-                hasSubcategory: !!product.subcategory,
-                subcategoryValue: product.subcategory,
-                subcategoryType: typeof product.subcategory,
-                isArray: Array.isArray(product.subcategory),
-                isEmpty: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length === 0 : product.subcategory.trim() === '') : true,
-                subcategoryMapKeys: Object.keys(subcategoryMap)
-            });
+
             
             if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
-                console.log('🔍 Processing array subcategory:', product.subcategory);
                 
                 // معالجة جميع التصنيفات الفرعية
                 product.subcategory.forEach(subcat => {
-                    console.log('🔍 Processing subcategory:', subcat);
                     if (subcat && subcat.trim() !== '') { // تأكد من أن القيمة ليست فارغة
                         const subcategoryInfo = subcategoryMap[subcat];
-                        console.log('🔍 Found subcategory info:', subcategoryInfo);
                         if (subcategoryInfo) {
                             subcategoryNames.push(subcategoryInfo.name);
                             subcategoryColors.push(subcategoryInfo.color);
                         } else {
-                            console.log('🔍 Subcategory not found in map:', subcat);
                             // محاولة إصلاح البيانات إذا لم يتم العثور عليها في الخريطة
                             subcategoryNames.push(subcat);
                             subcategoryColors.push('bg-gray-500');
@@ -1299,44 +1235,37 @@
                     }
                 });
             } else if (product.subcategory && typeof product.subcategory === 'string' && product.subcategory.trim() !== '') {
-                console.log('🔍 Processing string subcategory:', product.subcategory);
                 
                 // Check if it's a JSON string first
                 if (product.subcategory.startsWith('[') || product.subcategory.startsWith('{')) {
                     try {
                         const subcategoryArray = JSON.parse(product.subcategory);
-                        console.log('🔍 Parsed subcategory array:', subcategoryArray);
                         if (Array.isArray(subcategoryArray) && subcategoryArray.length > 0) {
                             subcategoryArray.forEach(subcat => {
-                                console.log('🔍 Processing parsed subcategory:', subcat);
                                 if (subcat && subcat.trim() !== '') { // تأكد من أن القيمة ليست فارغة
                                     const subcategoryInfo = subcategoryMap[subcat];
-                                    console.log('🔍 Found parsed subcategory info:', subcategoryInfo);
                                     if (subcategoryInfo) {
                                         subcategoryNames.push(subcategoryInfo.name);
                                         subcategoryColors.push(subcategoryInfo.color);
-                                                            } else {
-                            console.log('🔍 Parsed subcategory not found in map:', subcat);
-                            // محاولة إصلاح البيانات إذا لم يتم العثور عليها في الخريطة
-                            subcategoryNames.push(subcat);
-                            subcategoryColors.push('bg-gray-500');
-                        }
+                                    } else {
+                                        // محاولة إصلاح البيانات إذا لم يتم العثور عليها في الخريطة
+                                        subcategoryNames.push(subcat);
+                                        subcategoryColors.push('bg-gray-500');
+                                    }
                                 }
                             });
                         }
                     } catch (error) {
-                        console.error('🔍 Error parsing subcategory JSON:', error);
+                        // Error parsing subcategory JSON
                     }
                 } else {
                     // It's a plain string, check if it's a key in subcategoryMap first
-                    console.log('🔍 Subcategory is plain string:', product.subcategory);
                     
                     // First, try direct key matching
                     const subcategoryInfo = subcategoryMap[product.subcategory];
                     if (subcategoryInfo) {
                         subcategoryNames = [subcategoryInfo.name];
                         subcategoryColors = [subcategoryInfo.color];
-                        console.log('🔍 Found direct key match:', product.subcategory);
                     } else {
                         // If not found as key, try to find by display name
                         const foundKey = Object.keys(subcategoryMap).find(key => 
@@ -1345,64 +1274,27 @@
                         if (foundKey) {
                             subcategoryNames = [subcategoryMap[foundKey].name];
                             subcategoryColors = [subcategoryMap[foundKey].color];
-                            console.log('🔍 Found matching key by name:', foundKey);
                         } else {
                             // If still not found, use the original string but format it
-                            console.log('🔍 No matching key found, using original string:', product.subcategory);
                             if (product.subcategory && product.subcategory.trim() !== '') {
                                 subcategoryNames = [product.subcategory];
                                 subcategoryColors = ['bg-gray-500'];
-                            } else {
-                                console.log('🔍 Subcategory is empty or whitespace only');
                             }
                         }
                     }
                 }
             } else {
-                console.log('🔍 No subcategory data found or subcategory is null/undefined');
-                console.log('🔍 Product details for debugging:', {
-                    id: product.id,
-                    name: product.name,
-                    subcategory: product.subcategory,
-                    subcategoryType: typeof product.subcategory,
-                    hasSubcategory: !!product.subcategory,
-                    subcategoryValue: product.subcategory,
-                    subcategoryLength: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length : product.subcategory.length) : 'N/A'
-                });
+                // No subcategory data found or subcategory is null/undefined
             }
-            
-            console.log('🔍 Final subcategory names:', subcategoryNames);
-            console.log('🔍 Final subcategory colors:', subcategoryColors);
-            console.log('🔍 Final subcategory processing result:', {
-                productId: product.id,
-                productName: product.name,
-                originalSubcategory: product.subcategory,
-                processedNames: subcategoryNames,
-                processedColors: subcategoryColors,
-                namesCount: subcategoryNames.length,
-                colorsCount: subcategoryColors.length
-            });
             
             // إذا لم توجد تصنيفات فرعية، استخدم قيم افتراضية
             if (subcategoryNames.length === 0) {
-                console.log('🔍 No subcategories found, using default');
-                console.log('🔍 Product that caused default:', {
-                    id: product.id,
-                    name: product.name,
-                    subcategory: product.subcategory,
-                    subcategoryType: typeof product.subcategory,
-                    subcategoryValue: product.subcategory,
-                    subcategoryLength: product.subcategory ? (Array.isArray(product.subcategory) ? product.subcategory.length : product.subcategory.length) : 'N/A'
-                });
-                
                 // محاولة إصلاح البيانات إذا كانت فارغة أو غير صحيحة
                 if (product.subcategory && typeof product.subcategory === 'string' && product.subcategory.trim() !== '') {
-                    console.log('🔍 Attempting to fix subcategory data:', product.subcategory);
                     // إذا كان التصنيف الفرعي موجود لكن لم يتم العثور عليه في الخريطة
                     subcategoryNames = [product.subcategory];
                     subcategoryColors = ['bg-gray-500'];
                 } else if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
-                    console.log('🔍 Attempting to fix array subcategory data:', product.subcategory);
                     // إذا كان التصنيف الفرعي مصفوفة لكن لم يتم العثور عليها في الخريطة
                     product.subcategory.forEach(subcat => {
                         if (subcat && subcat.trim() !== '') {
@@ -1411,7 +1303,6 @@
                         }
                     });
                 } else {
-                    console.log('🔍 Using default subcategory for product:', product.id);
                     subcategoryNames = ['دعوة'];
                     subcategoryColors = ['bg-gray-500'];
                 }
@@ -1514,8 +1405,6 @@
                     // إذا كان كلاهما بدون سعر، ترتيب حسب تاريخ الإنشاء
                     return new Date(b.created_at) - new Date(a.created_at);
                 });
-                
-                console.log('✅ تم ترتيب المنتجات: منتجات بسعر أولاً (تصاعدياً) ثم منتجات بدون سعر');
             }
         }
 
@@ -1575,8 +1464,6 @@
 
         // عرض تفاصيل المنتج
         function viewProductDetails(productId) {
-            console.log('🔍 محاولة عرض تفاصيل المنتج:', productId);
-            
             // البحث عن المنتج في القائمة
             let product = allProducts.find(p => p.id === productId);
             
@@ -1591,16 +1478,13 @@
                         const adData = JSON.parse(featuredAd.getAttribute('data-ad-info') || '{}');
                         if (adData.id) {
                             product = adData;
-                            console.log('✅ تم العثور على المنتج المميز:', product);
                             
                             // تسجيل النقر على الإعلان إذا كان موجوداً
                             if (product.ad_id && window.advertisingService) {
-                                console.log('📢 تسجيل النقر على الإعلان المميز:', product.ad_id);
                                 try {
                                     window.advertisingService.recordClick(product.ad_id);
-                                    console.log('✅ تم تسجيل النقر بنجاح!');
                                 } catch (error) {
-                                    console.error('❌ خطأ في تسجيل النقر:', error);
+                                    // Error recording click
                                 }
                             }
                         }
@@ -1609,7 +1493,6 @@
             }
             
             if (!product) {
-                console.error('❌ المنتج غير موجود:', productId);
                 return;
             }
 
@@ -1919,8 +1802,6 @@
             const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
             const count = favorites.length;
             
-            console.log('🔄 Updating favorites count badge:', count);
-            
             // تحديث جميع العدادات
             const badges = [
                 'favorites-count-badge',
@@ -1930,17 +1811,12 @@
             badges.forEach(badgeId => {
                 const badge = document.getElementById(badgeId);
                 if (badge) {
-                    console.log(`✅ Found badge: ${badgeId}`);
                     if (count > 0) {
                         badge.textContent = count;
                         badge.classList.remove('hidden');
-                        console.log(`📊 Updated ${badgeId} to show: ${count}`);
                     } else {
                         badge.classList.add('hidden');
-                        console.log(`📊 Hidden ${badgeId} (count: 0)`);
                     }
-                } else {
-                    console.log(`❌ Badge not found: ${badgeId}`);
                 }
             });
         }
@@ -2112,8 +1988,6 @@
 
         // Apply all active filters
         function applyFilters() {
-            console.log('Applying filters:', activeFilters);
-            
             // Start with all products
             let filtered = [...allProducts];
             
@@ -2171,9 +2045,6 @@
                         } else {
                             productSubcategories = [product.subcategory];
                         }
-                        
-                        console.log('Product subcategories:', productSubcategories);
-                        console.log('Active filters:', activeFilters.subcategory);
                         
                         // Check if any of the selected subcategories match the product's subcategories
                         return activeFilters.subcategory.some(selectedCode => {
@@ -2741,12 +2612,10 @@
         async function loadCategoryFeaturedAds() {
             try {
                 if (!window.advertisingService) {
-                    console.log('⏳ انتظار خدمة الإعلانات...');
                     setTimeout(loadCategoryFeaturedAds, 1000);
                     return;
                 }
 
-                console.log('🔍 جلب الإعلانات المميزة للتصنيف: invitations');
                 const featuredAds = await window.advertisingService.getCategoryFeaturedProducts('invitations', 4);
                 
                 displayCategoryFeaturedAds(featuredAds);
@@ -2759,7 +2628,6 @@
                 });
                 
             } catch (error) {
-                console.error('❌ خطأ في تحميل الإعلانات المميزة:', error);
                 showNoFeaturedAds();
             }
         }
@@ -2822,7 +2690,6 @@
             `).join('');
             
             container.innerHTML = adsHTML;
-            console.log(`✅ تم عرض ${ads.length} إعلان مميز في التصنيف`);
         }
 
         // إظهار رسالة عدم وجود إعلانات مميزة
@@ -2910,19 +2777,19 @@
                     // تحديث عداد المفضلة
                     updateFavoritesCountBadge();
                     
-                                         // حدث ترتيب المنتجات
-                     const sortSelect = document.getElementById('sort-select');
-                     if (sortSelect) {
-                         sortSelect.addEventListener('change', function() {
-                             sortProducts(this.value);
-                         });
-                     }
-                     
-                     // حدث زر تحميل المزيد - تحقق من وجود العنصر أولاً
-                     const loadMoreBtn = document.getElementById('load-more-btn');
-                     if (loadMoreBtn) {
-                         loadMoreBtn.addEventListener('click', loadMoreProducts);
-                     }
+                    // حدث ترتيب المنتجات
+                    const sortSelect = document.getElementById('sort-select');
+                    if (sortSelect) {
+                        sortSelect.addEventListener('change', function() {
+                            sortProducts(this.value);
+                        });
+                    }
+                    
+                    // حدث زر تحميل المزيد - تحقق من وجود العنصر أولاً
+                    const loadMoreBtn = document.getElementById('load-more-btn');
+                    if (loadMoreBtn) {
+                        loadMoreBtn.addEventListener('click', loadMoreProducts);
+                    }
                 } else {
                     // انتظار 100ms ثم المحاولة مرة أخرى
                     setTimeout(waitForProductService, 100);
