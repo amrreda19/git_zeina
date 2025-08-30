@@ -46,6 +46,7 @@
     <script src="../js/product-requests-service.js?v=2025-08-22-1" defer></script>
     <script src="../js/governorate-filter.js?v=2025-08-22-1"></script>
     <script src="../js/subcategory-filter.js?v=2025-08-22-1"></script>
+    <script src="../js/cities-service.js?v=2025-08-22-1"></script>
     
     <style>
         :root {
@@ -434,7 +435,8 @@
 
         /* Simple Governorate Filter Styles */
         .simple-governorate-filter,
-        .simple-cities-filter {
+        .simple-cities-filter,
+        .simple-subcategory-filter {
             position: relative;
             width: 100%;
         }
@@ -489,12 +491,14 @@
         }
 
         .governorate-options,
-        .cities-options {
+        .cities-options,
+        .subcategory-options {
             padding: 8px;
         }
 
         .governorate-option,
-        .city-option {
+        .city-option,
+        .subcategory-option {
             display: flex;
             align-items: center;
             padding: 8px 12px;
@@ -504,12 +508,14 @@
         }
 
         .governorate-option:hover,
-        .city-option:hover {
+        .city-option:hover,
+        .subcategory-option:hover {
             background-color: #f3f4f6;
         }
 
         .governorate-checkbox,
-        .city-checkbox {
+        .city-checkbox,
+        .subcategory-checkbox {
             margin-left: 8px;
             width: 16px;
             height: 16px;
@@ -541,7 +547,8 @@
         }
 
         .selected-governorates,
-        .selected-cities {
+        .selected-cities,
+        .selected-subcategories {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
@@ -795,23 +802,75 @@
             </div>
 
             <div id="filters-content" class="filter-grid hidden transition-all duration-300 ease-in-out">
-                <!-- Simple Filter Buttons -->
+                <!-- Subcategory Filter -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">التصنيف الفرعي</label>
-                                         <div class="multi-filter-buttons flex flex-wrap gap-2">
-                         <button class="filter-btn active" data-category="all">الكل</button>
-                         <button class="filter-btn" data-category="invitation-wedding">دعوة زفاف</button>
-                         <button class="filter-btn" data-category="invitation-engagement">دعوة خطوبة</button>
-                         <button class="filter-btn" data-category="invitation-wedding-distribution">توزيعات فرح</button>
-                         <button class="filter-btn" data-category="invitation-engagement-distribution">توزيعات خطوبة</button>
-                         <button class="filter-btn" data-category="invitation-chocolate">توزيعات بالشوكولاتة</button>
-                         <button class="filter-btn" data-category="invitation-perfumed">توزيعات بالعطور / البرفان</button>
-                         <button class="filter-btn" data-category="invitation-gift">توزيعات مع هدية صغيره</button>
-                         <button class="filter-btn" data-category="invitation-baby-week">توزيعات سبوع</button>
-                         <button class="filter-btn" data-category="invitation-kids">توزيعات أطفال</button>
-                         <button class="filter-btn" data-category="invitation-flowers">توزيعات ورد</button>
-                         <button class="filter-btn" data-category="invitation-candles">توزيعات شموع</button>
-                         <button class="filter-btn" data-category="invitation-digital">دعوة رقمية</button>
+                    <div class="simple-subcategory-filter">
+                        <div class="filter-dropdown">
+                            <button id="subcategory-dropdown-btn" class="dropdown-btn">
+                                <span id="subcategory-placeholder">اختر التصنيفات الفرعية</span>
+                                <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6,9 12,15 18,9"></polyline>
+                                </svg>
+                            </button>
+                            <div id="subcategory-dropdown-content" class="dropdown-content hidden">
+                                <div class="subcategory-options">
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-wedding" class="subcategory-checkbox">
+                                        <span>دعوة زفاف</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-engagement" class="subcategory-checkbox">
+                                        <span>دعوة خطوبة</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-wedding-distribution" class="subcategory-checkbox">
+                                        <span>توزيعات فرح</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-engagement-distribution" class="subcategory-checkbox">
+                                        <span>توزيعات خطوبة</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-chocolate" class="subcategory-checkbox">
+                                        <span>توزيعات بالشوكولاتة</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-perfumed" class="subcategory-checkbox">
+                                        <span>توزيعات بالعطور / البرفان</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-gift" class="subcategory-checkbox">
+                                        <span>توزيعات مع هدية صغيرة</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-baby-week" class="subcategory-checkbox">
+                                        <span>توزيعات سبوع</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-kids" class="subcategory-checkbox">
+                                        <span>توزيعات أطفال</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-flowers" class="subcategory-checkbox">
+                                        <span>توزيعات ورد</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-candles" class="subcategory-checkbox">
+                                        <span>توزيعات شموع</span>
+                                    </label>
+                                    <label class="subcategory-option">
+                                        <input type="checkbox" value="invitation-digital" class="subcategory-checkbox">
+                                        <span>دعوة رقمية</span>
+                                    </label>
+                                </div>
+                                <div class="dropdown-actions">
+                                    <button id="select-all-subcategories" class="action-btn">تحديد الكل</button>
+                                    <button id="clear-all-subcategories" class="action-btn">إلغاء الكل</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="selected-subcategories" class="selected-subcategories"></div>
                      </div>
                 </div>
 
@@ -963,7 +1022,7 @@
                                     <input type="text" id="cities-search-input" placeholder="ابحث عن مدينة..." class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div class="cities-options">
-                                    <!-- Cities will be populated dynamically -->
+                                    <div class="p-3 text-center text-gray-500 text-sm">اختر محافظة أولاً لعرض المدن المتاحة</div>
                                 </div>
                                 <div class="dropdown-actions">
                                     <button id="select-all-cities" class="action-btn">تحديد الكل</button>
@@ -1157,7 +1216,7 @@
             const startIndex = (currentPage - 1) * productsPerPage;
             const endIndex = startIndex + productsPerPage;
             const currentProducts = products.slice(startIndex, endIndex);
-            console.log('Pagination:', { currentPage, totalPages, startIndex, endIndex, totalProducts: products.length, currentProductsCount: currentProducts.length });
+
             
             container.innerHTML = currentProducts.map((product, index) => {
                 const productCard = createProductCard(product);
@@ -1921,7 +1980,7 @@
 
         function updateCitiesFilter() {
             const selected = [];
-            const checkboxes = document.querySelectorAll('.cities-checkbox:checked');
+            const checkboxes = document.querySelectorAll('.city-checkbox:checked');
             
             checkboxes.forEach(checkbox => {
                 selected.push(checkbox.value);
@@ -1957,11 +2016,11 @@
 
         function filterCities(searchTerm) {
             const citiesOptions = document.querySelector('.cities-options');
-            const cities = citiesOptions.querySelectorAll('.cities-option');
+            const cities = citiesOptions.querySelectorAll('.city-option');
             
             cities.forEach(city => {
                 const cityName = city.querySelector('span').textContent;
-                if (cityName.includes(searchTerm)) {
+                if (cityName.toLowerCase().includes(searchTerm.toLowerCase())) {
                     city.style.display = 'flex';
                 } else {
                     city.style.display = 'none';
@@ -1971,8 +2030,14 @@
 
         // Initialize filters when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize simple filter buttons
-            setupSimpleFilterButtons();
+            // إنشاء كائن CitiesService للتأكد من توفره
+            if (window.CitiesService && !window.citiesServiceInstance) {
+                window.citiesServiceInstance = new window.CitiesService();
+    
+            }
+            
+            // Initialize simple subcategory filter
+            setupSimpleSubcategoryFilter();
             
             // Initialize simple governorate filter
             setupSimpleGovernorateFilter();
@@ -2131,7 +2196,6 @@
             displayProducts(filteredProducts);
             updateActiveFiltersDisplay();
             updateURL();
-            console.log('applyFilters called with resetPage:', resetPage, 'currentPage:', currentPage);
         }
 
         // Setup toggle filters functionality
@@ -2197,57 +2261,55 @@
             });
         }
 
-        // Setup simple filter buttons functionality
-        function setupSimpleFilterButtons() {
-            const filterButtons = document.querySelectorAll('.filter-btn');
+        // Setup simple subcategory filter functionality
+        function setupSimpleSubcategoryFilter() {
+            const subcategoryBtn = document.getElementById('subcategory-dropdown-btn');
+            const subcategoryContent = document.getElementById('subcategory-dropdown-content');
+            const subcategoryCheckboxes = document.querySelectorAll('.subcategory-checkbox');
+            const selectAllBtn = document.getElementById('select-all-subcategories');
+            const clearAllBtn = document.getElementById('clear-all-subcategories');
             
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const category = this.getAttribute('data-category');
-                    
-                    if (category === 'all') {
-                        // Reset all buttons
-                        filterButtons.forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
-                        activeFilters.subcategory = [];
-                    } else {
-                        // Handle multiple selection
-                        if (this.classList.contains('active')) {
-                            this.classList.remove('active');
-                            // Remove from active filters
-                            const index = activeFilters.subcategory.indexOf(category);
-                            if (index > -1) {
-                                activeFilters.subcategory.splice(index, 1);
-                            }
-                        } else {
-                            this.classList.add('active');
-                            // Add to active filters
-                            if (!activeFilters.subcategory.includes(category)) {
-                                activeFilters.subcategory.push(category);
-                            }
-                        }
-                        
-                        // If no subcategory is selected, show all
-                        if (activeFilters.subcategory.length === 0) {
-                            filterButtons.forEach(btn => {
-                                if (btn.getAttribute('data-category') === 'all') {
-                                    btn.classList.add('active');
-                                } else {
-                                    btn.classList.remove('active');
-                                }
-                            });
-                        } else {
-                            // Remove active from "all" button
-                            const allButton = document.querySelector('[data-category="all"]');
-                            if (allButton) {
-                                allButton.classList.remove('active');
-                            }
-                        }
-                    }
-                    
-                    // Apply filters immediately
-                    applyFilters();
+            if (!subcategoryBtn || !subcategoryContent) return;
+            
+            // Toggle dropdown
+            subcategoryBtn.addEventListener('click', function() {
+                subcategoryContent.classList.toggle('hidden');
+                subcategoryBtn.classList.toggle('active');
+            });
+            
+            // Handle checkbox changes
+            subcategoryCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateSubcategoryFilter();
                 });
+            });
+            
+            // Select all subcategories
+            if (selectAllBtn) {
+                selectAllBtn.addEventListener('click', function() {
+                    subcategoryCheckboxes.forEach(checkbox => {
+                        checkbox.checked = true;
+                    });
+                    updateSubcategoryFilter();
+                });
+            }
+            
+            // Clear all subcategories
+            if (clearAllBtn) {
+                clearAllBtn.addEventListener('click', function() {
+                    subcategoryCheckboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    updateSubcategoryFilter();
+                });
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!subcategoryBtn.contains(event.target) && !subcategoryContent.contains(event.target)) {
+                    subcategoryContent.classList.add('hidden');
+                    subcategoryBtn.classList.remove('active');
+                }
             });
         }
 
@@ -2303,6 +2365,43 @@
             });
         }
 
+        // Update subcategory filter based on selected checkboxes
+        function updateSubcategoryFilter() {
+            const selectedSubcategories = [];
+            const checkboxes = document.querySelectorAll('.subcategory-checkbox:checked');
+            
+            checkboxes.forEach(checkbox => {
+                selectedSubcategories.push(checkbox.value);
+            });
+            
+            activeFilters.subcategory = selectedSubcategories;
+            
+            // Update placeholder
+            const placeholder = document.getElementById('subcategory-placeholder');
+            if (selectedSubcategories.length === 0) {
+                placeholder.textContent = 'اختر التصنيفات الفرعية';
+            } else if (selectedSubcategories.length === 1) {
+                placeholder.textContent = getCategoryLabel(selectedSubcategories[0]);
+            } else {
+                placeholder.textContent = `${selectedSubcategories.length} تصنيف مختار`;
+            }
+            
+            // Update selected subcategories display
+            const selectedContainer = document.getElementById('selected-subcategories');
+            if (selectedSubcategories.length === 0) {
+                selectedContainer.innerHTML = '';
+            } else {
+                selectedContainer.innerHTML = selectedSubcategories.map(subcategory => `
+                    <span class="selected-tag">
+                        ${getCategoryLabel(subcategory)}
+                        <button class="remove-tag" onclick="removeSubcategory('${subcategory}')">×</button>
+                    </span>
+                `).join('');
+            }
+            
+            applyFilters();
+        }
+
         // Update governorate filter based on selected checkboxes
         function updateGovernorateFilter() {
             const selectedGovernorates = [];
@@ -2337,7 +2436,86 @@
                 `).join('');
             }
             
+            // Update cities based on selected governorates
+            updateCitiesOptions(selectedGovernorates);
+            
             applyFilters();
+        }
+
+        // Remove subcategory from filter
+        function removeSubcategory(subcategory) {
+            const checkbox = document.querySelector(`.subcategory-checkbox[value="${subcategory}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+                updateSubcategoryFilter();
+            }
+        }
+
+        // Update cities options based on selected governorates
+        function updateCitiesOptions(selectedGovernorates) {
+            const citiesOptionsContainer = document.querySelector('.cities-options');
+            if (!citiesOptionsContainer) return;
+            
+            // Clear existing cities
+            citiesOptionsContainer.innerHTML = '';
+            
+            if (selectedGovernorates.length === 0) {
+                citiesOptionsContainer.innerHTML = '<div class="p-3 text-center text-gray-500 text-sm">اختر محافظة أولاً لعرض المدن المتاحة</div>';
+                return;
+            }
+            
+            // تحقق من وجود CitiesService
+            if (!window.CitiesService) {
+                citiesOptionsContainer.innerHTML = '<div class="p-3 text-center text-red-500 text-sm">خطأ في تحميل خدمة المدن، يرجى إعادة تحميل الصفحة</div>';
+                console.error('CitiesService not found');
+                return;
+            }
+            
+            // إنشاء كائن من CitiesService إذا لم يكن موجوداً
+            if (!window.citiesServiceInstance) {
+                window.citiesServiceInstance = new window.CitiesService();
+            }
+            
+            // Get all cities from selected governorates
+            let allCities = [];
+            selectedGovernorates.forEach(governorate => {
+                try {
+                    const cities = window.citiesServiceInstance.getCitiesForGovernorate(governorate);
+                    allCities = allCities.concat(cities);
+                } catch (error) {
+        
+                }
+            });
+            
+            // Remove duplicates
+            allCities = [...new Set(allCities)];
+
+            
+            if (allCities.length === 0) {
+                citiesOptionsContainer.innerHTML = '<div class="p-3 text-center text-gray-500 text-sm">لا توجد مدن متاحة لهذه المحافظات</div>';
+                return;
+            }
+            
+            // Create city options
+            allCities.forEach(city => {
+                const cityOption = document.createElement('label');
+                cityOption.className = 'city-option';
+                cityOption.innerHTML = `
+                    <input type="checkbox" value="${city}" class="city-checkbox">
+                    <span>${city}</span>
+                `;
+                citiesOptionsContainer.appendChild(cityOption);
+            });
+            
+            // Re-attach event listeners to new checkboxes
+            const cityCheckboxes = citiesOptionsContainer.querySelectorAll('.city-checkbox');
+            cityCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateCitiesFilter();
+                });
+            });
+            
+
         }
 
         // Remove governorate from filter
@@ -2375,7 +2553,7 @@
             // Select all cities
             if (selectAllCitiesBtn) {
                 selectAllCitiesBtn.addEventListener('click', function() {
-                    const cityCheckboxes = document.querySelectorAll('.cities-checkbox');
+                    const cityCheckboxes = document.querySelectorAll('.city-checkbox');
                     cityCheckboxes.forEach(checkbox => {
                         checkbox.checked = true;
                     });
@@ -2386,7 +2564,7 @@
             // Clear all cities
             if (clearAllCitiesBtn) {
                 clearAllCitiesBtn.addEventListener('click', function() {
-                    const cityCheckboxes = document.querySelectorAll('.cities-checkbox');
+                    const cityCheckboxes = document.querySelectorAll('.city-checkbox');
                     cityCheckboxes.forEach(checkbox => {
                         checkbox.checked = false;
                     });
@@ -2398,7 +2576,7 @@
             const citiesOptionsContainer = document.querySelector('.cities-options');
             if (citiesOptionsContainer) {
                 citiesOptionsContainer.addEventListener('change', function(e) {
-                    if (e.target.classList.contains('cities-checkbox')) {
+                    if (e.target.classList.contains('city-checkbox')) {
                         updateCitiesFilter();
                     }
                 });
@@ -2415,7 +2593,7 @@
 
         // Remove city from filter
         function removeCity(city) {
-            const checkbox = document.querySelector(`.cities-checkbox[value="${city}"]`);
+            const checkbox = document.querySelector(`.city-checkbox[value="${city}"]`);
             if (checkbox) {
                 checkbox.checked = false;
                 updateCitiesFilter();
@@ -2446,13 +2624,9 @@
         // Clear all filters
         function clearAllFilters() {
             // Reset subcategory filters
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(btn => {
-                if (btn.getAttribute('data-category') === 'all') {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
+            const subcategoryCheckboxes = document.querySelectorAll('.subcategory-checkbox');
+            subcategoryCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
             });
             
             // Reset governorate filters
@@ -2462,7 +2636,7 @@
             });
             
             // Reset cities filters
-            const citiesCheckboxes = document.querySelectorAll('.cities-checkbox');
+            const citiesCheckboxes = document.querySelectorAll('.city-checkbox');
             citiesCheckboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
@@ -2482,7 +2656,13 @@
             };
             
             // Update displays
+            updateSubcategoryFilter();
             updateGovernorateFilter();
+            // Clear cities when clearing all filters
+            const citiesOptionsContainer = document.querySelector('.cities-options');
+            if (citiesOptionsContainer) {
+                citiesOptionsContainer.innerHTML = '<div class="p-3 text-center text-gray-500 text-sm">اختر محافظة أولاً لعرض المدن المتاحة</div>';
+            }
             updateCitiesFilter();
             applyFilters();
             
@@ -2585,13 +2765,8 @@
         function removeFilter(type, value) {
             switch (type) {
                 case 'subcategory':
-                    const index = activeFilters.subcategory.indexOf(value);
-                    if (index > -1) {
-                        activeFilters.subcategory.splice(index, 1);
-                        const button = document.querySelector(`[data-category="${value}"]`);
-                        if (button) button.classList.remove('active');
-                    }
-                    break;
+                    removeSubcategory(value);
+                    return; // updateSubcategoryFilter() already calls applyFilters()
                 case 'governorate':
                     removeGovernorate(value);
                     return; // updateGovernorateFilter() already calls applyFilters()
@@ -2834,7 +3009,6 @@
         function displayPagination(totalProducts) {
             const totalPages = Math.ceil(totalProducts / productsPerPage);
             const paginationContainer = document.getElementById('pagination-container');
-            console.log('displayPagination:', { totalProducts, totalPages, currentPage, productsPerPage });
             
             if (totalPages <= 1) {
                 paginationContainer.classList.add('hidden');
@@ -2965,7 +3139,6 @@
         }
 
         function goToPage(pageNumber) {
-            console.log('goToPage called with:', pageNumber);
             currentPage = pageNumber;
             updateURL();
             // تأخير صغير للتأكد من تحديث DOM قبل التمرير
@@ -2983,7 +3156,6 @@
                 const pageMatch = href.match(/page=(\d+)/);
                 if (pageMatch) {
                     const pageNumber = parseInt(pageMatch[1]);
-                    console.log('Clicking on page:', pageNumber);
                     goToPage(pageNumber);
                 }
             }
