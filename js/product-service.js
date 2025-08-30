@@ -294,36 +294,47 @@ class ProductService {
                 return { success: false, error: 'ProductService not initialized' };
             }
 
-    
-
-            // Get products from ALL tables and filter by category
-            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
-            let allProducts = [];
-
-            for (const table of tables) {
-                const { data, error } = await this.supabase
-                    .from(table)
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) {
-                    console.error(`Error fetching products from ${table}:`, error);
-                    continue;
-                }
-
-                // Add table name to each product for identification
-                const productsWithTable = (data || []).map(product => ({
-                    ...product,
-                    source_table: table
-                }));
-
-                allProducts = allProducts.concat(productsWithTable);
+            // تحديد الجدول المناسب للتصنيف
+            let tableName = '';
+            switch (category) {
+                case 'cake':
+                    tableName = 'products_cake';
+                    break;
+                case 'koshat':
+                    tableName = 'products_koshat';
+                    break;
+                case 'mirr':
+                    tableName = 'products_mirr';
+                    break;
+                case 'other':
+                    tableName = 'products_other';
+                    break;
+                case 'invitations':
+                    tableName = 'products_invitations';
+                    break;
+                default:
+                    return { success: false, error: 'Invalid category' };
             }
 
-            // Filter products by the requested category
-            const categoryProducts = allProducts.filter(product => product.category === category);
+            // جلب المنتجات من الجدول المحدد
+            const { data, error } = await this.supabase
+                .from(tableName)
+                .select('*')
+                .order('created_at', { ascending: false });
 
-            return { success: true, data: categoryProducts };
+            if (error) {
+                console.error(`Error fetching products from ${tableName}:`, error);
+                return { success: false, error: error.message };
+            }
+
+            // إضافة تصنيف المنتجات وجدول المصدر
+            const productsWithCategory = (data || []).map(product => ({
+                ...product,
+                category: category,
+                source_table: tableName
+            }));
+
+            return { success: true, data: productsWithCategory };
         } catch (error) {
             console.error('Error in getProductsByCategory:', error);
             return { success: false, error: error.message };

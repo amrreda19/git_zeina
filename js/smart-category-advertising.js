@@ -5,7 +5,7 @@
 class SmartCategoryAdvertisingService {
     constructor() {
         this.supabase = window.supabaseClient || null;
-        this.maxSlots = 9; // عدد الخانات الثابتة لكل قسم
+        this.maxSlots = 50; // عدد الخانات الثابتة لكل قسم (زيادة العدد لعرض جميع المنتجات)
         this.categorySections = new Map(); // تخزين حالة كل قسم
         this.realTimeUpdates = new Map(); // تحديثات فورية للإعلانات
     }
@@ -123,7 +123,7 @@ class SmartCategoryAdvertisingService {
                 .eq('ad_type', 'category_sections')
                 .eq('category_section', categoryId)
                 .order('created_at', { ascending: true }) // الأقدم أولاً
-                .limit(this.maxSlots);
+;
 
             if (error) throw error;
             
@@ -173,9 +173,8 @@ class SmartCategoryAdvertisingService {
     applySmartFillingLogic(ads, products) {
         const finalItems = [];
         
-        // الخطوة 1: إضافة الإعلانات أولاً (الخانات 1 إلى K)
-        const adCount = Math.min(ads.length, this.maxSlots);
-        for (let i = 0; i < adCount; i++) {
+        // الخطوة 1: إضافة الإعلانات أولاً
+        for (let i = 0; i < ads.length; i++) {
             finalItems.push({
                 ...ads[i],
                 is_ad: true,
@@ -183,17 +182,14 @@ class SmartCategoryAdvertisingService {
             });
         }
         
-        // الخطوة 2: إضافة المنتجات العادية (الخانات K+1 إلى 9)
-        const remainingSlots = this.maxSlots - adCount;
-        for (let i = 0; i < remainingSlots && i < products.length; i++) {
+        // الخطوة 2: إضافة جميع المنتجات العادية
+        for (let i = 0; i < products.length; i++) {
             finalItems.push({
                 ...products[i],
                 is_ad: false,
-                slot_position: adCount + i + 1
+                slot_position: ads.length + i + 1
             });
         }
-        
-
         
         return finalItems;
     }

@@ -1038,6 +1038,71 @@
                 line-height: 1.3;
             }
         }
+
+        /* أنماط ترقيم الصفحات */
+        #pagination-container {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        #pagination-container button {
+            border: 1px solid #e5e7eb;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #pagination-container button:hover:not(:disabled) {
+            background-color: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        #pagination-container button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #pagination-container .bg-yellow-500 {
+            background-color: #eab308 !important;
+            border-color: #eab308 !important;
+            color: white !important;
+        }
+
+        #pagination-container .bg-yellow-500:hover {
+            background-color: #d97706 !important;
+            border-color: #d97706 !important;
+        }
+
+        #page-info {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            #pagination-container {
+                margin-top: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            #pagination-container button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+                min-width: 40px;
+                min-height: 40px;
+            }
+
+            #page-info {
+                font-size: 0.8rem;
+                margin-bottom: 0.75rem;
+            }
+
+            #page-numbers {
+                gap: 0.25rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1487,6 +1552,29 @@
             <!-- Products will be loaded here -->
         </div>
 
+        <!-- Pagination -->
+        <div id="pagination-container" class="mt-8 flex flex-col items-center space-y-4">
+            <!-- معلومات الصفحة -->
+            <div id="page-info" class="text-gray-600 text-sm">
+                <!-- سيتم ملؤها بـ JavaScript -->
+            </div>
+            
+            <!-- أزرار التنقل -->
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <button id="prev-page" class="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    السابق
+                </button>
+                
+                <div id="page-numbers" class="flex items-center space-x-1 space-x-reverse">
+                    <!-- أرقام الصفحات ستتم إضافتها هنا -->
+                </div>
+                
+                <button id="next-page" class="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    التالي
+                </button>
+            </div>
+        </div>
+
         <!-- Loading State -->
         <div id="loading-state" class="text-center py-12">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -1560,6 +1648,7 @@
 
     <script>
         let allProducts = [];
+        let filteredProducts = [];
         let currentFilter = 'all';
         let governorateFilter;
         let subcategoryFilter;
@@ -1570,6 +1659,11 @@
             cities: [],
             price: ''
         };
+        
+        // إعدادات ترقيم الصفحات
+        const PRODUCTS_PER_PAGE = 18;
+        let currentPage = 1;
+        let totalPages = 1;
 
         // Global functions for cities filter
         function updateSelectedCities() {
@@ -1620,8 +1714,22 @@
             });
         }
 
+        // تهيئة ترقيم الصفحات من URL
+        function initializePaginationFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageParam = urlParams.get('page');
+            if (pageParam && !isNaN(pageParam)) {
+                currentPage = Math.max(1, parseInt(pageParam));
+            } else {
+                currentPage = 1;
+            }
+        }
+
         // Load products on page load
         document.addEventListener('DOMContentLoaded', async function() {
+            // تهيئة الصفحة من URL
+            initializePaginationFromURL();
+            
             // Initialize simple filter buttons
             setupSimpleFilterButtons();
             
@@ -1634,6 +1742,7 @@
             await loadCategoryProducts();
             setupAdvancedFilters();
             setupToggleFilters();
+            setupPagination();
         });
 
         // Load products by category
@@ -1667,7 +1776,9 @@
                     
                     // ترتيب المنتجات حسب المعايير المطلوبة
                     sortProductsByCriteria();
-                    applyFilters();
+                    filteredProducts = allProducts;
+                    displayProductsWithPagination();
+                    updateProductsCount();
                 } else {
                     console.error('❌ خطأ في جلب المنتجات:', result.error);
                     showError('حدث خطأ في تحميل المنتجات: ' + result.error);
@@ -1947,7 +2058,7 @@
 
         // Apply all filters
         function applyFilters() {
-            let filteredProducts = allProducts;
+            filteredProducts = allProducts;
 
             // Apply subcategory filter
             if (activeFilters.subcategory.length > 0) {
@@ -2067,7 +2178,12 @@
 
 
 
-            displayProducts(filteredProducts);
+            // إعادة تعيين الصفحة الحالية إلى 1 عند تطبيق فلاتر جديدة
+            currentPage = 1;
+            updateURL();
+            
+            displayProductsWithPagination();
+            updateProductsCount();
             updateActiveFiltersDisplay();
         }
 
@@ -2118,6 +2234,178 @@
 
             // Apply filters
             applyFilters();
+        }
+
+        // تحديث URL مع رقم الصفحة
+        function updateURL() {
+            const url = new URL(window.location);
+            if (currentPage > 1) {
+                url.searchParams.set('page', currentPage);
+            } else {
+                url.searchParams.delete('page');
+            }
+            window.history.replaceState({}, '', url);
+        }
+
+        // إعداد ترقيم الصفحات
+        function setupPagination() {
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+            
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateURL();
+                    displayProductsWithPagination();
+                    scrollToTop();
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateURL();
+                    displayProductsWithPagination();
+                    scrollToTop();
+                }
+            });
+        }
+
+        // التمرير لأعلى الصفحة
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // عرض المنتجات مع ترقيم الصفحات
+        function displayProductsWithPagination() {
+            // حساب إجمالي عدد الصفحات
+            totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+            
+            // التأكد من أن الصفحة الحالية في النطاق الصحيح
+            if (currentPage > totalPages && totalPages > 0) {
+                currentPage = totalPages;
+                updateURL();
+            }
+            
+            // حساب المنتجات للصفحة الحالية
+            const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+            const endIndex = startIndex + PRODUCTS_PER_PAGE;
+            const currentPageProducts = filteredProducts.slice(startIndex, endIndex);
+            
+            // عرض المنتجات
+            displayProducts(currentPageProducts);
+            
+            // تحديث ترقيم الصفحات
+            updatePaginationUI();
+        }
+
+        // تحديث واجهة ترقيم الصفحات
+        function updatePaginationUI() {
+            const container = document.getElementById('pagination-container');
+            const pageInfo = document.getElementById('page-info');
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+            const pageNumbers = document.getElementById('page-numbers');
+            
+            // إخفاء ترقيم الصفحات إذا لم توجد منتجات أو صفحة واحدة فقط
+            if (totalPages <= 1) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'flex';
+            
+            // تحديث معلومات الصفحة
+            const startProduct = (currentPage - 1) * PRODUCTS_PER_PAGE + 1;
+            const endProduct = Math.min(currentPage * PRODUCTS_PER_PAGE, filteredProducts.length);
+            pageInfo.textContent = `عرض ${startProduct} - ${endProduct} من ${filteredProducts.length} منتج`;
+            
+            // تحديث أزرار السابق والتالي
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+            
+            // تحديث أرقام الصفحات
+            updatePageNumbers();
+        }
+
+        // تحديث أرقام الصفحات
+        function updatePageNumbers() {
+            const pageNumbers = document.getElementById('page-numbers');
+            pageNumbers.innerHTML = '';
+            
+            // حساب نطاق الصفحات المعروضة
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            // التأكد من عرض 5 صفحات على الأقل إذا كان ذلك ممكناً
+            if (endPage - startPage < 4) {
+                if (startPage === 1) {
+                    endPage = Math.min(totalPages, startPage + 4);
+                } else if (endPage === totalPages) {
+                    startPage = Math.max(1, endPage - 4);
+                }
+            }
+            
+            // إضافة رقم الصفحة الأولى إذا لم تكن في النطاق
+            if (startPage > 1) {
+                addPageButton(1);
+                if (startPage > 2) {
+                    pageNumbers.appendChild(createEllipsis());
+                }
+            }
+            
+            // إضافة أرقام الصفحات في النطاق
+            for (let i = startPage; i <= endPage; i++) {
+                addPageButton(i);
+            }
+            
+            // إضافة رقم الصفحة الأخيرة إذا لم تكن في النطاق
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    pageNumbers.appendChild(createEllipsis());
+                }
+                addPageButton(totalPages);
+            }
+        }
+
+        // إضافة زر رقم صفحة
+        function addPageButton(pageNum) {
+            const pageNumbers = document.getElementById('page-numbers');
+            const button = document.createElement('button');
+            button.textContent = pageNum;
+            button.className = `px-3 py-2 rounded-lg transition-colors ${
+                pageNum === currentPage 
+                    ? 'bg-yellow-500 text-white' 
+                    : 'bg-white text-gray-600 hover:bg-gray-100'
+            }`;
+            
+            button.addEventListener('click', () => {
+                if (pageNum !== currentPage) {
+                    currentPage = pageNum;
+                    updateURL();
+                    displayProductsWithPagination();
+                    scrollToTop();
+                }
+            });
+            
+            pageNumbers.appendChild(button);
+        }
+
+        // إنشاء نقاط الحذف
+        function createEllipsis() {
+            const span = document.createElement('span');
+            span.textContent = '...';
+            span.className = 'px-2 py-2 text-gray-500';
+            return span;
+        }
+
+        // تحديث عدد المنتجات
+        function updateProductsCount() {
+            const productsCount = document.getElementById('products-count');
+            productsCount.textContent = `${filteredProducts.length} منتج`;
         }
 
         // Update active filters display
@@ -2230,13 +2518,9 @@
             const container = document.getElementById('products-container');
             const loadingState = document.getElementById('loading-state');
             const emptyState = document.getElementById('empty-state');
-            const productsCount = document.getElementById('products-count');
             
             // Hide loading state
             loadingState.classList.add('hidden');
-            
-            // Update products count
-            productsCount.textContent = `${products.length} منتج`;
             
             if (!products || products.length === 0) {
                 container.innerHTML = '';
@@ -3130,7 +3414,9 @@
                     
                     // تطبيق الفلاتر والترتيب
                     sortProductsByCriteria();
-                    applyFilters();
+                    filteredProducts = allProducts; // تهيئة المنتجات المفلترة
+                    displayProductsWithPagination();
+                    updateProductsCount();
                     
                     // تحديث أيقونات المفضلة
                     setTimeout(() => {
@@ -3145,13 +3431,19 @@
                     
                 } else {
                     // استخدام الطريقة القديمة إذا لم تنجح الطريقة الجديدة
-                    loadCategoryProducts();
+                    await loadCategoryProducts();
+                    filteredProducts = allProducts;
+                    displayProductsWithPagination();
+                    updateProductsCount();
                 }
                 
             } catch (error) {
                 console.error('❌ خطأ في تحميل قسم التصنيف مع الإعلانات:', error);
                 // استخدام الطريقة القديمة في حالة الخطأ
-                loadCategoryProducts();
+                await loadCategoryProducts();
+                filteredProducts = allProducts;
+                displayProductsWithPagination();
+                updateProductsCount();
             }
         }
 
