@@ -1101,35 +1101,12 @@
                 if (result.success) {
                     allProducts = result.data || [];
                     
-                    // Log first few products to debug subcategory format
+                    // Process products
                     if (allProducts.length > 0) {
-                        // Log all unique subcategory values
-                        const uniqueSubcategories = new Set();
+                        // Process subcategories
                         allProducts.forEach(product => {
                             if (product.subcategory) {
-                                if (Array.isArray(product.subcategory)) {
-                                    product.subcategory.forEach(sub => uniqueSubcategories.add(sub));
-                                } else if (typeof product.subcategory === 'string') {
-                                    try {
-                                        const parsed = JSON.parse(product.subcategory);
-                                        if (Array.isArray(parsed)) {
-                                            parsed.forEach(sub => uniqueSubcategories.add(sub));
-                                        } else {
-                                            uniqueSubcategories.add(product.subcategory);
-                                        }
-                                    } catch (error) {
-                                        uniqueSubcategories.add(product.subcategory);
-                                    }
-                                } else {
-                                    uniqueSubcategories.add(product.subcategory);
-                                }
-                            }
-                        });
-                        
-                        // Log detailed subcategory analysis
-                        allProducts.forEach((product, index) => {
-                            if (product.subcategory) {
-                                // Detailed subcategory analysis logic
+                                // Subcategory processing logic
                             }
                         });
                     }
@@ -1703,7 +1680,6 @@
             }
             
             if (!product) {
-                console.error('❌ المنتج غير موجود:', productId);
                 return;
             }
             
