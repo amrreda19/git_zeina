@@ -1131,36 +1131,10 @@
                 }
             }
 
-            // دالة عرض رسالة الإكمال
+            // دالة عرض رسالة الإكمال - تم إزالتها
             function showCompletionMessage() {
-                // لا تظهر رسالة الإكمال إلا إذا كان المستخدم قد بدأ في التفاعل
-                if (!userHasStartedInteracting) {
-                    return;
-                }
-
-                const generalErrorAlert = document.getElementById('general-error-alert');
-                const generalErrorMessage = document.getElementById('general-error-message');
-
-                if (generalErrorAlert && generalErrorMessage) {
-                    const message = '✅ <strong>ممتاز! جميع الحقول المطلوبة مكتملة</strong><br><small class="text-green-600">يمكنك الآن إرسال الطلب</small>';
-
-                    generalErrorMessage.innerHTML = message;
-                    generalErrorAlert.classList.remove('hidden');
-                    generalErrorAlert.classList.remove('bg-red-50', 'border-red-200');
-                    generalErrorAlert.classList.add('bg-green-50', 'border-green-200');
-
-                    // Scroll to the message only if it's the first time showing completion
-                    if (generalErrorAlert.classList.contains('hidden')) {
-                        generalErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-
-                    // Auto-hide after 3 seconds
-                    setTimeout(() => {
-                        hideGeneralError();
-                        generalErrorAlert.classList.remove('bg-green-50', 'border-green-200');
-                        generalErrorAlert.classList.add('bg-red-50', 'border-red-200');
-                    }, 3000);
-                }
+                // لا تظهر أي رسالة
+                return;
             }
 
             // دالة عرض رسالة الخطأ الديناميكية
@@ -1347,7 +1321,7 @@
                     // Show loading state
                     const submitBtn = form.querySelector('button[type="submit"]');
                     const originalText = submitBtn.textContent;
-                    submitBtn.textContent = 'جاري الإرسال...';
+                    submitBtn.textContent = 'جارٍ الإرسال… نُقدّر انتظارك.';
                     submitBtn.disabled = true;
                     
                     // Collect form data

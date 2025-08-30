@@ -1360,8 +1360,40 @@
             const toggleIcon = document.getElementById('toggle-icon');
             const toggleText = document.getElementById('toggle-text');
             const closeFiltersBtn = document.getElementById('close-filters-btn');
+            const filterSection = document.querySelector('.filter-section');
             
             let filtersOpen = false;
+            
+            // فتح الفلاتر عند الضغط على أي مكان في قسم الفلاتر
+            filterSection.addEventListener('click', function(event) {
+                // تجاهل النقر على الأزرار الموجودة داخل الفلاتر
+                if (event.target.closest('.filter-btn') || 
+                    event.target.closest('.dropdown-btn') || 
+                    event.target.closest('.governorate-checkbox') ||
+                    event.target.closest('.city-checkbox') ||
+                    event.target.closest('#price-filter') ||
+                    event.target.closest('#cities-search-input') ||
+                    event.target.closest('.action-btn') ||
+                    event.target.closest('.clear-filters-btn') ||
+                    event.target.closest('.close-filters-btn') ||
+                    event.target.closest('.remove-filter') ||
+                    event.target.closest('.active-filter-tag')) {
+                    return;
+                }
+                
+                // فتح الفلاتر إذا كانت مغلقة
+                if (!filtersOpen) {
+                    filtersOpen = true;
+                    filtersContent.classList.remove('hidden');
+                    toggleIcon.classList.add('rotated');
+                    toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
+                    
+                    // إظهار زر الإغلاق على الشاشات الصغيرة
+                    if (window.innerWidth < 640) {
+                        closeFiltersBtn.classList.remove('hidden');
+                    }
+                }
+            });
             
             toggleBtn.addEventListener('click', function() {
                 filtersOpen = !filtersOpen;
@@ -1392,6 +1424,21 @@
                 toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
                 closeFiltersBtn.classList.add('hidden');
                 filtersOpen = false;
+            });
+            
+            // إغلاق الفلاتر عند الضغط خارجها
+            document.addEventListener('click', function(event) {
+                const filterSection = document.querySelector('.filter-section');
+                const filtersContent = document.getElementById('filters-content');
+                
+                // إذا كانت الفلاتر مفتوحة والنقر خارج منطقة الفلاتر
+                if (filtersOpen && filterSection && !filterSection.contains(event.target)) {
+                    filtersContent.classList.add('hidden');
+                    toggleIcon.classList.remove('rotated');
+                    toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
+                    closeFiltersBtn.classList.add('hidden');
+                    filtersOpen = false;
+                }
             });
             
             // Handle resize events
@@ -1557,6 +1604,22 @@
                     activeFilters.governorate.length === 0 ? 'اختر المحافظات' : 
                     activeFilters.governorate.length === 1 ? activeFilters.governorate[0] :
                     `${activeFilters.governorate.length} محافظة مختارة`;
+                
+                // مسح جميع المدن المرتبطة بالمحافظة الممسوحة
+                if (activeFilters.cities && activeFilters.cities.length > 0) {
+                    // إزالة المدن من الفلاتر النشطة
+                    activeFilters.cities = [];
+                    
+                    // إلغاء تحديد جميع المدن في الواجهة
+                    const cityCheckboxes = document.querySelectorAll('.city-checkbox');
+                    cityCheckboxes.forEach(cityCheckbox => {
+                        cityCheckbox.checked = false;
+                    });
+                    
+                    // تحديث عرض المدن المختارة
+                    updateSelectedCities();
+                    updateCitiesPlaceholder();
+                }
                 
                 // Update selected display
                 const selectedContainer = document.getElementById('selected-governorates');
