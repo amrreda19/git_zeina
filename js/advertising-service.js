@@ -276,7 +276,11 @@ class AdvertisingService {
                 }
             }
             
-            return featuredProducts;
+            // ترتيب: الإعلانات أولاً، ثم المنتجات ذات السعر، ثم المنتجات بدون سعر
+            const featuredAdsFirst = featuredProducts.filter(p => p && p.is_advertisement === true);
+            const featuredWithPrice = featuredProducts.filter(p => p && !p.is_advertisement && !Number.isNaN(Number(p.price)) && Number(p.price) > 0);
+            const featuredNoPrice = featuredProducts.filter(p => p && !p.is_advertisement && (Number.isNaN(Number(p.price)) || Number(p.price) <= 0));
+            return [...featuredAdsFirst, ...featuredWithPrice, ...featuredNoPrice];
         } catch (error) {
             console.error('❌ خطأ في جلب المنتجات المميزة:', error);
             return [];
@@ -606,7 +610,11 @@ class AdvertisingService {
                 }
             }
             
-            return recommendedProducts;
+            // ترتيب: الإعلانات أولاً، ثم المنتجات ذات السعر، ثم المنتجات بدون سعر
+            const recommendedAdsFirst = recommendedProducts.filter(p => p && p.is_advertisement === true);
+            const recommendedWithPrice = recommendedProducts.filter(p => p && !p.is_advertisement && !Number.isNaN(Number(p.price)) && Number(p.price) > 0);
+            const recommendedNoPrice = recommendedProducts.filter(p => p && !p.is_advertisement && (Number.isNaN(Number(p.price)) || Number(p.price) <= 0));
+            return [...recommendedAdsFirst, ...recommendedWithPrice, ...recommendedNoPrice];
         } catch (error) {
             console.error('❌ خطأ في جلب المنتجات الموصى بها:', error);
             return [];
@@ -1909,11 +1917,13 @@ class AdvertisingService {
                     dbCategory = categoryType;
             }
             
-            // جلب الإعلانات النشطة للتصنيف المحدد
+            // جلب إعلانات أقسام التصنيفات فقط للتصنيف المحدد
             const { data: ads, error: adsError } = await this.supabase
                 .from('advertisements')
                 .select('*')
                 .eq('is_active', true)
+                .eq('ad_type', 'category_sections')
+                .eq('category_section', dbCategory)
                 .eq('product_category', dbCategory)
                 .order('priority', { ascending: false })
                 .order('created_at', { ascending: false })

@@ -182,12 +182,30 @@ class SmartCategoryAdvertisingService {
             });
         }
         
-        // الخطوة 2: إضافة جميع المنتجات العادية
-        for (let i = 0; i < products.length; i++) {
+        // الخطوة 2: إضافة المنتجات ذات السعر أولاً ثم المنتجات بدون سعر
+        let slotIndex = ads.length;
+        const pricedProducts = products.filter(p => {
+            const priceValue = (p && p.price !== undefined && p.price !== null) ? Number(p.price) : 0;
+            return !Number.isNaN(priceValue) && priceValue > 0;
+        });
+        const noPriceProducts = products.filter(p => {
+            const priceValue = (p && p.price !== undefined && p.price !== null) ? Number(p.price) : 0;
+            return Number.isNaN(priceValue) || priceValue <= 0;
+        });
+
+        for (let i = 0; i < pricedProducts.length; i++) {
             finalItems.push({
-                ...products[i],
+                ...pricedProducts[i],
                 is_ad: false,
-                slot_position: ads.length + i + 1
+                slot_position: ++slotIndex
+            });
+        }
+
+        for (let i = 0; i < noPriceProducts.length; i++) {
+            finalItems.push({
+                ...noPriceProducts[i],
+                is_ad: false,
+                slot_position: ++slotIndex
             });
         }
         
