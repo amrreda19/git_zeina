@@ -895,6 +895,10 @@
                     <span class="count" id="count-invitations">0</span>
                     دعوات وتوزيعات
                 </button>
+                <button class="filter-btn" data-category="flowerbouquets">
+                    <span class="count" id="count-flowerbouquets">0</span>
+                    بوكيهات الورد
+                </button>
             </div>
         </div>
 
@@ -957,6 +961,7 @@
                                 <option value="cake">تورتة</option>
                                 <option value="other">ديكورات متنوعة</option>
                                 <option value="invitations">دعوات وتوزيعات</option>
+                        <option value="flowerbouquets">بوكيهات الورد</option>
                             </select>
                         </div>
                     </div>
@@ -1167,7 +1172,7 @@
         async function loadAllProducts() {
             console.log('🔍 [DEBUG] ===== STARTING loadAllProducts =====');
             try {
-                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
                 console.log('🔍 [DEBUG] Tables to load:', tables);
                 allProducts = [];
                 console.log('🔍 [DEBUG] Cleared allProducts array');
@@ -1344,7 +1349,7 @@
 
         // Update product counts
         function updateProductCounts() {
-            const categories = ['koshat', 'cake', 'mirr', 'other', 'invitations'];
+            const categories = ['koshat', 'cake', 'mirr', 'other', 'invitations', 'flowerbouquets'];
             
             categories.forEach(category => {
                 const countElement = document.getElementById(`count-${category}`);
@@ -1501,7 +1506,8 @@
                 'cake': 'تورتة',
                 'mirr': 'مرايا',
                 'other': 'أخرى',
-                'invitations': 'دعوات وتوزيعات'
+                'invitations': 'دعوات وتوزيعات',
+            'flowerbouquets': 'بوكيهات الورد'
             };
             return categories[category] || category;
         }
@@ -1988,6 +1994,13 @@
                     { value: 'توزيعات ورد', label: 'توزيعات ورد' },
                     { value: 'توزيعات شموع', label: 'توزيعات شموع' },
                     { value: 'دعوة رقمية', label: 'دعوة رقمية' }
+                ],
+                'flowerbouquets': [
+                                { value: 'بوكيهات طبيعية', label: 'بوكيهات طبيعية' },
+            { value: 'بوكيهات صناعية', label: 'بوكيهات صناعية' },
+            { value: 'بوكيهات استاند', label: 'بوكيهات استاند' },
+            { value: 'بوكيهات مجففة', label: 'بوكيهات مجففة' },
+            { value: 'بوكيهات مشكلة', label: 'بوكيهات مشكلة' }
                 ]
             };
             
@@ -2657,11 +2670,12 @@
         // Helper function to get table name for category
         function getTableNameForCategory(category) {
             const tableMap = {
-                'cake': 'products_cake',
-                'koshat': 'products_koshat', 
-                'mirr': 'products_mirr',
-                'other': 'products_other',
-                'invitations': 'products_invitations'
+                            'cake': 'products_cake',
+            'koshat': 'products_koshat',
+            'mirr': 'products_mirr',
+            'other': 'products_other',
+            'invitations': 'products_invitations',
+            'flowerbouquets': 'products_flowerbouquets'
             };
             
             const tableName = tableMap[category];

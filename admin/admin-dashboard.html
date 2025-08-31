@@ -2405,6 +2405,7 @@
                                 <option value="cake">تورتة</option>
                                 <option value="other">ديكورات متنوعة</option>
                                 <option value="invitations">دعوات وتوزيعات</option>
+                                <option value="flowerbouquets">بوكيهات الورد</option>
                             </select>
                         </div>
                     </div>
@@ -2813,6 +2814,7 @@
                                 <option value="mirr">مرايا</option>
                                 <option value="other">ديكورات متنوعة</option>
                                 <option value="invitations">دعوات وتوزيعات</option>
+                                <option value="flowerbouquets">بوكيهات الورد</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -2905,6 +2907,7 @@
                                 <option value="mirr">مرايا</option>
                                 <option value="other">ديكورات متنوعة</option>
                                 <option value="invitations">دعوات وتوزيعات</option>
+                                <option value="flowerbouquets">بوكيهات الورد</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -3104,7 +3107,7 @@
                 let totalImages = 0;
                 let productsWithImages = 0;
                 let productsWithoutImages = 0;
-                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other'];
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
                 
                 for (const table of tables) {
                     try {
@@ -3169,7 +3172,7 @@
 
                 // إحصائيات المنتجات من جميع الجداول
                 let totalProducts = 0;
-                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other'];
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
                 
                 for (const table of tables) {
                     try {
@@ -3494,7 +3497,7 @@
                 let productsByCategory = {};
                 let productsWithoutImages = 0;
                 let recentProducts = [];
-                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other'];
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
                 
                 for (const table of tables) {
                     try {
@@ -3661,7 +3664,7 @@
         async function loadImagesReport() {
             try {
                 const imageStats = await calculateImageStatistics();
-                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other'];
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
                 let imagesByCategory = {};
                 
                 // حساب الصور حسب التصنيف
@@ -3824,7 +3827,9 @@
                 'products_cake': 'تورتات',
                 'products_koshat': 'كوشات',
                 'products_mirr': 'مرايا',
-                'products_other': 'ديكورات متنوعة'
+                'products_other': 'ديكورات متنوعة',
+                'products_invitations': 'دعوات وتوزيعات',
+                'products_flowerbouquets': 'بوكيهات الورد'
             };
             return categoryMap[tableName] || tableName;
         }
@@ -4410,7 +4415,8 @@
                     'مرايا': 'mirr',
                     'تورتة': 'cake',
                     'ديكورات متنوعة': 'other',
-                    'دعوات وتوزيعات': 'invitations'
+                    'دعوات وتوزيعات': 'invitations',
+                    'بوكيهات الورد': 'flowerbouquets'
                 };
                 categoryValue = categoryMap[categoryValue] || categoryValue;
             }
@@ -4610,7 +4616,8 @@
                 'mirr': 'مرايا',
                 'cake': 'تورتة',
                 'other': 'ديكورات متنوعة',
-                'invitations': 'دعوات وتوزيعات'
+                'invitations': 'دعوات وتوزيعات',
+                'flowerbouquets': 'بوكيهات الورد'
             };
             return categoryMap[category] || category;
         }
@@ -4723,6 +4730,13 @@
                     { value: 'توزيعات ورد', label: 'توزيعات ورد' },
                     { value: 'توزيعات شموع', label: 'توزيعات شموع' },
                     { value: 'دعوة رقمية', label: 'دعوة رقمية' }
+                ],
+                'flowerbouquets': [
+                                { value: 'بوكيهات طبيعية', label: 'بوكيهات طبيعية' },
+            { value: 'بوكيهات صناعية', label: 'بوكيهات صناعية' },
+            { value: 'بوكيهات استاند', label: 'بوكيهات استاند' },
+            { value: 'بوكيهات مجففة', label: 'بوكيهات مجففة' },
+            { value: 'بوكيهات مشكلة', label: 'بوكيهات مشكلة' }
                 ]
             };
             
@@ -5753,6 +5767,7 @@
                             case 'mirr': tableName = 'products_mirr'; break;
                             case 'other': tableName = 'products_other'; break;
                             case 'invitations': tableName = 'products_invitations'; break;
+                            case 'flowerbouquets': tableName = 'products_flowerbouquets'; break;
                         }
 
                         console.log(`🚨 DEBUG: محاولة جلب المنتج من ${tableName} بمعرف ${ad.product_id}`);
@@ -6428,6 +6443,9 @@
                     case 'invitations':
                         tableName = 'products_invitations';
                         break;
+                    case 'flowerbouquets':
+                        tableName = 'products_flowerbouquets';
+                        break;
                 }
                 
                 // جلب المنتجات من الجدول المحدد
@@ -6535,6 +6553,9 @@
                 ],
                 'invitations': [
                     { value: 'invitations', label: 'قسم الدعوات في الصفحة الرئيسية' }
+                ],
+                'flowerbouquets': [
+                    { value: 'flowerbouquets', label: 'قسم بوكيهات الورد في الصفحة الرئيسية' }
                 ]
             };
             

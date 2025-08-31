@@ -705,7 +705,8 @@ class ProductRequestsService {
                 'koshat': 'products_koshat',
                 'mirr': 'products_mirr',
                 'other': 'products_other',
-                'invitations': 'products_invitations'
+                'invitations': 'products_invitations',
+                'flowerbouquets': 'products_flowerbouquets'
             };
 
             const folderPath = folderMap[category] || 'products_other';
@@ -791,7 +792,8 @@ class ProductRequestsService {
             'koshat': 'products_koshat', 
             'mirr': 'products_mirr',
             'other': 'products_other',
-            'invitations': 'products_invitations'
+            'invitations': 'products_invitations',
+            'flowerbouquets': 'products_flowerbouquets'
         };
         
         const tableName = tableMap[category];

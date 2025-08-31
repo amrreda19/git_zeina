@@ -81,7 +81,8 @@ class ProductService {
             'koshat': 'products_koshat', 
             'mirr': 'products_mirr',
             'other': 'products_other',
-            'invitations': 'products_invitations' // استخدام جدول products_invitations الموجود
+            'invitations': 'products_invitations',
+            'flowerbouquets': 'products_flowerbouquets' // إضافة الجدول الجديد
         };
         
         const tableName = tableMap[category];
@@ -195,7 +196,7 @@ class ProductService {
                 return { success: false, error: 'ProductService not initialized' };
             }
 
-            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
+            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
             let allProducts = [];
 
             // Fetch ALL products from all tables in parallel for better performance
@@ -252,7 +253,7 @@ class ProductService {
                 return { success: false, error: 'ProductService not initialized' };
             }
 
-            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
+            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
             let allProducts = [];
 
             for (const table of tables) {
@@ -312,6 +313,9 @@ class ProductService {
                 case 'invitations':
                     tableName = 'products_invitations';
                     break;
+                case 'flowerbouquets':
+                    tableName = 'products_flowerbouquets';
+                    break;
                 default:
                     return { success: false, error: 'Invalid category' };
             }
@@ -350,7 +354,7 @@ class ProductService {
                 return { success: false, error: 'ProductService not initialized' };
             }
 
-            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
+            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
 
             for (const table of tables) {
                 const { data, error } = await this.supabase
@@ -390,7 +394,7 @@ class ProductService {
                 return { success: false, error: 'User not authenticated' };
             }
 
-            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
+            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
             let userProducts = [];
 
             for (const table of tables) {
@@ -1005,7 +1009,8 @@ class ProductService {
                     'koshat': 'products_koshat',
                     'mirr': 'products_mirr',
                     'other': 'products_other',
-                    'invitations': 'products_other'
+                    'invitations': 'products_other',
+                    'flowerbouquets': 'products_flowerbouquets' // إضافة هذا السطر
                 };
                 folderPath = folderMap[category] || '';
                 console.log(`🎯 Category: ${category} → Folder: ${folderPath}`);
@@ -1127,7 +1132,7 @@ class ProductService {
                 return await this.getAllProducts();
             }
 
-            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
+            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
             let searchResults = [];
 
             for (const table of tables) {
