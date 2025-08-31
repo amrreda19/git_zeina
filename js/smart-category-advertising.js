@@ -121,6 +121,7 @@ class SmartCategoryAdvertisingService {
                 .select('*')
                 .eq('is_active', true)
                 .eq('ad_type', 'category_sections')
+                .eq('position', 'homepage_featured')
                 .eq('category_section', categoryId)
                 .order('created_at', { ascending: true }) // الأقدم أولاً
 ;
@@ -279,6 +280,7 @@ class SmartCategoryAdvertisingService {
                 case 'mirr': tableName = 'products_mirr'; break;
                 case 'other': tableName = 'products_other'; break;
                 case 'invitations': tableName = 'products_invitations'; break;
+                case 'flowerbouquets': tableName = 'products_flowerbouquets'; break;
             }
             
             const { data: product, error } = await this.supabase

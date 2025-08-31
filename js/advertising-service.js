@@ -143,6 +143,9 @@ class AdvertisingService {
                             case 'invitations':
                                 tableName = 'products_invitations';
                                 break;
+                            case 'flowerbouquets':
+                                tableName = 'products_flowerbouquets';
+                                break;
                         }
                         
                         // جلب بيانات المنتج الحقيقي
@@ -356,6 +359,9 @@ class AdvertisingService {
                                 case 'invitations':
                                     tableName = 'products_invitations';
                                     break;
+                                case 'flowerbouquets':
+                                    tableName = 'products_flowerbouquets';
+                                    break;
                             }
                             
                             // جلب بيانات المنتج الحقيقي
@@ -470,6 +476,9 @@ class AdvertisingService {
                                 break;
                             case 'invitations':
                                 tableName = 'products_invitations';
+                                break;
+                            case 'flowerbouquets':
+                                tableName = 'products_flowerbouquets';
                                 break;
                         }
                         
@@ -671,6 +680,9 @@ class AdvertisingService {
                                 break;
                             case 'invitations':
                                 tableName = 'products_invitations';
+                                break;
+                            case 'flowerbouquets':
+                                tableName = 'products_flowerbouquets';
                                 break;
                         }
                         
@@ -1067,6 +1079,9 @@ class AdvertisingService {
                     case 'invitations':
                         tableName = 'products_invitations';
                         break;
+                    case 'flowerbouquets':
+                        tableName = 'products_flowerbouquets';
+                        break;
                 }
                 
                 // جلب بيانات المنتج الحقيقي مع التأكد من جلب جميع الحقول
@@ -1193,7 +1208,7 @@ class AdvertisingService {
             const allProducts = [];
             
             // جلب منتجات من جميع الجداول
-            const tables = ['products_koshat', 'products_cake', 'products_mirr', 'products_other', 'products_invitations'];
+            const tables = ['products_koshat', 'products_cake', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
             
             for (const table of tables) {
                 try {
@@ -1297,7 +1312,7 @@ class AdvertisingService {
         try {
             console.log(`🎲 جلب ${limit} منتج عشوائي محسن...`);
             
-            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations'];
+            const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
             let allProducts = [];
 
             // جلب ALL منتجات من جميع الجداول في التوازي للأداء الأفضل
@@ -1830,6 +1845,9 @@ class AdvertisingService {
                             case 'invitations':
                                 tableName = 'products_invitations';
                                 break;
+                            case 'flowerbouquets':
+                                tableName = 'products_flowerbouquets';
+                                break;
                         }
                         
                         // جلب بيانات المنتج الحقيقي
@@ -1911,6 +1929,7 @@ class AdvertisingService {
                 case 'cake':
                 case 'other':
                 case 'invitations':
+                case 'flowerbouquets':
                     dbCategory = categoryType;
                     break;
                 default:
@@ -1962,6 +1981,9 @@ class AdvertisingService {
                                 break;
                             case 'invitations':
                                 tableName = 'products_invitations';
+                                break;
+                            case 'flowerbouquets':
+                                tableName = 'products_flowerbouquets';
                                 break;
                         }
                         
