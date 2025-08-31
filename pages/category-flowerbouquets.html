@@ -795,7 +795,7 @@
                     <svg id="toggle-icon" class="toggle-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
-                    <span id="toggle-text" class="text-sm sm:text-base">فلاتر اختيار المنتج والمحافظة</span>
+                                           <span id="toggle-text" class="text-sm sm:text-base">فلاتر اختيار المنتج والمحافظة</span>
                 </button>
                 <div class="flex flex-col items-end gap-2">
                     <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
@@ -2205,11 +2205,11 @@
                 filtersOpen = !filtersOpen;
                 
                 if (filtersOpen) {
-                    // Open filters
-                    filtersContent.classList.remove('hidden');
-                    if (toggleIcon) toggleIcon.classList.add('rotated');
-                    if (toggleText) toggleText.textContent = 'إلغاء تحديد نوع البوكيه والمحافظة';
-                    // إظهار زر الإغلاق في الشاشة الصغيرة
+                                            // Open filters
+                        filtersContent.classList.remove('hidden');
+                        if (toggleIcon) toggleIcon.classList.add('rotated');
+                        if (toggleText) toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
+                        // إظهار زر الإغلاق في الشاشة الصغيرة
                     if (closeFiltersBtn && window.innerWidth < 640) {
                         closeFiltersBtn.classList.remove('hidden');
                     }
@@ -2217,7 +2217,6 @@
                     // Close filters
                     filtersContent.classList.add('hidden');
                     if (toggleIcon) toggleIcon.classList.remove('rotated');
-                    if (toggleText) toggleText.textContent = 'فلاتر اختيار نوع البوكيه والمحافظة';
                     // إخفاء زر الإغلاق
                     if (closeFiltersBtn) {
                         closeFiltersBtn.classList.add('hidden');
@@ -2231,7 +2230,6 @@
                     // إغلاق الفلاتر
                     filtersContent.classList.add('hidden');
                     if (toggleIcon) toggleIcon.classList.remove('rotated');
-                    if (toggleText) toggleText.textContent = 'فلاتر اختيار نوع البوكيه والمحافظة';
                     // إخفاء زر الإغلاق
                     closeFiltersBtn.classList.add('hidden');
                     filtersOpen = false;
@@ -2247,7 +2245,6 @@
                 if (filtersOpen && filterSection && !filterSection.contains(event.target)) {
                     filtersContent.classList.add('hidden');
                     if (toggleIcon) toggleIcon.classList.remove('rotated');
-                    if (toggleText) toggleText.textContent = 'فلاتر اختيار نوع البوكيه والمحافظة';
                     if (closeFiltersBtn) closeFiltersBtn.classList.add('hidden');
                     filtersOpen = false;
                 }
