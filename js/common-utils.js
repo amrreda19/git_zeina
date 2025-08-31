@@ -65,7 +65,14 @@ function getSubcategoryName(subcategory) {
         'invitation-engagement': 'دعوة خطوبة',
         'invitation-birthday': 'دعوة عيد ميلاد',
         'invitation-party': 'دعوة حفلة',
-        'invitation-corporate': 'دعوة شركة'
+        'invitation-corporate': 'دعوة شركة',
+        
+        // باقات الزهور
+        'flowerbouquets-natural': 'بوكيهات طبيعية',
+        'flowerbouquets-artificial': 'بوكيهات صناعية',
+        'flowerbouquets-stand': 'بوكيهات استاند',
+        'flowerbouquets-dried': 'بوكيهات مجففة',
+        'flowerbouquets-arranged': 'بوكيهات مشكلة'
     };
     return subcategories[subcategory] || subcategory;
 }
@@ -122,7 +129,14 @@ function getSubcategoryDisplayInfo(subcategory) {
         'invitation-engagement': { name: 'دعوة خطوبة', color: 'bg-purple-500' },
         'invitation-birthday': { name: 'دعوة عيد ميلاد', color: 'bg-green-500' },
         'invitation-party': { name: 'دعوة حفلة', color: 'bg-blue-500' },
-        'invitation-corporate': { name: 'دعوة شركة', color: 'bg-indigo-500' }
+        'invitation-corporate': { name: 'دعوة شركة', color: 'bg-indigo-500' },
+        
+        // باقات الزهور
+        'flowerbouquets-natural': { name: 'بوكيهات طبيعية', color: 'bg-green-500' },
+        'flowerbouquets-artificial': { name: 'بوكيهات صناعية', color: 'bg-blue-500' },
+        'flowerbouquets-stand': { name: 'بوكيهات استاند', color: 'bg-purple-500' },
+        'flowerbouquets-dried': { name: 'بوكيهات مجففة', color: 'bg-yellow-500' },
+        'flowerbouquets-arranged': { name: 'بوكيهات مشكلة', color: 'bg-pink-500' }
     };
     
     return subcategoryMap[subcategory] || { name: subcategory, color: 'bg-gray-500' };

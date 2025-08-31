@@ -1419,7 +1419,8 @@
         function updateProductsCount(count) {
             const countElement = document.getElementById('products-count');
             if (countElement) {
-                countElement.textContent = count || filteredProducts.length;
+                const productCount = count || filteredProducts.length;
+                countElement.textContent = `${productCount} منتج`;
             }
         }
 
@@ -2228,7 +2229,8 @@
                     event.target.closest('.remove-filter') ||
                     event.target.closest('.active-filter-tag') ||
                     event.target.closest('.subcategory-checkbox') ||
-                    event.target.closest('.subcategory-dropdown-btn')) {
+                    event.target.closest('.subcategory-dropdown-btn') ||
+                    event.target.closest('#toggle-filters-btn')) {
                     return;
                 }
                 

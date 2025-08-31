@@ -795,7 +795,7 @@
                     <svg id="toggle-icon" class="toggle-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
-                    <span id="toggle-text" class="text-sm sm:text-base">فلاتر اختيار نوع البوكيه والمحافظة</span>
+                    <span id="toggle-text" class="text-sm sm:text-base">فلاتر اختيار المنتج والمحافظة</span>
                 </button>
                 <div class="flex flex-col items-end gap-2">
                     <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
@@ -818,23 +818,23 @@
                             <div id="subcategory-dropdown-content" class="dropdown-content hidden">
                                 <div class="subcategory-options">
                                     <label class="subcategory-option">
-                                        <input type="checkbox" value="natural-bouquets" class="subcategory-checkbox">
+                                        <input type="checkbox" value="flowerbouquets-natural" class="subcategory-checkbox">
                                         <span>بوكيهات طبيعية</span>
                                     </label>
                                     <label class="subcategory-option">
-                                        <input type="checkbox" value="artificial-bouquets" class="subcategory-checkbox">
+                                        <input type="checkbox" value="flowerbouquets-artificial" class="subcategory-checkbox">
                                         <span>بوكيهات صناعية</span>
                                     </label>
                                     <label class="subcategory-option">
-                                        <input type="checkbox" value="stand-bouquets" class="subcategory-checkbox">
+                                        <input type="checkbox" value="flowerbouquets-stand" class="subcategory-checkbox">
                                         <span>بوكيهات استاند</span>
                                     </label>
                                     <label class="subcategory-option">
-                                        <input type="checkbox" value="dried-bouquets" class="subcategory-checkbox">
+                                        <input type="checkbox" value="flowerbouquets-dried" class="subcategory-checkbox">
                                         <span>بوكيهات مجففة</span>
                                     </label>
                                     <label class="subcategory-option">
-                                        <input type="checkbox" value="shaped-bouquets" class="subcategory-checkbox">
+                                        <input type="checkbox" value="flowerbouquets-arranged" class="subcategory-checkbox">
                                         <span>بوكيهات مشكلة</span>
                                     </label>
                                 </div>
@@ -1219,11 +1219,11 @@
             // Define subcategoryMap at function level so it's accessible to all blocks
             const subcategoryMap = {
                 // بوكيهات ورد
-                'natural-bouquets': { name: 'بوكيهات طبيعية', color: 'bg-green-500' },
-                'artificial-bouquets': { name: 'بوكيهات صناعية', color: 'bg-blue-500' },
-                'stand-bouquets': { name: 'بوكيهات استاند', color: 'bg-purple-500' },
-                'dried-bouquets': { name: 'بوكيهات مجففة', color: 'bg-orange-500' },
-                'shaped-bouquets': { name: 'بوكيهات مشكلة', color: 'bg-pink-500' }
+                'flowerbouquets-natural': { name: 'بوكيهات طبيعية', color: 'bg-green-500' },
+                'flowerbouquets-artificial': { name: 'بوكيهات صناعية', color: 'bg-blue-500' },
+                'flowerbouquets-stand': { name: 'بوكيهات استاند', color: 'bg-purple-500' },
+                'flowerbouquets-dried': { name: 'بوكيهات مجففة', color: 'bg-orange-500' },
+                'flowerbouquets-arranged': { name: 'بوكيهات مشكلة', color: 'bg-pink-500' }
             };
             
 
@@ -1386,7 +1386,8 @@
         function updateProductsCount(count) {
             const countElement = document.getElementById('products-count');
             if (countElement) {
-                countElement.textContent = count || filteredProducts.length;
+                const productCount = count || filteredProducts.length;
+                countElement.textContent = `${productCount} منتج`;
             }
         }
 
@@ -2029,20 +2030,20 @@
                 filtered = filtered.filter(product => {
                     // خريطة تحويل النصوص العربية إلى أكواد
                     const arabicToCodeMap = {
-                        'بوكيهات طبيعية': 'natural-bouquets',
-                        'بوكيهات صناعية': 'artificial-bouquets',
-                        'بوكيهات استاند': 'stand-bouquets',
-                        'بوكيهات مجففة': 'dried-bouquets',
-                        'بوكيهات مشكلة': 'shaped-bouquets'
+                        'بوكيهات طبيعية': 'flowerbouquets-natural',
+                        'بوكيهات صناعية': 'flowerbouquets-artificial',
+                        'بوكيهات استاند': 'flowerbouquets-stand',
+                        'بوكيهات مجففة': 'flowerbouquets-dried',
+                        'بوكيهات مشكلة': 'flowerbouquets-arranged'
                     };
                     
                     // خريطة تحويل الأكواد إلى نصوص عربية
                     const codeToArabicMap = {
-                        'natural-bouquets': 'بوكيهات طبيعية',
-                        'artificial-bouquets': 'بوكيهات صناعية',
-                        'stand-bouquets': 'بوكيهات استاند',
-                        'dried-bouquets': 'بوكيهات مجففة',
-                        'shaped-bouquets': 'بوكيهات مشكلة'
+                        'flowerbouquets-natural': 'بوكيهات طبيعية',
+                        'flowerbouquets-artificial': 'بوكيهات صناعية',
+                        'flowerbouquets-stand': 'بوكيهات استاند',
+                        'flowerbouquets-dried': 'بوكيهات مجففة',
+                        'flowerbouquets-arranged': 'بوكيهات مشكلة'
                     };
                     
                     if (product.subcategory) {
@@ -2166,7 +2167,7 @@
             
             let filtersOpen = false;
             
-            // فتح الفلاتر عند الضغط على أي مكان في قسم الفلاتر
+            // فتح الفلاتر عند الضغط على أي مكان في قسم الفلاتر (فقط إذا كانت مغلقة)
             filterSection.addEventListener('click', function(event) {
                 // تجاهل النقر على الأزرار الموجودة داخل الفلاتر
                 if (event.target.closest('.filter-btn') || 
@@ -2181,7 +2182,8 @@
                     event.target.closest('.remove-filter') ||
                     event.target.closest('.active-filter-tag') ||
                     event.target.closest('.subcategory-checkbox') ||
-                    event.target.closest('.subcategory-dropdown-btn')) {
+                    event.target.closest('.subcategory-dropdown-btn') ||
+                    event.target.closest('#toggle-filters-btn')) {
                     return;
                 }
                 
@@ -2763,11 +2765,11 @@
                  // Get category label
          function getCategoryLabel(category) {
              const labels = {
-                 'natural-bouquets': 'بوكيهات طبيعية',
-                 'artificial-bouquets': 'بوكيهات صناعية',
-                 'stand-bouquets': 'بوكيهات استاند',
-                 'dried-bouquets': 'بوكيهات مجففة',
-                 'shaped-bouquets': 'بوكيهات مشكلة'
+                 'flowerbouquets-natural': 'بوكيهات طبيعية',
+                 'flowerbouquets-artificial': 'بوكيهات صناعية',
+                 'flowerbouquets-stand': 'بوكيهات استاند',
+                 'flowerbouquets-dried': 'بوكيهات مجففة',
+                 'flowerbouquets-arranged': 'بوكيهات مشكلة'
              };
              return labels[category] || category;
          }
