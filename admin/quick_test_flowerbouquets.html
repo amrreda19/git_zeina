@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار سريع - بوكيهات الورد</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            direction: rtl;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #2563eb;
+        }
+        .test-button.danger {
+            background: #ef4444;
+        }
+        .test-button.danger:hover {
+            background: #dc2626;
+        }
+        .test-button.success {
+            background: #10b981;
+        }
+        .test-button.success:hover {
+            background: #059669;
+        }
+        .result {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+        .success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+        }
+        .warning {
+            background: #fffbeb;
+            border: 1px solid #fed7aa;
+            color: #d97706;
+        }
+        .info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 اختبار سريع - إصلاح مشكلة حذف بوكيهات الورد</h1>
+    
+    <div class="test-section">
+        <h3>1. اختبار الاتصال بقاعدة البيانات</h3>
+        <button class="test-button" onclick="testConnection()">اختبار الاتصال</button>
+        <div id="connection-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. فحص جدول بوكيهات الورد</h3>
+        <button class="test-button" onclick="checkTable()">فحص الجدول</button>
+        <div id="table-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. اختبار القراءة</h3>
+        <button class="test-button" onclick="testRead()">اختبار القراءة</button>
+        <div id="read-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. اختبار الحذف</h3>
+        <input type="text" id="product-id" placeholder="أدخل ID المنتج" style="padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 4px;">
+        <button class="test-button danger" onclick="testDelete()">اختبار الحذف</button>
+        <div id="delete-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. إصلاح الصلاحيات</h3>
+        <button class="test-button success" onclick="fixPermissions()">إصلاح الصلاحيات</button>
+        <div id="permissions-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>6. اختبار شامل</h3>
+        <button class="test-button" onclick="runFullTest()">تشغيل اختبار شامل</button>
+        <div id="full-test-result" class="result"></div>
+    </div>
+
+    <script>
+        let supabase = null;
+
+        // تهيئة Supabase
+        async function initializeSupabase() {
+            try {
+                while (!window.supabaseClient) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                supabase = window.supabaseClient;
+                console.log('✅ Supabase initialized');
+                return true;
+            } catch (error) {
+                console.error('❌ Failed to initialize Supabase:', error);
+                return false;
+            }
+        }
+
+        // اختبار الاتصال
+        async function testConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'جاري اختبار الاتصال...';
+
+            try {
+                const initialized = await initializeSupabase();
+                if (!initialized) {
+                    throw new Error('فشل في تهيئة Supabase');
+                }
+
+                // اختبار الاتصال البسيط
+                const { data, error } = await supabase.from('products_flowerbouquets').select('count').limit(1);
+                
+                if (error) {
+                    throw error;
+                }
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ الاتصال ناجح!\n\nالبيانات: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ فشل الاتصال:\n\n${error.message}\n\n${error.details || ''}`;
+            }
+        }
+
+        // فحص الجدول
+        async function checkTable() {
+            const resultDiv = document.getElementById('table-result');
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'جاري فحص الجدول...';
+
+            try {
+                const initialized = await initializeSupabase();
+                if (!initialized) {
+                    throw new Error('فشل في تهيئة Supabase');
+                }
+
+                // فحص وجود الجدول
+                const { data, error } = await supabase
+                    .from('products_flowerbouquets')
+                    .select('*')
+                    .limit(5);
+
+                if (error) {
+                    throw error;
+                }
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ الجدول موجود ويعمل!\n\nعدد المنتجات: ${data.length}\n\nعينة من البيانات:\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ مشكلة في الجدول:\n\n${error.message}\n\n${error.details || ''}`;
+            }
+        }
+
+        // اختبار القراءة
+        async function testRead() {
+            const resultDiv = document.getElementById('read-result');
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'جاري اختبار القراءة...';
+
+            try {
+                const initialized = await initializeSupabase();
+                if (!initialized) {
+                    throw new Error('فشل في تهيئة Supabase');
+                }
+
+                // اختبار قراءة شاملة
+                const { data, error } = await supabase
+                    .from('products_flowerbouquets')
+                    .select('id, title, category, created_at')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+
+                if (error) {
+                    throw error;
+                }
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ القراءة ناجحة!\n\nعدد المنتجات: ${data.length}\n\nالمنتجات:\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ فشل في القراءة:\n\n${error.message}\n\n${error.details || ''}`;
+            }
+        }
+
+        // اختبار الحذف
+        async function testDelete() {
+            const resultDiv = document.getElementById('delete-result');
+            const productId = document.getElementById('product-id').value.trim();
+            
+            if (!productId) {
+                resultDiv.className = 'result warning';
+                resultDiv.textContent = '⚠️ يرجى إدخال ID المنتج أولاً';
+                return;
+            }
+
+            resultDiv.className = 'result info';
+            resultDiv.textContent = `جاري اختبار حذف المنتج ${productId}...`;
+
+            try {
+                const initialized = await initializeSupabase();
+                if (!initialized) {
+                    throw new Error('فشل في تهيئة Supabase');
+                }
+
+                // محاولة الحذف
+                const { data, error } = await supabase
+                    .from('products_flowerbouquets')
+                    .delete()
+                    .eq('id', productId)
+                    .select();
+
+                if (error) {
+                    throw error;
+                }
+
+                if (data && data.length > 0) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ تم حذف المنتج بنجاح!\n\nالمنتج المحذوف:\n${JSON.stringify(data[0], null, 2)}`;
+                } else {
+                    resultDiv.className = 'result warning';
+                    resultDiv.textContent = `⚠️ المنتج غير موجود أو تم حذفه مسبقاً`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ فشل في الحذف:\n\n${error.message}\n\n${error.details || ''}\n\n💡 قد تكون المشكلة في الصلاحيات أو السياسات`;
+            }
+        }
+
+        // إصلاح الصلاحيات
+        async function fixPermissions() {
+            const resultDiv = document.getElementById('permissions-result');
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'جاري محاولة إصلاح الصلاحيات...';
+
+            try {
+                const initialized = await initializeSupabase();
+                if (!initialized) {
+                    throw new Error('فشل في تهيئة Supabase');
+                }
+
+                // محاولة إصلاح الصلاحيات عبر SQL
+                const { data, error } = await supabase.rpc('fix_flowerbouquets_permissions');
+
+                if (error) {
+                    // إذا فشل RPC، جرب الطريقة البديلة
+                    console.log('RPC failed, trying alternative method...');
+                    
+                    // محاولة تحديث منتج تجريبي لاختبار الصلاحيات
+                    const { data: testData, error: testError } = await supabase
+                        .from('products_flowerbouquets')
+                        .update({ updated_at: new Date().toISOString() })
+                        .eq('id', 1)
+                        .select();
+
+                    if (testError) {
+                        throw new Error(`لا يمكن تحديث المنتج: ${testError.message}`);
+                    }
+
+                    resultDiv.className = 'result warning';
+                    resultDiv.textContent = `⚠️ تم اختبار الصلاحيات\n\nيمكن تحديث المنتجات ولكن قد تكون هناك مشكلة في الحذف\n\nيجب تنفيذ أوامر SQL في Supabase Editor:\n\nGRANT ALL PRIVILEGES ON TABLE products_flowerbouquets TO authenticated;\nGRANT ALL PRIVILEGES ON TABLE products_flowerbouquets TO anon;`;
+                } else {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ تم إصلاح الصلاحيات بنجاح!\n\nالنتيجة: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ فشل في إصلاح الصلاحيات:\n\n${error.message}\n\n💡 يجب تنفيذ أوامر SQL في Supabase Editor\n\nراجع ملف fix_flowerbouquets_permissions.sql`;
+            }
+        }
+
+        // اختبار شامل
+        async function runFullTest() {
+            const resultDiv = document.getElementById('full-test-result');
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'جاري تشغيل اختبار شامل...\n\n';
+
+            try {
+                const initialized = await initializeSupabase();
+                if (!initialized) {
+                    throw new Error('فشل في تهيئة Supabase');
+                }
+
+                let testResults = [];
+                
+                // اختبار 1: الاتصال
+                try {
+                    const { data, error } = await supabase.from('products_flowerbouquets').select('count').limit(1);
+                    if (error) throw error;
+                    testResults.push('✅ الاتصال: ناجح');
+                } catch (error) {
+                    testResults.push(`❌ الاتصال: فشل - ${error.message}`);
+                }
+
+                // اختبار 2: القراءة
+                try {
+                    const { data, error } = await supabase.from('products_flowerbouquets').select('*').limit(1);
+                    if (error) throw error;
+                    testResults.push(`✅ القراءة: ناجح (${data.length} منتج)`);
+                } catch (error) {
+                    testResults.push(`❌ القراءة: فشل - ${error.message}`);
+                }
+
+                // اختبار 3: التحديث
+                try {
+                    const { data, error } = await supabase
+                        .from('products_flowerbouquets')
+                        .update({ updated_at: new Date().toISOString() })
+                        .eq('id', 1)
+                        .select();
+                    if (error) throw error;
+                    testResults.push('✅ التحديث: ناجح');
+                } catch (error) {
+                    testResults.push(`❌ التحديث: فشل - ${error.message}`);
+                }
+
+                // اختبار 4: الحذف (محاولة حذف منتج غير موجود)
+                try {
+                    const { data, error } = await supabase
+                        .from('products_flowerbouquets')
+                        .delete()
+                        .eq('id', 999999)
+                        .select();
+                    if (error) throw error;
+                    testResults.push('✅ الحذف: ناجح (حتى لو لم يتم حذف شيء)');
+                } catch (error) {
+                    testResults.push(`❌ الحذف: فشل - ${error.message}`);
+                }
+
+                resultDiv.className = 'result info';
+                resultDiv.textContent = `📊 نتائج الاختبار الشامل:\n\n${testResults.join('\n')}\n\n💡 إذا فشل الحذف، راجع الصلاحيات في Supabase`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ فشل في الاختبار الشامل:\n\n${error.message}`;
+            }
+        }
+
+        // تهيئة عند تحميل الصفحة
+        window.onload = function() {
+            console.log('🔧 صفحة الاختبار السريع جاهزة');
+            initializeSupabase();
+        };
+    </script>
+</body>
+</html>

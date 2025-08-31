@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار مقارنة الحذف - بوكيهات الورد vs الجداول الأخرى</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            direction: rtl;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        h1 {
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #f8fafc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .test-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background-color 0.3s ease;
+        }
+        .test-button:hover {
+            background: #2563eb;
+        }
+        .test-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .result {
+            background: #f1f5f9;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: center;
+        }
+        .comparison-table th {
+            background: #f8fafc;
+            font-weight: bold;
+        }
+        .status-ok {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .status-error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .status-warning {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 اختبار مقارنة الحذف - بوكيهات الورد vs الجداول الأخرى</h1>
+        
+        <div class="test-section">
+            <h3>1. اختبار الاتصال بقاعدة البيانات</h3>
+            <button class="test-button" onclick="testConnection()">اختبار الاتصال</button>
+            <div id="connection-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. مقارنة وجود الجداول</h3>
+            <button class="test-button" onclick="compareTables()">مقارنة الجداول</button>
+            <div id="tables-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. مقارنة الصلاحيات</h3>
+            <button class="test-button" onclick="comparePermissions()">مقارنة الصلاحيات</button>
+            <div id="permissions-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. اختبار القراءة من كل جدول</h3>
+            <button class="test-button" onclick="testReadAllTables()">اختبار القراءة</button>
+            <div id="read-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. اختبار الحذف من كل جدول</h3>
+            <button class="test-button" onclick="testDeleteAllTables()">اختبار الحذف</button>
+            <div id="delete-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>6. إصلاح صلاحيات بوكيهات الورد</h3>
+            <button class="test-button" onclick="fixFlowerbouquetsPermissions()">إصلاح الصلاحيات</button>
+            <div id="fix-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>7. اختبار شامل</h3>
+            <button class="test-button" onclick="runFullComparison()">تشغيل الاختبار الشامل</button>
+            <div id="full-result" class="result"></div>
+        </div>
+
+        <div id="comparison-table-container"></div>
+    </div>
+
+    <script>
+        let supabase = null;
+        let testResults = {};
+
+        async function initializeSupabase() {
+            try {
+                if (typeof window.supabaseClient !== 'undefined') {
+                    supabase = window.supabaseClient;
+                    console.log('✅ Supabase client initialized from window');
+                } else {
+                    console.error('❌ Supabase client not found in window');
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('❌ Error initializing Supabase:', error);
+                return false;
+            }
+        }
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري اختبار الاتصال...';
+
+            try {
+                const isReady = await initializeSupabase();
+                if (!isReady) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ فشل في تهيئة Supabase';
+                    return;
+                }
+
+                // اختبار الاتصال البسيط
+                const { data, error } = await supabase
+                    .from('products_other')
+                    .select('id')
+                    .limit(1);
+
+                if (error) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ خطأ في الاتصال: ${error.message}`;
+                } else {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ الاتصال ناجح!\nتم الاتصال بقاعدة البيانات بنجاح.\nSupabase URL: ${supabase.supabaseUrl}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطأ في الاختبار: ${error.message}`;
+            }
+        }
+
+        async function compareTables() {
+            const resultDiv = document.getElementById('tables-result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري فحص الجداول...';
+
+            try {
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
+                const results = {};
+
+                for (const table of tables) {
+                    try {
+                        const { data, error } = await supabase
+                            .from(table)
+                            .select('id')
+                            .limit(1);
+                        
+                        results[table] = {
+                            exists: !error,
+                            error: error ? error.message : null,
+                            count: data ? data.length : 0
+                        };
+                    } catch (e) {
+                        results[table] = {
+                            exists: false,
+                            error: e.message,
+                            count: 0
+                        };
+                    }
+                }
+
+                let resultText = '🔍 نتائج فحص الجداول:\n\n';
+                Object.entries(results).forEach(([table, result]) => {
+                    const status = result.exists ? '✅' : '❌';
+                    const errorText = result.error ? ` (خطأ: ${result.error})` : '';
+                    resultText += `${status} ${table}: ${result.exists ? 'موجود' : 'غير موجود'}${errorText}\n`;
+                });
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = resultText;
+                
+                // حفظ النتائج للمقارنة
+                testResults.tables = results;
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطأ في فحص الجداول: ${error.message}`;
+            }
+        }
+
+        async function comparePermissions() {
+            const resultDiv = document.getElementById('permissions-result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري فحص الصلاحيات...';
+
+            try {
+                // فحص الصلاحيات باستخدام استعلام SQL
+                const { data, error } = await supabase.rpc('exec_sql', {
+                    sql_query: `
+                        SELECT 
+                            table_name,
+                            grantee,
+                            privilege_type,
+                            is_grantable
+                        FROM information_schema.role_table_grants 
+                        WHERE table_name IN ('products_cake', 'products_flowerbouquets')
+                        ORDER BY table_name, grantee, privilege_type;
+                    `
+                });
+
+                if (error) {
+                    // إذا فشل RPC، استخدم طريقة بديلة
+                    resultDiv.className = 'result warning';
+                    resultDiv.textContent = `⚠️ لا يمكن فحص الصلاحيات مباشرة: ${error.message}\n\nجرب فحص الصلاحيات من Supabase Dashboard > SQL Editor`;
+                } else {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ تم فحص الصلاحيات:\n\n${JSON.stringify(data, null, 2)}`;
+                }
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطأ في فحص الصلاحيات: ${error.message}`;
+            }
+        }
+
+        async function testReadAllTables() {
+            const resultDiv = document.getElementById('read-result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري اختبار القراءة من جميع الجداول...';
+
+            try {
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
+                const results = {};
+
+                for (const table of tables) {
+                    try {
+                        const { data, error } = await supabase
+                            .from(table)
+                            .select('id, title, category')
+                            .limit(3);
+                        
+                        results[table] = {
+                            success: !error,
+                            error: error ? error.message : null,
+                            count: data ? data.length : 0,
+                            sample: data ? data.slice(0, 2) : []
+                        };
+                    } catch (e) {
+                        results[table] = {
+                            success: false,
+                            error: e.message,
+                            count: 0,
+                            sample: []
+                        };
+                    }
+                }
+
+                let resultText = '📖 نتائج اختبار القراءة:\n\n';
+                Object.entries(results).forEach(([table, result]) => {
+                    const status = result.success ? '✅' : '❌';
+                    const errorText = result.error ? ` (خطأ: ${result.error})` : '';
+                    const sampleText = result.sample.length > 0 ? `\n  عينة: ${result.sample.map(p => p.title || p.id).join(', ')}` : '';
+                    resultText += `${status} ${table}: ${result.success ? 'نجح' : 'فشل'}${errorText}${sampleText}\n`;
+                });
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = resultText;
+                
+                // حفظ النتائج للمقارنة
+                testResults.read = results;
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطأ في اختبار القراءة: ${error.message}`;
+            }
+        }
+
+        async function testDeleteAllTables() {
+            const resultDiv = document.getElementById('delete-result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري اختبار الحذف من جميع الجداول...\n⚠️ هذا اختبار فقط - لن يتم حذف أي منتجات حقيقية';
+
+            try {
+                const tables = ['products_cake', 'products_koshat', 'products_mirr', 'products_other', 'products_invitations', 'products_flowerbouquets'];
+                const results = {};
+
+                for (const table of tables) {
+                    try {
+                        // محاولة حذف منتج غير موجود (اختبار الصلاحيات فقط)
+                        const { data, error } = await supabase
+                            .from(table)
+                            .delete()
+                            .eq('id', 999999); // ID غير موجود
+                        
+                        results[table] = {
+                            success: !error || error.code === 'PGRST116', // PGRST116 = not found
+                            error: error ? error.message : null,
+                            errorCode: error ? error.code : null,
+                            canDelete: !error || error.code === 'PGRST116'
+                        };
+                    } catch (e) {
+                        results[table] = {
+                            success: false,
+                            error: e.message,
+                            errorCode: null,
+                            canDelete: false
+                        };
+                    }
+                }
+
+                let resultText = '🗑️ نتائج اختبار الحذف:\n\n';
+                Object.entries(results).forEach(([table, result]) => {
+                    const status = result.canDelete ? '✅' : '❌';
+                    const errorText = result.error ? ` (خطأ: ${result.error})` : '';
+                    const codeText = result.errorCode ? ` [${result.errorCode}]` : '';
+                    resultText += `${status} ${table}: ${result.canDelete ? 'يمكن الحذف' : 'لا يمكن الحذف'}${errorText}${codeText}\n`;
+                });
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = resultText;
+                
+                // حفظ النتائج للمقارنة
+                testResults.delete = results;
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطأ في اختبار الحذف: ${error.message}`;
+            }
+        }
+
+        async function fixFlowerbouquetsPermissions() {
+            const resultDiv = document.getElementById('fix-result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري محاولة إصلاح صلاحيات بوكيهات الورد...';
+
+            try {
+                // محاولة إصلاح الصلاحيات باستخدام SQL
+                const { data, error } = await supabase.rpc('exec_sql', {
+                    sql_query: `
+                        -- منح صلاحيات كاملة
+                        GRANT ALL PRIVILEGES ON TABLE products_flowerbouquets TO authenticated;
+                        GRANT ALL PRIVILEGES ON TABLE products_flowerbouquets TO anon;
+                        
+                        -- إزالة RLS مؤقتاً
+                        ALTER TABLE products_flowerbouquets DISABLE ROW LEVEL SECURITY;
+                        
+                        -- إنشاء سياسة الحذف
+                        DROP POLICY IF EXISTS "Allow delete for authenticated users" ON products_flowerbouquets;
+                        CREATE POLICY "Allow delete for authenticated users" ON products_flowerbouquets
+                            FOR DELETE TO authenticated USING (true);
+                    `
+                });
+
+                if (error) {
+                    resultDiv.className = 'result warning';
+                    resultDiv.textContent = `⚠️ لا يمكن إصلاح الصلاحيات مباشرة: ${error.message}\n\nيجب تنفيذ الأوامر التالية في Supabase SQL Editor:\n\n` +
+                        `GRANT ALL PRIVILEGES ON TABLE products_flowerbouquets TO authenticated;\n` +
+                        `GRANT ALL PRIVILEGES ON TABLE products_flowerbouquets TO anon;\n` +
+                        `ALTER TABLE products_flowerbouquets DISABLE ROW LEVEL SECURITY;\n` +
+                        `CREATE POLICY "Allow delete for authenticated users" ON products_flowerbouquets FOR DELETE TO authenticated USING (true);`;
+                } else {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ تم إصلاح الصلاحيات بنجاح!\n\nالآن جرب اختبار الحذف مرة أخرى.`;
+                }
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطأ في إصلاح الصلاحيات: ${error.message}`;
+            }
+        }
+
+        async function runFullComparison() {
+            const resultDiv = document.getElementById('full-result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري تشغيل الاختبار الشامل...';
+
+            try {
+                // تشغيل جميع الاختبارات
+                await testConnection();
+                await compareTables();
+                await comparePermissions();
+                await testReadAllTables();
+                await testDeleteAllTables();
+
+                // إنشاء جدول المقارنة
+                createComparisonTable();
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ تم إكمال الاختبار الشامل!\n\nتم فحص جميع الجداول والمقارنة بينها.\nراجع النتائج أعلاه.`;
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطأ في الاختبار الشامل: ${error.message}`;
+            }
+        }
+
+        function createComparisonTable() {
+            const container = document.getElementById('comparison-table-container');
+            
+            if (!testResults.tables || !testResults.read || !testResults.delete) {
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'comparison-table';
+            
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>الجدول</th>
+                        <th>الوجود</th>
+                        <th>القراءة</th>
+                        <th>الحذف</th>
+                        <th>الحالة العامة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${Object.keys(testResults.tables).map(tableName => {
+                        const tableResult = testResults.tables[tableName];
+                        const readResult = testResults.read[tableName];
+                        const deleteResult = testResults.delete[tableName];
+                        
+                        const tableStatus = tableResult.exists ? '✅' : '❌';
+                        const readStatus = readResult.success ? '✅' : '❌';
+                        const deleteStatus = deleteResult.canDelete ? '✅' : '❌';
+                        
+                        let overallStatus = '✅';
+                        let overallClass = 'status-ok';
+                        
+                        if (!tableResult.exists || !readResult.success || !deleteResult.canDelete) {
+                            overallStatus = '❌';
+                            overallClass = 'status-error';
+                        } else if (tableName === 'products_flowerbouquets' && !deleteResult.canDelete) {
+                            overallStatus = '⚠️';
+                            overallClass = 'status-warning';
+                        }
+                        
+                        return `
+                            <tr>
+                                <td><strong>${tableName}</strong></td>
+                                <td>${tableStatus}</td>
+                                <td>${readStatus}</td>
+                                <td>${deleteStatus}</td>
+                                <td class="${overallClass}">${overallStatus}</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+            
+            container.innerHTML = '<h3>📊 جدول المقارنة</h3>';
+            container.appendChild(table);
+        }
+
+        window.onload = function() {
+            console.log('🔍 صفحة اختبار المقارنة جاهزة');
+            initializeSupabase();
+        };
+    </script>
+</body>
+</html>
