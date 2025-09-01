@@ -836,6 +836,13 @@
             justify-content: center;
             font-size: 10px;
         }
+        /* Slider Controls */
+        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 32px; height: 32px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; }
+        .slider-prev { right: 8px; }
+        .slider-next { left: 8px; }
+        .slider-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; gap: 6px; justify-content: center; z-index: 10; }
+        .slider-dot { width: 6px; height: 6px; border-radius: 9999px; background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.1); padding: 0; }
+        .slider-dot.active { background: #d4af37; }
     </style>
 </head>
 <body>
@@ -2052,19 +2059,27 @@
                     subcategoryColors = ['bg-blue-500'];
                 }
                 
+                let images = [];
+                if (Array.isArray(product.image_urls) && product.image_urls.length > 0) {
+                    images = product.image_urls;
+                } else if (typeof product.image_urls === 'string' && product.image_urls.trim() !== '') {
+                    try {
+                        const parsed = JSON.parse(product.image_urls);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            images = parsed;
+                        }
+                    } catch (e) {
+                        if (product.image_urls.includes(',')) {
+                            images = product.image_urls.split(',').map(s => s.trim()).filter(Boolean);
+                        } else {
+                            images = [product.image_urls.trim()];
+                        }
+                    }
+                }
+                if (images.length === 0) { images = [imageUrl]; }
+                const initialIndex = 0;
                 return `
-                    <div class="product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300" data-product-id="${product.id}">
-                        <div class="image-container">
-                            <img src="${imageUrl}" alt="${product.title || 'منتج'}" class="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105 cursor-pointer" loading="lazy" onclick="viewProduct('${product.id}')">
-                            <!-- أيقونة المفضلة -->
-                            <div class="absolute top-3 left-3">
-                                <button class="favorite-btn bg-white rounded-full p-2 shadow-lg hover:bg-pink-50 transition-all duration-200" onclick="toggleFavorite(event, '${product.id}', '${product.title || 'منتج'}', '${imageUrl}', '${product.price || 0}', '${product.governorate || ''}', '${product.cities || ''}', '${subcategoryNames.join(',')}')">
-                                    <svg class="w-5 h-5 ${isFavorite(product.id) ? 'text-pink-500 fill-current' : 'text-gray-400'}" viewBox="0 0 24 24">
-                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
+                    <div class=\"product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300\" data-product-id=\"${product.id}\">\n                        <div class=\"image-container\" tabindex=\"0\" data-product-id=\"${product.id}\">\n                            ${images.map((url, idx) => `<img src=\"${url}\" alt=\"${product.title || 'منتج'}\" class=\"w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105 cursor-pointer slider-image ${idx === initialIndex ? '' : 'hidden'}\" loading=\"${idx === initialIndex ? 'eager' : 'lazy'}\" onclick=\"viewProduct('${product.id}')\">`).join('')}\n                            ${images.length > 1 ? `<button class=\\\"slider-btn slider-prev\\\" aria-label=\\\"السابق\\\">‹</button><button class=\\\"slider-btn slider-next\\\" aria-label=\\\"التالي\\\">›</button>` : ''}\n                            <div class=\"slider-dots\">${images.map((_, i) => `<button class=\"slider-dot ${i === initialIndex ? 'active' : ''}\" aria-label=\"الصورة ${i + 1}\" data-index=\"${i}\"></button>`).join('')}</div>\n                            <div class=\"absolute top-3 left-3\">\n                                <button class=\"favorite-btn bg-white rounded-full p-2 shadow-lg hover:bg-pink-50 transition-all duration-200\" onclick=\"toggleFavorite(event, '${product.id}', '${product.title || 'منتج'}', '${imageUrl}', '${product.price || 0}', '${product.governorate || ''}', '${product.cities || ''}', '${subcategoryNames.join(',')}')\">\n                                    <svg class=\"w-5 h-5 ${isFavorite(product.id) ? 'text-pink-500 fill-current' : 'text-gray-400'}\" viewBox=\"0 0 24 24\">\n                                        <path d=\"M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z\"/>\n                                    </svg>\n                                </button>\n                            </div>\n                        </div>
                                                     <div class="p-3 sm:p-4">
                             ${subcategoryNames.length > 0 ? `
                                 <div class="mb-2 flex flex-wrap gap-1">
@@ -2111,6 +2126,7 @@
 
                 return cardHtml;
             }).join('');
+            initCardSliders();
             
             displayPagination(products.length);
         }
@@ -2963,48 +2979,23 @@
                 noAdsMessage.classList.add('hidden');
             }
             
-            const adsHTML = ads.map(ad => `
-                <div class="bg-white rounded-lg shadow-md overflow-hidden border-2 border-yellow-200 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105 flex-shrink-0" 
-                     style="width: 200px;"
-                     data-ad-id="${ad.id}"
-                     data-product-id="${ad.id}"
-                     data-ad-info='${JSON.stringify(ad)}'>
-                    <div class="relative">
-                                                <img src="${ad.image_url || '../assets/images/decorations.jpg'}"
-                             alt="${ad.title}"
-                             class="w-full h-40 object-cover cursor-pointer"
-                             loading="lazy"
-                             onclick="viewProductDetails('${ad.id}')">
-                        
-                        <!-- علامة مميز -->
-                        <div class="absolute top-1 right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
-                            ⭐ مميز
-                        </div>
-                        
-                        <!-- زر المفضلة -->
-                        <button onclick="toggleFavorite(event, '${ad.id}', '${ad.title}', '${ad.image_url || '../assets/images/decorations.jpg'}', ${ad.price || 0}, '${ad.governorate || ''}', '${ad.cities || ''}', '${ad.subcategories ? ad.subcategories.join(',') : ''}')" 
-                                class="absolute top-1 left-1 bg-white rounded-full p-1.5 shadow-lg hover:shadow-xl transition-all duration-200 favorite-btn border-2 border-white">
-                            <svg class="w-4 h-4 ${isFavorite('${ad.id}') ? 'text-pink-500 fill-current' : 'text-gray-400'}" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                            </svg>
-                        </button>
+            const adsHTML = ads.map(ad => {
+                const imgs = Array.isArray(ad.image_urls) && ad.image_urls.length>0 ? ad.image_urls : [ad.image_url || '../assets/images/decorations.jpg'];
+                return `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden border-2 border-yellow-200 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105 flex-shrink-0" style="width: 200px;" data-ad-id="${ad.id}" data-product-id="${ad.id}" data-ad-info='${JSON.stringify(ad)}'>
+                    <div class="relative image-container" data-product-id="${ad.id}" tabindex="0">
+                        ${imgs.map((u,i)=>`<img src="${u}" alt="${ad.title}" class="w-full h-40 object-cover slider-image ${i===0?'':'hidden'}" loading="${i===0?'eager':'lazy'}" onclick="viewProductDetails('${ad.id}')">`).join('')}
+                        ${imgs.length>1?`<button class=\"slider-btn slider-prev\" aria-label=\"السابق\">‹</button><button class=\"slider-btn slider-next\" aria-label=\"التالي\">›</button>`:''}
+                        <div class="slider-dots">${imgs.map((_,i)=>`<button class="slider-dot ${i===0?'active':''}" aria-label="الصورة ${i+1}" data-index="${i}"></button>`).join('')}</div>
+                        <div class="absolute top-1 right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">⭐ مميز</div>
+                        <button onclick="toggleFavorite(event, '${ad.id}', '${ad.title}', '${ad.image_url || '../assets/images/decorations.jpg'}', ${ad.price || 0}, '${ad.governorate || ''}', '${ad.cities || ''}', '${ad.subcategories ? ad.subcategories.join(',') : ''}')" class="absolute top-1 left-1 bg-white rounded-full p-1.5 shadow-lg hover:shadow-xl transition-all duration-200 favorite-btn border-2 border-white"><svg class="w-4 h-4 ${isFavorite('${ad.id}') ? 'text-pink-500 fill-current' : 'text-gray-400'}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>
                     </div>
-                    
-                    <div class="p-3">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-bold text-yellow-600">
-                                ${ad.price > 0 ? ad.price + ' ج.م' : 'السعر عند الطلب'}
-                            </span>
-                            <!-- عرض المحافظة فقط إذا كانت موجودة وغير فارغة -->
-                            ${sanitizeDisplayData(ad.governorate) ? `<span class="text-xs text-gray-500">${sanitizeDisplayData(ad.governorate)}</span>` : ''}
-                        </div>
-                        
-                        <!-- تم إزالة أزرار عرض التفاصيل والواتساب -->
-                    </div>
-                </div>
-            `).join('');
+                    <div class="p-3"><div class="flex items-center justify-between mb-2"><span class="text-sm font-bold text-yellow-600">${ad.price > 0 ? ad.price + ' ج.م' : 'السعر عند الطلب'}</span>${sanitizeDisplayData(ad.governorate) ? `<span class="text-xs text-gray-500">${sanitizeDisplayData(ad.governorate)}</span>` : ''}</div></div>
+                </div>`;
+            }).join('');
             
             container.innerHTML = adsHTML;
+            initCardSliders();
         }
 
         // إظهار رسالة عدم وجود إعلانات مميزة
@@ -3135,6 +3126,75 @@
                     updateFavoritesCountBadge();
                 }
             });
+            // تهيئة السلايدر بعد أول عرض
+            setTimeout(initCardSliders, 300);
+        });
+
+        function initCardSliders() {
+            document.querySelectorAll('#products-container .image-container, #featured-ads-container .image-container').forEach(container => {
+                if (container.__sliderInit) return;
+                attachSwipe(container);
+                container.addEventListener('keydown', onSliderKeyDown);
+                container.__sliderInit = true;
+            });
+        }
+
+        function onSliderKeyDown(e) {
+            if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+            const id = this.getAttribute('data-product-id');
+            const curr = (window.sliderState && window.sliderState.get(id)) || 0;
+            updateCardSlide(this, curr + (e.key === 'ArrowLeft' ? -1 : 1));
+        }
+
+        function attachSwipe(container) {
+            let startX = 0; let deltaX = 0;
+            container.addEventListener('touchstart', e => { startX = e.touches[0].clientX; deltaX = 0; }, { passive: true });
+            container.addEventListener('touchmove', e => { deltaX = e.touches[0].clientX - startX; }, { passive: true });
+            container.addEventListener('touchend', () => {
+                if (Math.abs(deltaX) > 30) {
+                    const id = container.getAttribute('data-product-id');
+                    const curr = (window.sliderState && window.sliderState.get(id)) || 0;
+                    updateCardSlide(container, curr + (deltaX > 0 ? -1 : 1));
+                }
+            });
+        }
+
+        window.sliderState = new Map();
+        function updateCardSlide(container, newIndex) {
+            const id = container.getAttribute('data-product-id');
+            const imgs = container.querySelectorAll('.slider-image');
+            if (!imgs.length) return;
+            const total = imgs.length;
+            const idx = ((newIndex % total) + total) % total;
+            imgs.forEach((img, i) => { if (i === idx) { img.classList.remove('hidden'); } else { img.classList.add('hidden'); } });
+            const dots = container.querySelectorAll('.slider-dot');
+            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+            window.sliderState.set(id, idx);
+        }
+
+        document.addEventListener('click', function(e) {
+            const prev = e.target.closest('.slider-prev');
+            if (prev) {
+                const container = prev.closest('.image-container');
+                const id = container.getAttribute('data-product-id');
+                const curr = (window.sliderState && window.sliderState.get(id)) || 0;
+                updateCardSlide(container, curr - 1);
+                return;
+            }
+            const next = e.target.closest('.slider-next');
+            if (next) {
+                const container = next.closest('.image-container');
+                const id = container.getAttribute('data-product-id');
+                const curr = (window.sliderState && window.sliderState.get(id)) || 0;
+                updateCardSlide(container, curr + 1);
+                return;
+            }
+            const dot = e.target.closest('.slider-dot');
+            if (dot) {
+                const container = dot.closest('.image-container');
+                const index = parseInt(dot.getAttribute('data-index')) || 0;
+                updateCardSlide(container, index);
+            }
         });
 
         // دوال الترقيم
