@@ -8,7 +8,7 @@ class GovernorateFilter {
         this.multiple = options.multiple !== false; // افتراضي متعدد
         this.placeholder = options.placeholder || 'اختر المحافظات';
         this.governorates = [
-            'القاهرة', 'الجيزة', 'الإسكندرية', 'الشرقية', 'الغربية', 'المنوفية',
+            'توصيل لكل المحافظات', 'القاهرة', 'الجيزة', 'الإسكندرية', 'الشرقية', 'الغربية', 'المنوفية',
             'القليوبية', 'البحيرة', 'كفر الشيخ', 'دمياط', 'الدقهلية', 'المنيا',
             'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'بني سويف',
             'الفيوم', 'الوادي الجديد', 'مطروح', 'شمال سيناء', 'جنوب سيناء',
@@ -548,7 +548,20 @@ class GovernorateFilter {
 
     handleCheckboxChange(checkbox) {
         if (checkbox.checked) {
-            this.selectedGovernorates.add(checkbox.value);
+            // إذا تم اختيار "توصيل لكل المحافظات"، قم بإلغاء اختيار باقي المحافظات
+            if (checkbox.value === 'توصيل لكل المحافظات') {
+                this.clearAll();
+                this.selectedGovernorates.add('توصيل لكل المحافظات');
+                checkbox.checked = true;
+            } else {
+                // إذا تم اختيار أي محافظة أخرى، قم بإلغاء اختيار "توصيل لكل المحافظات"
+                const allGovernoratesCheckbox = document.querySelector('.governorate-input[value="توصيل لكل المحافظات"]');
+                if (allGovernoratesCheckbox) {
+                    allGovernoratesCheckbox.checked = false;
+                    this.selectedGovernorates.delete('توصيل لكل المحافظات');
+                }
+                this.selectedGovernorates.add(checkbox.value);
+            }
         } else {
             this.selectedGovernorates.delete(checkbox.value);
         }
@@ -561,6 +574,9 @@ class GovernorateFilter {
         
         if (this.selectedGovernorates.size === 0) {
             triggerText.textContent = this.placeholder;
+            selectedCount.style.display = 'none';
+        } else if (this.selectedGovernorates.has('توصيل لكل المحافظات')) {
+            triggerText.textContent = 'توصيل لكل المحافظات';
             selectedCount.style.display = 'none';
         } else if (this.selectedGovernorates.size === 1) {
             triggerText.textContent = Array.from(this.selectedGovernorates)[0];

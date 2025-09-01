@@ -1073,6 +1073,10 @@
                             <div id="governorate-dropdown-content" class="dropdown-content hidden">
                                 <div class="governorate-options">
                                     <label class="governorate-option">
+                                        <input type="checkbox" value="توصيل لكل المحافظات" class="governorate-checkbox">
+                                        <span>توصيل لكل المحافظات</span>
+                                    </label>
+                                    <label class="governorate-option">
                                         <input type="checkbox" value="القاهرة" class="governorate-checkbox">
                                         <span>القاهرة</span>
                                     </label>
@@ -2537,6 +2541,21 @@
             // Handle checkbox changes
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
+                    // إذا تم اختيار "توصيل لكل المحافظات"، قم بإلغاء اختيار باقي المحافظات
+                    if (this.value === 'توصيل لكل المحافظات' && this.checked) {
+                        checkboxes.forEach(cb => {
+                            if (cb.value !== 'توصيل لكل المحافظات') {
+                                cb.checked = false;
+                            }
+                        });
+                    } else if (this.value !== 'توصيل لكل المحافظات' && this.checked) {
+                        // إذا تم اختيار أي محافظة أخرى، قم بإلغاء اختيار "توصيل لكل المحافظات"
+                        const allGovernoratesCheckbox = document.querySelector('.governorate-checkbox[value="توصيل لكل المحافظات"]');
+                        if (allGovernoratesCheckbox) {
+                            allGovernoratesCheckbox.checked = false;
+                        }
+                    }
+                    
                     updateSelectedGovernorates();
                     updatePlaceholder();
                     applyFilters();
@@ -2578,6 +2597,8 @@
                 const placeholder = document.getElementById('governorate-placeholder');
                 if (activeFilters.governorate.length === 0) {
                     placeholder.textContent = 'اختر المحافظات';
+                } else if (activeFilters.governorate.includes('توصيل لكل المحافظات')) {
+                    placeholder.textContent = 'توصيل لكل المحافظات';
                 } else if (activeFilters.governorate.length === 1) {
                     placeholder.textContent = activeFilters.governorate[0];
                 } else {
