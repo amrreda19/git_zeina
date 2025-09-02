@@ -568,6 +568,71 @@
             gap: 6px;
         }
 
+        /* Color Filter Styles */
+        .color-filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .color-option {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .color-option:hover {
+            border-color: #d4af37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .color-option.active {
+            border-color: #d4af37;
+            border-width: 3px;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+
+        .color-name {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .color-option.active .color-name {
+            background: rgba(212, 175, 55, 0.9);
+        }
+
+        @media (max-width: 640px) {
+            .color-filter-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+            }
+            
+            .color-option {
+                height: 50px;
+            }
+            
+            .color-name {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+        }
+
         .remove-tag {
             background: rgba(255,255,255,0.2);
             border: none;
@@ -853,6 +918,38 @@
                         </div>
                         <div id="selected-subcategories" class="selected-subcategories"></div>
                      </div>
+                </div>
+
+                <!-- Color Filter -->
+                <div id="color-filter-section" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">لون البوكيه</label>
+                    <div class="color-filter-grid">
+                        <button class="color-option" data-color="red" style="background-color: #ef4444;">
+                            <span class="color-name">أحمر</span>
+                        </button>
+                        <button class="color-option" data-color="pink" style="background-color: #ec4899;">
+                            <span class="color-name">وردي</span>
+                        </button>
+                        <button class="color-option" data-color="white" style="background-color: #ffffff; border: 2px solid #e5e7eb;">
+                            <span class="color-name">أبيض</span>
+                        </button>
+                        <button class="color-option" data-color="yellow" style="background-color: #eab308;">
+                            <span class="color-name">أصفر</span>
+                        </button>
+                        <button class="color-option" data-color="purple" style="background-color: #a855f7;">
+                            <span class="color-name">بنفسجي</span>
+                        </button>
+                        <button class="color-option" data-color="orange" style="background-color: #f97316;">
+                            <span class="color-name">برتقالي</span>
+                        </button>
+                        <button class="color-option" data-color="blue" style="background-color: #3b82f6;">
+                            <span class="color-name">أزرق</span>
+                        </button>
+                        <button class="color-option" data-color="mixed" style="background: linear-gradient(45deg, #ef4444, #ec4899, #eab308, #a855f7);">
+                            <span class="color-name">مختلط</span>
+                        </button>
+                    </div>
+                    <div id="selected-colors" class="selected-tags"></div>
                 </div>
 
                 <!-- Simple Governorate Filter -->
@@ -1149,6 +1246,7 @@
                 
                 if (result.success) {
                     allProducts = result.data || [];
+                    console.log('🔍 Loaded products:', allProducts.length, 'First product colors:', allProducts[0]?.colors);
                     
                     // Process products
                     if (allProducts.length > 0) {
@@ -1214,6 +1312,7 @@
 
         // إنشاء بطاقة منتج
         function createProductCard(product) {
+            console.log('🔍 Creating product card for:', product.id, 'Colors:', product.colors);
             
             const card = document.createElement('div');
             card.className = 'product-card bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300';
@@ -1380,6 +1479,27 @@
                                     </span>
                                 `;
                             }).join('')}
+                        </div>
+                    ` : ''}
+
+                    ${product.colors && product.colors.trim() ? `
+                        <div class="mb-2">
+                            <div class="flex flex-wrap gap-1">
+                                ${product.colors.split(',').map(color => {
+                                    const colorMap = {
+                                        'red': { name: 'أحمر', bg: 'bg-red-100', text: 'text-red-800' },
+                                        'pink': { name: 'وردي', bg: 'bg-pink-100', text: 'text-pink-800' },
+                                        'white': { name: 'أبيض', bg: 'bg-gray-100', text: 'text-gray-800' },
+                                        'yellow': { name: 'أصفر', bg: 'bg-yellow-100', text: 'text-yellow-800' },
+                                        'purple': { name: 'بنفسجي', bg: 'bg-purple-100', text: 'text-purple-800' },
+                                        'orange': { name: 'برتقالي', bg: 'bg-orange-100', text: 'text-orange-800' },
+                                        'blue': { name: 'أزرق', bg: 'bg-blue-100', text: 'text-blue-800' },
+                                        'mixed': { name: 'مختلط', bg: 'bg-indigo-100', text: 'text-indigo-800' }
+                                    };
+                                    const colorInfo = colorMap[color.trim()] || { name: color.trim(), bg: 'bg-gray-100', text: 'text-gray-800' };
+                                    return `<span class="inline-block ${colorInfo.bg} ${colorInfo.text} text-xs px-1.5 py-0.5 rounded-full">${colorInfo.name}</span>`;
+                                }).join('')}
+                            </div>
                         </div>
                     ` : ''}
 
@@ -2022,8 +2142,20 @@
     
             }
             
+            // Initialize active filters object
+            window.activeFilters = {
+                subcategory: [],
+                governorates: [],
+                cities: [],
+                price: '',
+                colors: []
+            };
+            
             // Initialize simple subcategory filter
             setupSimpleSubcategoryFilter();
+            
+            // Initialize color filter
+            setupColorFilter();
             
             // Initialize simple governorate filter
             setupSimpleGovernorateFilter();
@@ -2041,8 +2173,11 @@
             // Start with all products
             let filtered = [...allProducts];
             
+            // Use global activeFilters if available
+            const filters = window.activeFilters || activeFilters;
+            
             // Apply subcategory filter
-            if (activeFilters.subcategory.length > 0) {
+            if (filters.subcategory.length > 0) {
                 filtered = filtered.filter(product => {
                     // خريطة تحويل النصوص العربية إلى أكواد
                     const arabicToCodeMap = {
@@ -2083,7 +2218,7 @@
                         }
                         
                         // Check if any of the selected subcategories match the product's subcategories
-                        return activeFilters.subcategory.some(selectedCode => {
+                        return filters.subcategory.some(selectedCode => {
                             // Check direct match with code
                             if (productSubcategories.includes(selectedCode)) {
                                 return true;
@@ -2103,6 +2238,17 @@
                         });
                     }
                     return false;
+                });
+            }
+            
+            // Apply color filter
+            if (filters.colors && filters.colors.length > 0) {
+                filtered = filtered.filter(product => {
+                    if (!product.colors || product.colors.length === 0) return false;
+                    
+                    return filters.colors.some(selectedColor => 
+                        product.colors.includes(selectedColor)
+                    );
                 });
             }
             
@@ -2410,7 +2556,19 @@
                 selectedSubcategories.push(checkbox.value);
             });
             
-            activeFilters.subcategory = selectedSubcategories;
+            window.activeFilters.subcategory = selectedSubcategories;
+            
+            // Show/hide color filter based on subcategory selection
+            const colorFilterSection = document.getElementById('color-filter-section');
+            if (colorFilterSection) {
+                if (selectedSubcategories.length > 0) {
+                    colorFilterSection.classList.remove('hidden');
+                } else {
+                    colorFilterSection.classList.add('hidden');
+                    // Clear color selections when no subcategory is selected
+                    clearColorFilter();
+                }
+            }
             
             // Update placeholder
             const placeholder = document.getElementById('subcategory-placeholder');
@@ -2709,12 +2867,16 @@
                 priceFilter.value = '';
             }
             
+            // Clear color filter
+            clearColorFilter();
+            
             // Reset active filters
-            activeFilters = {
+            window.activeFilters = {
                 subcategory: [],
                 governorates: [],
                 cities: [],
-                price: ''
+                price: '',
+                colors: []
             };
             
             // Update displays
@@ -2744,7 +2906,7 @@
             const allFilters = [];
             
             // Add subcategory filters
-            activeFilters.subcategory.forEach(category => {
+            window.activeFilters.subcategory.forEach(category => {
                 allFilters.push({
                     type: 'subcategory',
                     value: category,
@@ -2753,7 +2915,7 @@
             });
             
             // Add governorate filters
-            activeFilters.governorates.forEach(governorate => {
+            window.activeFilters.governorates.forEach(governorate => {
                 allFilters.push({
                     type: 'governorate',
                     value: governorate,
@@ -2762,7 +2924,7 @@
             });
             
             // Add city filters
-            activeFilters.cities.forEach(city => {
+            window.activeFilters.cities.forEach(city => {
                 allFilters.push({
                     type: 'city',
                     value: city,
@@ -2771,11 +2933,11 @@
             });
             
             // Add price filter
-            if (activeFilters.price) {
+            if (window.activeFilters.price) {
                 allFilters.push({
                     type: 'price',
-                    value: activeFilters.price,
-                    label: getPriceLabel(activeFilters.price)
+                    value: window.activeFilters.price,
+                    label: getPriceLabel(window.activeFilters.price)
                 });
             }
             
@@ -2829,10 +2991,13 @@
                     removeCity(value);
                     return; // updateCitiesFilter() already calls applyFilters()
                 case 'price':
-                    activeFilters.price = '';
+                    window.activeFilters.price = '';
                     const priceFilter = document.getElementById('price-filter');
                     if (priceFilter) priceFilter.value = '';
                     break;
+                case 'color':
+                    removeColor(value);
+                    return; // removeColor() already calls applyFilters()
             }
             applyFilters();
         }
@@ -3268,6 +3433,100 @@
                 applyFilters(false);
             }
         });
+
+        // Color Filter Functions
+        function setupColorFilter() {
+            const colorOptions = document.querySelectorAll('.color-option');
+            
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const color = this.dataset.color;
+                    toggleColorSelection(color);
+                });
+            });
+        }
+
+        function toggleColorSelection(color) {
+            const option = document.querySelector(`[data-color="${color}"]`);
+            const selectedColorsContainer = document.getElementById('selected-colors');
+            
+            if (!window.activeFilters.colors) {
+                window.activeFilters.colors = [];
+            }
+            
+            if (option.classList.contains('active')) {
+                // Remove color
+                option.classList.remove('active');
+                window.activeFilters.colors = window.activeFilters.colors.filter(c => c !== color);
+            } else {
+                // Add color
+                option.classList.add('active');
+                window.activeFilters.colors.push(color);
+            }
+            
+            updateColorDisplay();
+            applyFilters();
+        }
+
+        function updateColorDisplay() {
+            const selectedColorsContainer = document.getElementById('selected-colors');
+            if (!selectedColorsContainer) return;
+            
+            selectedColorsContainer.innerHTML = '';
+            
+            if (window.activeFilters.colors && window.activeFilters.colors.length > 0) {
+                window.activeFilters.colors.forEach(color => {
+                    const colorTag = document.createElement('div');
+                    colorTag.className = 'selected-tag';
+                    colorTag.innerHTML = `
+                        <span>${getColorLabel(color)}</span>
+                        <button class="remove-tag" onclick="removeColor('${color}')">×</button>
+                    `;
+                    selectedColorsContainer.appendChild(colorTag);
+                });
+            }
+        }
+
+        function getColorLabel(color) {
+            const labels = {
+                'red': 'أحمر',
+                'pink': 'وردي',
+                'white': 'أبيض',
+                'yellow': 'أصفر',
+                'purple': 'بنفسجي',
+                'orange': 'برتقالي',
+                'blue': 'أزرق',
+                'mixed': 'مختلط'
+            };
+            return labels[color] || color;
+        }
+
+        function removeColor(color) {
+            const option = document.querySelector(`[data-color="${color}"]`);
+            if (option) {
+                option.classList.remove('active');
+            }
+            
+            if (window.activeFilters.colors) {
+                window.activeFilters.colors = window.activeFilters.colors.filter(c => c !== color);
+            }
+            
+            updateColorDisplay();
+            applyFilters();
+        }
+
+        function clearColorFilter() {
+            const colorOptions = document.querySelectorAll('.color-option');
+            colorOptions.forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            if (window.activeFilters.colors) {
+                window.activeFilters.colors = [];
+            }
+            
+            updateColorDisplay();
+        }
     </script>
     
     <!-- Floating Add Product Button -->

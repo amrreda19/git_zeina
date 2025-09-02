@@ -252,13 +252,20 @@ class ProductRequestsService {
                 whatsapp: request.whatsapp,
                 facebook: request.facebook,
                 instagram: request.instagram,
+                colors: request.colors, // إضافة الألوان من الطلب
                 image_urls: finalImageUrls,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
             };
 
-            // Insert into the appropriate products table
+            // إزالة عمود colors من البيانات إذا لم يكن الجدول products_flowerbouquets
             const tableName = this.getTableName(request.category);
+            if (tableName !== 'products_flowerbouquets' && productData.colors !== undefined) {
+                delete productData.colors;
+                console.log('🔍 Removed colors field for non-flowerbouquets table in request approval');
+            }
+
+            // Insert into the appropriate products table
             const { data: product, error: productError } = await this.supabase
                 .from(tableName)
                 .insert([productData])

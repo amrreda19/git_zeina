@@ -151,6 +151,12 @@ class ProductService {
                 updated_at: new Date().toISOString()
             };
             
+            // إزالة عمود colors من البيانات إذا لم يكن الجدول products_flowerbouquets
+            if (tableName !== 'products_flowerbouquets' && productToInsert.colors !== undefined) {
+                delete productToInsert.colors;
+                console.log('🔍 Removed colors field for non-flowerbouquets table');
+            }
+            
             // طباعة البيانات للتأكد من صحتها
             console.log('📝 Data to insert:', productToInsert);
 

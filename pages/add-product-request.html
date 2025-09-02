@@ -364,6 +364,48 @@
             }
         }
         
+        /* فلتر ألوان بسيط */
+        #color-filter-section {
+            /* نفس هوامش باقي الخانات */
+        }
+        .color-option-simple {
+            border-radius: 8px;
+            padding: 10px 0;
+            font-weight: 600;
+            font-size: 15px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s;
+            outline: none;
+            cursor: pointer;
+            box-shadow: none;
+        }
+        .color-option-simple.active,
+        .color-option-simple:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px #fef9c3;
+            z-index: 1;
+        }
+        .color-option-simple:active {
+            transform: scale(0.97);
+        }
+        #selected-colors-simple .selected-tag {
+            background: #d4af37;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        #selected-colors-simple .remove-tag {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            margin-right: 4px;
+        }
 
     </style>
 </head>
@@ -512,6 +554,22 @@
                                 </div>
                                 <p class="text-xs text-gray-500 mt-1">اختر التصنيف الفرعي المناسب</p>
                             </div>
+                        </div>
+                        
+                        <!-- اختيار الألوان (للبوكيهات فقط) -->
+                        <div id="color-filter-section" class="mt-6 hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ألوان البوكيه <span class="text-green-600 text-base font-bold">(اختياري)</span></label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <button type="button" class="color-option-simple" data-color="red">أحمر</button>
+                                <button type="button" class="color-option-simple" data-color="pink">وردي</button>
+                                <button type="button" class="color-option-simple" data-color="white">أبيض</button>
+                                <button type="button" class="color-option-simple" data-color="yellow">أصفر</button>
+                                <button type="button" class="color-option-simple" data-color="purple">بنفسجي</button>
+                                <button type="button" class="color-option-simple" data-color="orange">برتقالي</button>
+                                <button type="button" class="color-option-simple" data-color="blue">أزرق</button>
+                                <button type="button" class="color-option-simple" data-color="mixed">مختلط</button>
+                            </div>
+                            <div id="selected-colors-simple" class="mt-3 flex flex-wrap gap-2"></div>
                         </div>
                         
                         <!-- المحافظات في صف منفصل -->
@@ -1050,6 +1108,15 @@
                 return instagramPatterns.some(pattern => pattern.test(url));
             }
             
+            // دالة لجمع الألوان المختارة
+            function getSelectedColors() {
+                const selectedColors = [];
+                document.querySelectorAll('.color-option-simple.active').forEach(btn => {
+                    selectedColors.push(btn.dataset.color);
+                });
+                return selectedColors.join(', ');
+            }
+            
             // دالة للتحقق المباشر من حقل الفيسبوك
             function validateFacebookField() {
                 const facebookField = document.getElementById('request-facebook');
@@ -1355,7 +1422,8 @@
                         cities: Array.from(document.querySelectorAll('input[name="cities"]:checked')).map(cb => cb.value).join(', '), // تحويل إلى نص مفصول بفواصل
                         whatsapp: document.getElementById('request-whatsapp').value.trim() || '', // إرسال نص فارغ بدلاً من null
                         facebook: document.getElementById('request-facebook').value.trim() || '', // إرسال نص فارغ بدلاً من null
-                        instagram: document.getElementById('request-instagram').value.trim() || '' // إرسال نص فارغ بدلاً من null
+                        instagram: document.getElementById('request-instagram').value.trim() || '', // إرسال نص فارغ بدلاً من null
+                        colors: getSelectedColors() // إضافة الألوان المختارة
                     };
                     
                     // Get image files from the new slot system
@@ -1528,12 +1596,21 @@
                 const citiesByGovernorateElement = document.getElementById('cities-by-governorate');
                 const imageCounterElement = document.getElementById('image-counter');
                 const subcategoryOptionsElement = document.getElementById('request-subcategory-options');
+                const colorFilterSection = document.getElementById('color-filter-section');
+                const selectedColorsDiv = document.getElementById('selected-colors-simple');
                 
                 if (selectedGovernoratesElement) selectedGovernoratesElement.innerHTML = '';
                 if (citiesSectionElement) citiesSectionElement.classList.add('hidden');
                 if (citiesByGovernorateElement) citiesByGovernorateElement.innerHTML = '';
                 if (imageCounterElement) imageCounterElement.textContent = '0/3';
                 if (subcategoryOptionsElement) subcategoryOptionsElement.innerHTML = '<div class="text-center py-8 text-gray-500"><p>اختر التصنيف الرئيسي أولاً</p></div>';
+                if (colorFilterSection) colorFilterSection.classList.add('hidden');
+                if (selectedColorsDiv) selectedColorsDiv.innerHTML = '';
+                
+                // Clear color selections
+                document.querySelectorAll('.color-option-simple').forEach(btn => {
+                    btn.classList.remove('active');
+                });
                 
                 // Clear all form fields
                 const form = document.getElementById('product-request-form');
@@ -2335,6 +2412,84 @@
                 popup.addEventListener('click', function(e) {
                     if (e.target === popup) {
                         hideSuccessPopup();
+                    }
+                });
+            }
+        });
+
+        // فلتر ألوان بسيط لبوكيهات الورد
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.getElementById('request-category');
+            const colorFilterSection = document.getElementById('color-filter-section');
+            const colorButtons = document.querySelectorAll('.color-option-simple');
+            const selectedColorsDiv = document.getElementById('selected-colors-simple');
+            let selectedColors = [];
+
+            function updateColorFilterVisibility() {
+                if (categorySelect && categorySelect.value === 'flowerbouquets') {
+                    colorFilterSection.classList.remove('hidden');
+                } else {
+                    colorFilterSection.classList.add('hidden');
+                    selectedColors = [];
+                    updateSelectedColorsDisplay();
+                    colorButtons.forEach(btn => btn.classList.remove('active'));
+                }
+            }
+
+            function updateSelectedColorsDisplay() {
+                if (!selectedColorsDiv) return;
+                selectedColorsDiv.innerHTML = '';
+                selectedColors.forEach(color => {
+                    const tag = document.createElement('span');
+                    tag.className = 'selected-tag';
+                    tag.innerHTML = getColorLabel(color) +
+                        `<button type="button" class="remove-tag" data-color="${color}">×</button>`;
+                    selectedColorsDiv.appendChild(tag);
+                });
+            }
+
+            function getColorLabel(color) {
+                const labels = {
+                    'red': 'أحمر',
+                    'pink': 'وردي',
+                    'white': 'أبيض',
+                    'yellow': 'أصفر',
+                    'purple': 'بنفسجي',
+                    'orange': 'برتقالي',
+                    'blue': 'أزرق',
+                    'mixed': 'مختلط'
+                };
+                return labels[color] || color;
+            }
+
+            if (categorySelect) {
+                categorySelect.addEventListener('change', updateColorFilterVisibility);
+                updateColorFilterVisibility();
+            }
+
+            colorButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const color = this.dataset.color;
+                    if (selectedColors.includes(color)) {
+                        selectedColors = selectedColors.filter(c => c !== color);
+                        this.classList.remove('active');
+                    } else {
+                        selectedColors.push(color);
+                        this.classList.add('active');
+                    }
+                    updateSelectedColorsDisplay();
+                });
+            });
+
+            if (selectedColorsDiv) {
+                selectedColorsDiv.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-tag')) {
+                        const color = e.target.dataset.color;
+                        selectedColors = selectedColors.filter(c => c !== color);
+                        colorButtons.forEach(btn => {
+                            if (btn.dataset.color === color) btn.classList.remove('active');
+                        });
+                        updateSelectedColorsDisplay();
                     }
                 });
             }

@@ -46,6 +46,46 @@
         .cities-trigger:hover {
             border-color: #d1d5db;
         }
+        
+        /* فلتر ألوان بسيط */
+        .color-option-simple {
+            border-radius: 8px;
+            padding: 10px 0;
+            font-weight: 600;
+            font-size: 15px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s;
+            outline: none;
+            cursor: pointer;
+            box-shadow: none;
+        }
+        .color-option-simple.active,
+        .color-option-simple:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px #fef9c3;
+            z-index: 1;
+        }
+        .color-option-simple:active {
+            transform: scale(0.97);
+        }
+        #selected-colors-simple .selected-tag {
+            background: #d4af37;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        #selected-colors-simple .remove-tag {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            margin-right: 4px;
+        }
 
         .cities-trigger.active {
             border-color: #3b82f6;
@@ -861,6 +901,22 @@
                     <p class="text-xs text-gray-500 mt-1">يجب اختيار تصنيف فرعي واحد على الأقل</p>
                 </div>
                 
+                <!-- اختيار الألوان (للبوكيهات فقط) -->
+                <div id="color-filter-section" class="input-group" style="display: none;">
+                    <label class="block text-sm font-medium text-gray-700 mb-2 optional-field">ألوان البوكيه</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <button type="button" class="color-option-simple" data-color="red">أحمر</button>
+                        <button type="button" class="color-option-simple" data-color="pink">وردي</button>
+                        <button type="button" class="color-option-simple" data-color="white">أبيض</button>
+                        <button type="button" class="color-option-simple" data-color="yellow">أصفر</button>
+                        <button type="button" class="color-option-simple" data-color="purple">بنفسجي</button>
+                        <button type="button" class="color-option-simple" data-color="orange">برتقالي</button>
+                        <button type="button" class="color-option-simple" data-color="blue">أزرق</button>
+                        <button type="button" class="color-option-simple" data-color="mixed">مختلط</button>
+                    </div>
+                    <div id="selected-colors-simple" class="mt-3 flex flex-wrap gap-2"></div>
+                </div>
+                
                 <div class="input-group">
                     <label class="block text-sm font-medium text-gray-700 mb-2 required-field">المحافظات المتوفرة</label>
                     <div id="product-governorate-container"></div>
@@ -1028,7 +1084,70 @@
             
             // Initialize cities filter
             initializeCitiesFilter();
+            
+            // Initialize color filter
+            initializeColorFilter();
         });
+
+        // Initialize color filter functionality
+        function initializeColorFilter() {
+            const colorButtons = document.querySelectorAll('.color-option-simple');
+            const selectedColorsDiv = document.getElementById('selected-colors-simple');
+            let selectedColors = [];
+
+            function updateSelectedColorsDisplay() {
+                if (!selectedColorsDiv) return;
+                selectedColorsDiv.innerHTML = '';
+                selectedColors.forEach(color => {
+                    const tag = document.createElement('span');
+                    tag.className = 'selected-tag';
+                    tag.innerHTML = getColorLabel(color) +
+                        `<button type="button" class="remove-tag" data-color="${color}">×</button>`;
+                    selectedColorsDiv.appendChild(tag);
+                });
+            }
+
+            function getColorLabel(color) {
+                const labels = {
+                    'red': 'أحمر',
+                    'pink': 'وردي',
+                    'white': 'أبيض',
+                    'yellow': 'أصفر',
+                    'purple': 'بنفسجي',
+                    'orange': 'برتقالي',
+                    'blue': 'أزرق',
+                    'mixed': 'مختلط'
+                };
+                return labels[color] || color;
+            }
+
+            colorButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const color = this.dataset.color;
+                    if (selectedColors.includes(color)) {
+                        selectedColors = selectedColors.filter(c => c !== color);
+                        this.classList.remove('active');
+                    } else {
+                        selectedColors.push(color);
+                        this.classList.add('active');
+                    }
+                    updateSelectedColorsDisplay();
+                });
+            });
+
+            if (selectedColorsDiv) {
+                selectedColorsDiv.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-tag')) {
+                        const color = e.target.dataset.color;
+                        selectedColors = selectedColors.filter(c => c !== color);
+                        colorButtons.forEach(btn => {
+                            if (btn.dataset.color === color) btn.classList.remove('active');
+                        });
+                        updateSelectedColorsDisplay();
+                    }
+                });
+            }
+        }
 
         // Mobile menu functionality
         document.getElementById('mobile-menu-btn').addEventListener('click', function() {
@@ -1309,6 +1428,14 @@
                  const selectedCitiesArray = getSelectedCities();
                  
                  // Prepare product data
+                 // Get selected colors
+                 const selectedColors = [];
+                 document.querySelectorAll('.color-option-simple.active').forEach(btn => {
+                     selectedColors.push(btn.dataset.color);
+                 });
+                 
+                 console.log('🔍 Selected colors:', selectedColors);
+                 
                  const productData = {
                      title: description, // Use description as title
                      description: description,
@@ -1320,8 +1447,11 @@
                      whatsapp: whatsapp,
                      facebook: facebook || null,
                      instagram: instagram || null,
+                     colors: selectedColors.length > 0 ? selectedColors.join(', ') : null,
                      user_id: session.user.id
                  };
+                 
+                 console.log('🔍 Product data with colors:', productData);
                  
                  // Convert uploaded images to File objects
                  const imageFiles = [];
@@ -1348,8 +1478,15 @@
                     document.getElementById('add-product-form').reset();
                     document.getElementById('subcategory-group').style.display = 'none';
                     document.getElementById('cities-group').style.display = 'none';
+                    document.getElementById('color-filter-section').style.display = 'none';
                     uploadedImages.length = 0;
                     document.getElementById('image-preview').innerHTML = '';
+                    
+                    // Clear selected colors
+                    document.querySelectorAll('.color-option-simple').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.getElementById('selected-colors-simple').innerHTML = '';
                     
                     // Clear cities filter
                     selectedCities.clear();
@@ -1470,10 +1607,12 @@
             const selectedCategory = this.value;
             const subcategoryGroup = document.getElementById('subcategory-group');
             const subcategoryOptions = document.getElementById('subcategory-options');
+            const colorFilterSection = document.getElementById('color-filter-section');
             
             console.log('🔍 Found elements:', {
                 subcategoryGroup: !!subcategoryGroup,
-                subcategoryOptions: !!subcategoryOptions
+                subcategoryOptions: !!subcategoryOptions,
+                colorFilterSection: !!colorFilterSection
             });
             
             // Clear subcategory options
@@ -1508,6 +1647,20 @@
                 // Hide subcategory group
                 subcategoryGroup.style.display = 'none';
                 console.log('🙈 Subcategory group is now hidden');
+            }
+            
+            // Show/hide color filter for flowerbouquets
+            if (selectedCategory === 'flowerbouquets') {
+                colorFilterSection.style.display = 'block';
+                console.log('🎨 Color filter is now visible');
+            } else {
+                colorFilterSection.style.display = 'none';
+                console.log('🙈 Color filter is now hidden');
+                // Clear selected colors
+                document.querySelectorAll('.color-option-simple').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.getElementById('selected-colors-simple').innerHTML = '';
             }
         });
 

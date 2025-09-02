@@ -1030,6 +1030,47 @@
             border-top: 1px solid rgba(226, 232, 240, 0.8);
         }
 
+        /* فلتر ألوان بسيط للتعديل */
+        .edit-color-option-simple {
+            border-radius: 8px;
+            padding: 10px 0;
+            font-weight: 600;
+            font-size: 15px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s;
+            outline: none;
+            cursor: pointer;
+            box-shadow: none;
+            background: white;
+        }
+        .edit-color-option-simple.active,
+        .edit-color-option-simple:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px #fef9c3;
+            z-index: 1;
+        }
+        .edit-color-option-simple:active {
+            transform: scale(0.97);
+        }
+        #edit-request-selected-colors-simple .selected-tag {
+            background: #d4af37;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        #edit-request-selected-colors-simple .remove-tag {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+
         /* ===== تصميم محترف لحقول النموذج ===== */
         
         .form-group {
@@ -2426,6 +2467,22 @@
                             <!-- سيتم توليد التصنيفات الفرعية هنا -->
                         </div>
                     </div>
+                </div>
+                
+                <!-- اختيار الألوان (للبوكيهات فقط) -->
+                <div id="edit-request-color-filter-section" style="display: none;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">ألوان البوكيه</label>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px;">
+                        <button type="button" class="edit-color-option-simple" data-color="red">أحمر</button>
+                        <button type="button" class="edit-color-option-simple" data-color="pink">وردي</button>
+                        <button type="button" class="edit-color-option-simple" data-color="white">أبيض</button>
+                        <button type="button" class="edit-color-option-simple" data-color="yellow">أصفر</button>
+                        <button type="button" class="edit-color-option-simple" data-color="purple">بنفسجي</button>
+                        <button type="button" class="edit-color-option-simple" data-color="orange">برتقالي</button>
+                        <button type="button" class="edit-color-option-simple" data-color="blue">أزرق</button>
+                        <button type="button" class="edit-color-option-simple" data-color="mixed">مختلط</button>
+                    </div>
+                    <div id="edit-request-selected-colors-simple" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
                 </div>
                 
                 <!-- Cities -->
@@ -3960,6 +4017,26 @@
                 }
             }
 
+            // معالجة الألوان - للبوكيهات فقط
+            let colorsDisplay = '';
+            if (request.category === 'flowerbouquets' && request.colors) {
+                const colors = request.colors.split(',').map(color => color.trim()).filter(color => color);
+                if (colors.length > 0) {
+                    const colorLabels = {
+                        'red': 'أحمر',
+                        'pink': 'وردي', 
+                        'white': 'أبيض',
+                        'yellow': 'أصفر',
+                        'purple': 'بنفسجي',
+                        'orange': 'برتقالي',
+                        'blue': 'أزرق',
+                        'mixed': 'مختلط'
+                    };
+                    const displayColors = colors.map(color => colorLabels[color] || color).join(', ');
+                    colorsDisplay = `<p><strong>الألوان:</strong> ${displayColors}</p>`;
+                }
+            }
+
             return `
                 <div class="request-card" data-request-id="${request.id}">
                     <div class="request-header">
@@ -3974,6 +4051,7 @@
                             <p><strong>الوصف:</strong> ${request.description || 'غير محدد'}</p>
                             <p><strong>السعر:</strong> ${priceDisplay}</p>
                             <p><strong>المحافظات:</strong> ${governorateDisplay}</p>
+                            ${colorsDisplay}
                             <p><strong>تاريخ الطلب:</strong> ${createdAt}</p>
                         </div>
                         
@@ -4273,6 +4351,13 @@
                     <span class="request-detail-value">${requestData.governorate}</span>
                 </div>
                 
+                ${requestData.category === 'flowerbouquets' && requestData.colors ? `
+                <div class="request-detail-item">
+                    <span class="request-detail-label">الألوان:</span>
+                    <span class="request-detail-value">${requestData.colors}</span>
+                </div>
+                ` : ''}
+                
                 <div class="request-detail-item">
                     <span class="request-detail-label">رقم الواتساب:</span>
                     <span class="request-detail-value">${requestData.whatsapp}</span>
@@ -4425,6 +4510,24 @@
             document.getElementById('edit-request-whatsapp').value = requestData.whatsapp || '';
             document.getElementById('edit-request-facebook').value = requestData.facebook || '';
             document.getElementById('edit-request-instagram').value = requestData.instagram || '';
+            
+            // ملء الألوان للبوكيهات
+            if (categoryValue === 'flowerbouquets' && requestData.colors) {
+                const colorFilterSection = document.getElementById('edit-request-color-filter-section');
+                colorFilterSection.style.display = 'block';
+                
+                const colors = requestData.colors.split(',').map(color => color.trim()).filter(color => color);
+                colors.forEach(color => {
+                    const colorBtn = document.querySelector(`.edit-color-option-simple[data-color="${color}"]`);
+                    if (colorBtn) {
+                        colorBtn.classList.add('active');
+                    }
+                });
+                updateEditRequestSelectedColorsDisplay();
+            } else {
+                const colorFilterSection = document.getElementById('edit-request-color-filter-section');
+                colorFilterSection.style.display = 'none';
+            }
 
             // ملء المحافظات
             let governorates = [];
@@ -4517,6 +4620,7 @@
             // تهيئة فلتر المدن عند فتح النافذة
             setTimeout(() => {
                 initializeEditRequestCitiesFilter();
+                initializeEditRequestColorFilter();
             }, 100);
         }
 
@@ -5286,6 +5390,12 @@
 
             // الحصول على المدن المختارة
             const selectedCitiesArray = getEditRequestSelectedCities();
+            
+            // الحصول على الألوان المختارة
+            const selectedColors = [];
+            document.querySelectorAll('.edit-color-option-simple.active').forEach(btn => {
+                selectedColors.push(btn.dataset.color);
+            });
 
             // التحقق من صحة البيانات
             if (!description.trim()) {
@@ -5313,10 +5423,17 @@
                     whatsapp: whatsapp,
                     facebook: facebook || null,
                     instagram: instagram || null,
+                    colors: selectedColors.length > 0 ? selectedColors.join(', ') : null,
                     // الحفاظ على ترتيب الصور المُعدل إذا كانت موجودة
                     image_urls: currentRequest && currentRequest.image_urls ? currentRequest.image_urls : null,
                     updated_at: new Date().toISOString()
                 };
+
+                // إزالة عمود colors من البيانات إذا لم يكن التصنيف flowerbouquets
+                if (category !== 'flowerbouquets' && updateData.colors !== undefined) {
+                    delete updateData.colors;
+                    console.log('🔍 Removed colors field for non-flowerbouquets category in request update');
+                }
 
                 console.log('🔍 [DEBUG] ===== saveEditRequestChanges - UPDATE DATA =====');
                 console.log('🔍 [DEBUG] Request ID:', requestId);
@@ -5420,6 +5537,19 @@
             if (editRequestCategory) {
                 editRequestCategory.addEventListener('change', function() {
                     populateEditRequestSubcategories(this.value, []);
+                    
+                    // Show/hide color filter for flowerbouquets
+                    const colorFilterSection = document.getElementById('edit-request-color-filter-section');
+                    if (this.value === 'flowerbouquets') {
+                        colorFilterSection.style.display = 'block';
+                    } else {
+                        colorFilterSection.style.display = 'none';
+                        // Clear selected colors
+                        document.querySelectorAll('.edit-color-option-simple').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        document.getElementById('edit-request-selected-colors-simple').innerHTML = '';
+                    }
                 });
             }
 
@@ -5490,8 +5620,72 @@
             console.log('🔍 Window Loaded - Initializing cities filter for edit request');
             setTimeout(() => {
                 initializeEditRequestCitiesFilter();
+                initializeEditRequestColorFilter();
             }, 200);
         });
+        
+        // تهيئة فلتر الألوان لنموذج التعديل
+        function initializeEditRequestColorFilter() {
+            const colorButtons = document.querySelectorAll('.edit-color-option-simple');
+            const selectedColorsDiv = document.getElementById('edit-request-selected-colors-simple');
+            let selectedColors = [];
+
+            function updateEditRequestSelectedColorsDisplay() {
+                if (!selectedColorsDiv) return;
+                selectedColorsDiv.innerHTML = '';
+                selectedColors.forEach(color => {
+                    const tag = document.createElement('span');
+                    tag.className = 'selected-tag';
+                    tag.innerHTML = getEditRequestColorLabel(color) +
+                        `<button type="button" class="remove-tag" data-color="${color}">×</button>`;
+                    selectedColorsDiv.appendChild(tag);
+                });
+            }
+
+            function getEditRequestColorLabel(color) {
+                const labels = {
+                    'red': 'أحمر',
+                    'pink': 'وردي',
+                    'white': 'أبيض',
+                    'yellow': 'أصفر',
+                    'purple': 'بنفسجي',
+                    'orange': 'برتقالي',
+                    'blue': 'أزرق',
+                    'mixed': 'مختلط'
+                };
+                return labels[color] || color;
+            }
+
+            colorButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const color = this.dataset.color;
+                    if (selectedColors.includes(color)) {
+                        selectedColors = selectedColors.filter(c => c !== color);
+                        this.classList.remove('active');
+                    } else {
+                        selectedColors.push(color);
+                        this.classList.add('active');
+                    }
+                    updateEditRequestSelectedColorsDisplay();
+                });
+            });
+
+            if (selectedColorsDiv) {
+                selectedColorsDiv.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-tag')) {
+                        const color = e.target.dataset.color;
+                        selectedColors = selectedColors.filter(c => c !== color);
+                        colorButtons.forEach(btn => {
+                            if (btn.dataset.color === color) btn.classList.remove('active');
+                        });
+                        updateEditRequestSelectedColorsDisplay();
+                    }
+                });
+            }
+            
+            // جعل الدالة متاحة عالمياً
+            window.updateEditRequestSelectedColorsDisplay = updateEditRequestSelectedColorsDisplay;
+        }
 
         // ===== نظام المسارات الجديد =====
         

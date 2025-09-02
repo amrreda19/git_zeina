@@ -31,6 +31,47 @@
             border-color: #3b82f6 !important;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
         }
+        
+        /* فلتر ألوان بسيط لتعديل المنتجات */
+        .edit-product-color-option-simple {
+            border-radius: 8px;
+            padding: 10px 0;
+            font-weight: 600;
+            font-size: 15px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s;
+            outline: none;
+            cursor: pointer;
+            box-shadow: none;
+            background: white;
+        }
+        .edit-product-color-option-simple.active,
+        .edit-product-color-option-simple:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px #fef9c3;
+            z-index: 1;
+        }
+        .edit-product-color-option-simple:active {
+            transform: scale(0.97);
+        }
+        #edit-product-selected-colors-simple .selected-tag {
+            background: #d4af37;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        #edit-product-selected-colors-simple .remove-tag {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            margin-right: 4px;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -984,6 +1025,22 @@
                     </div>
                 </div>
                 
+                <!-- اختيار الألوان (للبوكيهات فقط) -->
+                <div id="edit-color-filter-section" style="display: none;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">ألوان البوكيه</label>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px;">
+                        <button type="button" class="edit-product-color-option-simple" data-color="red">أحمر</button>
+                        <button type="button" class="edit-product-color-option-simple" data-color="pink">وردي</button>
+                        <button type="button" class="edit-product-color-option-simple" data-color="white">أبيض</button>
+                        <button type="button" class="edit-product-color-option-simple" data-color="yellow">أصفر</button>
+                        <button type="button" class="edit-product-color-option-simple" data-color="purple">بنفسجي</button>
+                        <button type="button" class="edit-product-color-option-simple" data-color="orange">برتقالي</button>
+                        <button type="button" class="edit-product-color-option-simple" data-color="blue">أزرق</button>
+                        <button type="button" class="edit-product-color-option-simple" data-color="mixed">مختلط</button>
+                    </div>
+                    <div id="edit-product-selected-colors-simple" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                </div>
+                
                 <!-- Cities -->
                 <div>
                     <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">المناطق/المدن المتوفرة (اختياري)</label>
@@ -1463,6 +1520,12 @@
                                     <span class="meta-icon">📍</span>
                                     <span class="meta-text">${product.governorate || 'غير محدد'}</span>
                                 </div>
+                                ${product.category === 'flowerbouquets' && product.colors ? `
+                                <div class="meta-item">
+                                    <span class="meta-icon">🎨</span>
+                                    <span class="meta-text">${product.colors}</span>
+                                </div>
+                                ` : ''}
                                 <div class="meta-item">
                                     <span class="meta-icon">📅</span>
                                     <span class="meta-text">${product.created_at ? new Date(product.created_at).toLocaleDateString('ar-EG') : 'غير محدد'}</span>
@@ -1716,6 +1779,26 @@
             document.getElementById('edit-whatsapp').value = product.whatsapp || '';
             document.getElementById('edit-facebook').value = product.facebook || '';
             document.getElementById('edit-instagram').value = product.instagram || '';
+            
+            // ملء الألوان للبوكيهات
+            if (product.category === 'flowerbouquets') {
+                const colorFilterSection = document.getElementById('edit-color-filter-section');
+                colorFilterSection.style.display = 'block';
+                
+                if (product.colors) {
+                    const colors = product.colors.split(',').map(color => color.trim()).filter(color => color);
+                    colors.forEach(color => {
+                        const colorBtn = document.querySelector(`.edit-product-color-option-simple[data-color="${color}"]`);
+                        if (colorBtn) {
+                            colorBtn.classList.add('active');
+                        }
+                    });
+                    updateEditProductSelectedColorsDisplay();
+                }
+            } else {
+                const colorFilterSection = document.getElementById('edit-color-filter-section');
+                colorFilterSection.style.display = 'none';
+            }
 
             console.log('🔍 [DEBUG] Form filled with product data:', {
                 description: product.description,
@@ -1876,6 +1959,7 @@
             // Initialize cities filter when modal opens
             setTimeout(() => {
                 initializeEditCitiesFilter();
+                initializeEditProductColorFilter();
             }, 100);
         }
 
@@ -2378,6 +2462,19 @@
             // Category change in edit modal
             document.getElementById('edit-category').addEventListener('change', function() {
                 populateEditSubcategories(this.value, []);
+                
+                // Show/hide color filter for flowerbouquets
+                const colorFilterSection = document.getElementById('edit-color-filter-section');
+                if (this.value === 'flowerbouquets') {
+                    colorFilterSection.style.display = 'block';
+                } else {
+                    colorFilterSection.style.display = 'none';
+                    // Clear selected colors
+                    document.querySelectorAll('.edit-product-color-option-simple').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.getElementById('edit-product-selected-colors-simple').innerHTML = '';
+                }
             });
 
             // Image upload in edit modal
@@ -2462,6 +2559,12 @@
             });
 
             console.log('🔍 Saving selected subcategories:', selectedSubcategories);
+            
+            // Get selected colors
+            const selectedColors = [];
+            document.querySelectorAll('.edit-product-color-option-simple.active').forEach(btn => {
+                selectedColors.push(btn.dataset.color);
+            });
 
             // Convert subcategories to JSON string for consistent storage
             let subcategoryValue = null;
@@ -2512,11 +2615,18 @@
                     whatsapp: whatsapp,
                     facebook: facebook || null,
                     instagram: instagram || null,
+                    colors: selectedColors.length > 0 ? selectedColors.join(', ') : null,
                     image_urls: currentProduct && currentProduct.image_urls ? currentProduct.image_urls : null,
                     user_id: currentProduct.user_id || null,
                     created_at: currentProduct.created_at || new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 };
+
+                // إزالة عمود colors من البيانات إذا لم يكن الجدول products_flowerbouquets
+                if (newTableName !== 'products_flowerbouquets' && updateData.colors !== undefined) {
+                    delete updateData.colors;
+                    console.log('🔍 Removed colors field for non-flowerbouquets table in update');
+                }
 
                 console.log('🔍 [DEBUG] ===== saveEditChanges - UPDATE DATA =====');
                 console.log('🔍 [DEBUG] Product ID:', productId);
@@ -2582,6 +2692,7 @@
                             whatsapp: whatsapp,
                             facebook: facebook || null,
                             instagram: instagram || null,
+                            colors: selectedColors.length > 0 ? selectedColors.join(', ') : null,
                             sourceTable: newTableName,  // تحديث الجدول المصدر
                             updated_at: new Date().toISOString()
                         };
@@ -2593,6 +2704,12 @@
                     // Category didn't change - just update in current table
                     console.log('🔍 [DEBUG] 🔄 Category unchanged - updating in current table');
                     
+                    // إزالة عمود colors من البيانات إذا لم يكن الجدول products_flowerbouquets
+                    if (tableName !== 'products_flowerbouquets' && updateData.colors !== undefined) {
+                        delete updateData.colors;
+                        console.log('🔍 Removed colors field for non-flowerbouquets table in update');
+                    }
+
                     // تحديث البيانات في قاعدة البيانات
                     const { error } = await window.supabaseClient
                         .from(tableName)
@@ -2632,6 +2749,7 @@
                             whatsapp: whatsapp,
                             facebook: facebook || null,
                             instagram: instagram || null,
+                            colors: selectedColors.length > 0 ? selectedColors.join(', ') : null,
                             updated_at: new Date().toISOString()
                         };
 
@@ -2984,8 +3102,72 @@
             console.log('🔍 DOM Content Loaded - Initializing cities filter');
             setTimeout(() => {
                 initializeEditCitiesFilter();
+                initializeEditProductColorFilter();
             }, 100);
         });
+        
+        // Initialize color filter for edit product modal
+        function initializeEditProductColorFilter() {
+            const colorButtons = document.querySelectorAll('.edit-product-color-option-simple');
+            const selectedColorsDiv = document.getElementById('edit-product-selected-colors-simple');
+            let selectedColors = [];
+
+            function updateEditProductSelectedColorsDisplay() {
+                if (!selectedColorsDiv) return;
+                selectedColorsDiv.innerHTML = '';
+                selectedColors.forEach(color => {
+                    const tag = document.createElement('span');
+                    tag.className = 'selected-tag';
+                    tag.innerHTML = getEditProductColorLabel(color) +
+                        `<button type="button" class="remove-tag" data-color="${color}">×</button>`;
+                    selectedColorsDiv.appendChild(tag);
+                });
+            }
+
+            function getEditProductColorLabel(color) {
+                const labels = {
+                    'red': 'أحمر',
+                    'pink': 'وردي',
+                    'white': 'أبيض',
+                    'yellow': 'أصفر',
+                    'purple': 'بنفسجي',
+                    'orange': 'برتقالي',
+                    'blue': 'أزرق',
+                    'mixed': 'مختلط'
+                };
+                return labels[color] || color;
+            }
+
+            colorButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const color = this.dataset.color;
+                    if (selectedColors.includes(color)) {
+                        selectedColors = selectedColors.filter(c => c !== color);
+                        this.classList.remove('active');
+                    } else {
+                        selectedColors.push(color);
+                        this.classList.add('active');
+                    }
+                    updateEditProductSelectedColorsDisplay();
+                });
+            });
+
+            if (selectedColorsDiv) {
+                selectedColorsDiv.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-tag')) {
+                        const color = e.target.dataset.color;
+                        selectedColors = selectedColors.filter(c => c !== color);
+                        colorButtons.forEach(btn => {
+                            if (btn.dataset.color === color) btn.classList.remove('active');
+                        });
+                        updateEditProductSelectedColorsDisplay();
+                    }
+                });
+            }
+            
+            // جعل الدالة متاحة عالمياً
+            window.updateEditProductSelectedColorsDisplay = updateEditProductSelectedColorsDisplay;
+        }
 
         // Also initialize when window loads
         window.addEventListener('load', function() {
