@@ -360,9 +360,9 @@
             subAll.checked=active.subcat.length===0;
             subAll.onchange=()=>{if(subAll.checked){document.querySelectorAll('.subcat').forEach(c=>c.checked=false); active.subcat=[]; apply();}}
         }
-        document.querySelectorAll('.subcat').forEach(el=>{el.checked=active.subcat.includes(el.value); el.onchange=()=>{el.checked?active.subcat.push(el.value):active.subcat=active.subcat.filter(v=>v!==el.value); updateSelectedSubcats(); apply();};});
-        document.querySelectorAll('.gov').forEach(el=>{el.checked=active.gov.includes(el.value); el.onchange=()=>{el.checked?active.gov.push(el.value):active.gov=active.gov.filter(v=>v!==el.value); updateSelectedGovernorates(); renderCities(new CitiesService()); bind(); apply();};});
-        document.querySelectorAll('.city').forEach(el=>{el.checked=active.city.includes(el.value); el.onchange=()=>{el.checked?active.city.push(el.value):active.city=active.city.filter(v=>v!==el.value); updateSelectedCities(); apply();};});
+        document.querySelectorAll('.subcat').forEach(el=>{el.checked=active.subcat.includes(el.value); el.onchange=()=>{el.checked?active.subcat.push(el.value):active.subcat=active.subcat.filter(v=>v!==el.value); updateSelectedSubcats(); apply();document.getElementById('subcat-dropdown-content').classList.add('hidden');document.getElementById('subcat-dropdown-btn').classList.remove('active');};});
+        document.querySelectorAll('.gov').forEach(el=>{el.checked=active.gov.includes(el.value); el.onchange=()=>{el.checked?active.gov.push(el.value):active.gov=active.gov.filter(v=>v!==el.value); updateSelectedGovernorates(); renderCities(new CitiesService()); bind(); apply();document.getElementById('governorate-dropdown-content').classList.add('hidden');document.getElementById('governorate-dropdown-btn').classList.remove('active');};});
+        document.querySelectorAll('.city').forEach(el=>{el.checked=active.city.includes(el.value); el.onchange=()=>{el.checked?active.city.push(el.value):active.city=active.city.filter(v=>v!==el.value); updateSelectedCities(); apply();document.getElementById('city-dropdown-content').classList.add('hidden');document.getElementById('city-dropdown-btn').classList.remove('active');};});
         document.querySelectorAll('input[name="price"]').forEach(el=>{
             const u=new URL(location);
             const pmin=u.searchParams.get('pmin');
@@ -376,7 +376,7 @@
                 else if(pmin==='0'&&pmax==='0') selectedValue='negotiable';
             }
             el.checked = el.value === selectedValue;
-            el.onchange=()=>{updateSelectedPrice(); apply();}
+            el.onchange=()=>{updateSelectedPrice(); apply();document.getElementById('price-dropdown-content').classList.add('hidden');document.getElementById('price-dropdown-btn').classList.remove('active');}
         });
         document.getElementById('clear-btn').onclick=()=>{active={subcat:[],gov:[],city:[],pmin:'',pmax:''}; location.replace(location.pathname);};
         document.getElementById('apply-btn').onclick=()=>{const q=toParams(); location.href=`category-cake.html${q?'?'+q:''}`;};
