@@ -301,34 +301,50 @@
         let s=[];
         if(Array.isArray(p.subcategory)) s=p.subcategory;
         else if(typeof p.subcategory==='string') s=parseSubcats(p.subcategory);
-        return active.subcat.some(c=>s.includes(c)||s.includes(codeToAr[c]||c));
+        const result = active.subcat.some(c=>s.includes(c)||s.includes(codeToAr[c]||c));
+        if(!result) console.log('منتج لا يطابق فلتر التصنيف الفرعي:', p.id, 'subcats:', s, 'active.subcat:', active.subcat);
+        return result;
     }
     function passGov(p){
         if(!active.gov.length) return true;
         const g=(p.governorate||'').split(',').map(s=>s.trim());
-        return active.gov.some(v=>g.some(x=>x.includes(v)));
+        const result = active.gov.some(v=>g.some(x=>x.includes(v)));
+        if(!result) console.log('منتج لا يطابق فلتر المحافظة:', p.id, 'governorate:', g, 'active.gov:', active.gov);
+        return result;
     }
     function passCity(p){
         if(!active.city.length) return true;
         const c=(p.cities||'').split(',').map(s=>s.trim());
-        return active.city.some(v=>c.some(x=>x.includes(v)));
+        const result = active.city.some(v=>c.some(x=>x.includes(v)));
+        if(!result) console.log('منتج لا يطابق فلتر المدن:', p.id, 'cities:', c, 'active.city:', active.city);
+        return result;
     }
     function passPrice(p){
         const pr=parseFloat(p.price)||0;
         const selectedPrice = document.querySelector('input[name="price"]:checked');
         const val = selectedPrice ? selectedPrice.value : '';
         if(!val) return true;
+        let result;
         switch(val){
-            case '0-200': return pr>0 && pr<=200;
-            case '200-500': return pr>200 && pr<=500;
-            case '500-1000': return pr>500 && pr<=1000;
-            case '1000+': return pr>1000;
-            case 'negotiable': return pr===0 || !p.price;
-            default: return true;
+            case '0-200': result = pr>0 && pr<=200; break;
+            case '200-500': result = pr>200 && pr<=500; break;
+            case '500-1000': result = pr>500 && pr<=1000; break;
+            case '1000+': result = pr>1000; break;
+            case 'negotiable': result = pr===0 || !p.price; break;
+            default: result = true;
         }
+        if(!result) console.log('منتج لا يطابق فلتر السعر:', p.id, 'price:', pr, 'val:', val);
+        return result;
     }
     function apply(){
+        console.log('بدء تطبيق الفلاتر في صفحة الفلاتر - عدد المنتجات:', all.length);
+        console.log('الفلاتر النشطة:', active);
+        
         const r=all.filter(p=>passSubcat(p)&&passGov(p)&&passCity(p)&&passPrice(p));
+        
+        console.log('المنتجات المفلترة:', r.length);
+        console.log('تفاصيل المنتجات المفلترة:', r.map(p => ({id: p.id, title: p.title, subcategory: p.subcategory, governorate: p.governorate, cities: p.cities, price: p.price})));
+        
         document.getElementById('result-count').textContent=r.length;
         document.getElementById('apply-count').textContent=`${r.length}`;
     }
@@ -557,6 +573,7 @@
             }
             const r=await window.ProductService.getProductsByCategory('cake');
             all=r.success?r.data:[];
+            console.log('تم تحميل المنتجات في صفحة الفلاتر:', all.length, 'منتج');
         }catch{all=[];}
         renderSubcats(); bind(); apply(); updateSelectedGovernorates(); updateSelectedSubcats(); updateSelectedCities(); updateSelectedPrice();
     });

@@ -254,11 +254,7 @@
             }
         }
         
-        .filter-btn.active {
-            background-color: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
+
         
         .btn-primary {
             background: linear-gradient(135deg, var(--gold) 0%, #b8941f 100%);
@@ -345,12 +341,7 @@
                 font-size: 0.75rem;
             }
             
-            .filter-btn {
-                min-width: 90px;
-                padding: 6px 10px;
-                font-size: 13px;
-                min-height: 44px;
-            }
+
             
             .dropdown-btn {
                 padding: 6px 8px;
@@ -410,16 +401,9 @@
                 margin-bottom: 0.8rem;
             }
             
-            .filter-grid {
-                gap: 0.6rem;
-            }
+
             
-            .filter-btn {
-                min-width: 95px;
-                padding: 7px 11px;
-                font-size: 13px;
-                min-height: 44px;
-            }
+
             
             .dropdown-btn {
                 padding: 7px 9px;
@@ -512,18 +496,7 @@
             }
         }
 
-        .filter-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-        }
-        
-        @media (min-width: 640px) {
-            .filter-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
-            }
-        }
+
 
         .clear-filters-btn {
             background: #ef4444;
@@ -549,83 +522,9 @@
             background: #dc2626;
             transform: translateY(-1px);
         }
-        .close-filters-btn {
-            background: #6b7280;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .close-filters-btn:hover {
-            background: #4b5563;
-            transform: translateY(-1px);
-        }
 
-        .active-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-top: 0.75rem;
-        }
-        
-        @media (min-width: 640px) {
-            .active-filters {
-                gap: 0.5rem;
-                margin-top: 1rem;
-            }
-        }
 
-        .active-filter-tag {
-            background: #3b82f6;
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            /* تحسين حجم اللمس */
-            min-height: 32px;
-        }
-        
-        @media (min-width: 640px) {
-            .active-filter-tag {
-                padding: 0.25rem 0.75rem;
-                font-size: 0.875rem;
-                gap: 0.5rem;
-                min-height: 36px;
-            }
-        }
 
-        .remove-filter {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            border-radius: 50%;
-            width: 1rem;
-            height: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.6rem;
-            /* تحسين حجم اللمس */
-            min-width: 24px;
-            min-height: 24px;
-        }
-        
-        @media (min-width: 640px) {
-            .remove-filter {
-                width: 1.25rem;
-                height: 1.25rem;
-                font-size: 0.75rem;
-                min-width: 28px;
-                min-height: 28px;
-            }
-        }
 
         /* Toggle button styles */
         .toggle-filters-btn {
@@ -664,64 +563,11 @@
             transform: rotate(180deg);
         }
 
-        /* Simple Filter Buttons Styles */
-        .multi-filter-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
 
-        .filter-btn {
-            padding: 10px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            background: white;
-            color: #374151;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            min-width: 120px;
-            text-align: center;
-            /* تحسين حجم اللمس للشاشات الصغيرة */
-            min-height: 44px;
-        }
-
-        .filter-btn:hover {
-            border-color: #d4af37;
-            background: #fefbf0;
-            transform: translateY(-1px);
-        }
-
-        .filter-btn.active {
-            background: #d4af37;
-            border-color: #d4af37;
-            color: white;
-            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
-        }
-
-        .filter-btn.active:hover {
-            background: #b8941f;
-            border-color: #b8941f;
-        }
-
-        @media (max-width: 640px) {
-            .filter-btn {
-                min-width: 100px;
-                padding: 8px 12px;
-                font-size: 14px;
-                min-height: 44px; /* ضمان حجم لمس مناسب */
-            }
-        }
 
         /* تحسينات إضافية للشاشات الصغيرة جداً */
         @media (max-width: 360px) {
-            .filter-btn {
-                min-width: 90px;
-                padding: 6px 10px;
-                font-size: 13px;
-                min-height: 44px;
-            }
+
             
             .filter-section {
                 padding: 0.5rem;
@@ -744,245 +590,21 @@
         }
 
         @media (min-width: 361px) and (max-width: 414px) {
-            .filter-btn {
-                min-width: 95px;
-                padding: 7px 11px;
-                font-size: 13px;
-                min-height: 44px;
-            }
+
             
             .filter-section {
                 padding: 0.6rem;
                 margin-bottom: 0.8rem;
             }
             
-            .filter-grid {
-                gap: 0.6rem;
-            }
+
         }
 
-        /* Simple Governorate Filter Styles */
-        .simple-governorate-filter,
-        .simple-cities-filter {
-            position: relative;
-            width: 100%;
-        }
 
-        .filter-dropdown {
-            position: relative;
-        }
 
-        .dropdown-btn {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            background: white;
-            color: #374151;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            /* تحسين حجم اللمس */
-            min-height: 44px;
-        }
 
-        .dropdown-btn:hover {
-            border-color: #d4af37;
-            background: #fefbf0;
-        }
 
-        .dropdown-arrow {
-            width: 16px;
-            height: 16px;
-            transition: transform 0.3s ease;
-        }
 
-        .dropdown-btn.active .dropdown-arrow {
-            transform: rotate(180deg);
-        }
-
-        .dropdown-content {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            z-index: 1000;
-            max-height: 300px;
-            overflow-y: auto;
-            /* تحسين التمرير على الأجهزة المحمولة */
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .governorate-options,
-        .cities-options {
-            padding: 8px;
-        }
-
-        .governorate-option,
-        .city-option {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: background-color 0.2s ease;
-            /* تحسين حجم اللمس */
-            min-height: 44px;
-        }
-
-        .governorate-option:hover,
-        .city-option:hover {
-            background-color: #f3f4f6;
-        }
-
-        .governorate-checkbox,
-        .city-checkbox {
-            margin-left: 8px;
-            width: 16px;
-            height: 16px;
-            accent-color: #d4af37;
-            /* تحسين حجم اللمس */
-            min-width: 20px;
-            min-height: 20px;
-        }
-
-        .dropdown-actions {
-            display: flex;
-            gap: 8px;
-            padding: 8px;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 6px 12px;
-            border: 1px solid #d4af37;
-            border-radius: 6px;
-            background: white;
-            color: #d4af37;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            /* تحسين حجم اللمس */
-            min-height: 44px;
-        }
-
-        .action-btn:hover {
-            background: #d4af37;
-            color: white;
-        }
-
-        .selected-governorates,
-        .selected-cities {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 8px;
-        }
-
-        .selected-governorate-tag,
-        .selected-city-tag {
-            background: #d4af37;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 16px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            /* تحسين حجم اللمس */
-            min-height: 32px;
-        }
-
-        .remove-governorate,
-        .remove-city {
-            background: rgba(255,255,255,0.3);
-            border: none;
-            color: white;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            /* تحسين حجم اللمس */
-            min-width: 24px;
-            min-height: 24px;
-        }
-
-        /* تحسينات للشاشات الصغيرة */
-        @media (max-width: 640px) {
-            .dropdown-btn {
-                padding: 8px 10px;
-                font-size: 13px;
-                min-height: 44px;
-            }
-            
-            .governorate-option,
-            .city-option {
-                padding: 6px 10px;
-                min-height: 44px;
-            }
-            
-            .action-btn {
-                padding: 5px 10px;
-                font-size: 11px;
-                min-height: 44px;
-            }
-            
-            .selected-governorate-tag,
-            .selected-city-tag {
-                padding: 3px 6px;
-                font-size: 11px;
-                min-height: 32px;
-            }
-            
-            .remove-governorate,
-            .remove-city {
-                width: 18px;
-                height: 18px;
-                min-width: 24px;
-                min-height: 24px;
-            }
-        }
-
-        /* تحسينات للشاشات الصغيرة جداً */
-        @media (max-width: 360px) {
-            .dropdown-btn {
-                padding: 6px 8px;
-                font-size: 12px;
-                min-height: 44px;
-            }
-            
-            .governorate-option,
-            .city-option {
-                padding: 5px 8px;
-                min-height: 44px;
-            }
-            
-            .action-btn {
-                padding: 4px 8px;
-                font-size: 10px;
-                min-height: 44px;
-            }
-            
-            .selected-governorate-tag,
-            .selected-city-tag {
-                padding: 2px 5px;
-                font-size: 10px;
-                min-height: 32px;
-            }
-        }
 
         /* إخفاء شريط التمرير للإعلانات المميزة */
         .scrollbar-hide {
@@ -1301,7 +923,7 @@
     <main class="container mx-auto px-2 sm:px-3 md:px-4 py-4 sm:py-6 md:py-8">
 
 
-        <!-- Advanced Filters -->
+        <!-- Simple Filters -->
         <div class="filter-section">
             <div class="flex justify-between items-center mb-3 sm:mb-4">
                 <button id="toggle-filters-btn" class="toggle-filters-btn">
@@ -1312,205 +934,8 @@
                 </button>
                 <div class="flex flex-col items-end gap-2">
                     <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
-                    <button id="close-filters-btn" class="close-filters-btn hidden sm:hidden">إغلاق النافذة</button>
                 </div>
             </div>
-
-            <div id="filters-content" class="filter-grid hidden transition-all duration-300 ease-in-out">
-                <!-- Simple Filter Buttons -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">التصنيف الفرعي</label>
-                    <div class="multi-filter-buttons flex flex-wrap gap-2">
-                        <button class="filter-btn active" data-category="all">الكل</button>
-                        <button class="filter-btn" data-category="cake-wedding">تورتة زفاف</button>
-                        <button class="filter-btn" data-category="cake-engagement">تورتة خطوبة</button>
-                        <button class="filter-btn" data-category="cake-birthday">تورتة عيد ميلاد</button>
-                        <button class="filter-btn" data-category="cake-chocolate">تورتة شوكولاتة</button>
-                        <button class="filter-btn" data-category="cake-fruit">تورتة فواكه</button>
-                        <button class="filter-btn" data-category="cake-chocolate-tray">صينية شوكولاتة</button>
-                    </div>
-                </div>
-
-                <!-- Simple Governorate Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">المحافظة</label>
-                    <div class="simple-governorate-filter">
-                        <div class="filter-dropdown">
-                            <button id="governorate-dropdown-btn" class="dropdown-btn">
-                                <span id="governorate-placeholder">اختر المحافظات</span>
-                                <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="6,9 12,15 18,9"></polyline>
-                                </svg>
-                            </button>
-                            <div id="governorate-dropdown-content" class="dropdown-content hidden">
-                                <div class="governorate-options">
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="توصيل لكل المحافظات" class="governorate-checkbox">
-                                        <span>توصيل لكل المحافظات</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="القاهرة" class="governorate-checkbox">
-                                        <span>القاهرة</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="الجيزة" class="governorate-checkbox">
-                                        <span>الجيزة</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="الإسكندرية" class="governorate-checkbox">
-                                        <span>الإسكندرية</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="الشرقية" class="governorate-checkbox">
-                                        <span>الشرقية</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="الغربية" class="governorate-checkbox">
-                                        <span>الغربية</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="المنوفية" class="governorate-checkbox">
-                                        <span>المنوفية</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="القليوبية" class="governorate-checkbox">
-                                        <span>القليوبية</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="البحيرة" class="governorate-checkbox">
-                                        <span>البحيرة</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="كفر الشيخ" class="governorate-checkbox">
-                                        <span>كفر الشيخ</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="دمياط" class="governorate-checkbox">
-                                        <span>دمياط</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="الدقهلية" class="governorate-checkbox">
-                                        <span>الدقهلية</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="المنيا" class="governorate-checkbox">
-                                        <span>المنيا</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="أسيوط" class="governorate-checkbox">
-                                        <span>أسيوط</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="سوهاج" class="governorate-checkbox">
-                                        <span>سوهاج</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="قنا" class="governorate-checkbox">
-                                        <span>قنا</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="الأقصر" class="governorate-checkbox">
-                                        <span>الأقصر</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="أسوان" class="governorate-checkbox">
-                                        <span>أسوان</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="بني سويف" class="governorate-checkbox">
-                                        <span>بني سويف</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="الفيوم" class="governorate-checkbox">
-                                        <span>الفيوم</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="الوادي الجديد" class="governorate-checkbox">
-                                        <span>الوادي الجديد</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="مطروح" class="governorate-checkbox">
-                                        <span>مطروح</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="شمال سيناء" class="governorate-checkbox">
-                                        <span>شمال سيناء</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="جنوب سيناء" class="governorate-checkbox">
-                                        <span>جنوب سيناء</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="البحر الأحمر" class="governorate-checkbox">
-                                        <span>البحر الأحمر</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="بورسعيد" class="governorate-checkbox">
-                                        <span>بورسعيد</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="الإسماعيلية" class="governorate-checkbox">
-                                        <span>الإسماعيلية</span>
-                                    </label>
-                                    <label class="governorate-option">
-                                        <input type="checkbox" value="السويس" class="governorate-checkbox">
-                                        <span>السويس</span>
-                                    </label>
-                                </div>
-                                <div class="dropdown-actions">
-                                    <button id="select-all-governorates" class="action-btn">تحديد الكل</button>
-                                    <button id="clear-all-governorates" class="action-btn">إلغاء الكل</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="selected-governorates" class="selected-governorates"></div>
-                    </div>
-                </div>
-
-                <!-- Cities Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">المدينة/المنطقة</label>
-                    <div class="simple-cities-filter">
-                        <div class="filter-dropdown">
-                            <button id="cities-dropdown-btn" class="dropdown-btn">
-                                <span id="cities-placeholder">اختر المدن/المناطق</span>
-                                <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="6,9 12,15 18,9"></polyline>
-                                </svg>
-                            </button>
-                            <div id="cities-dropdown-content" class="dropdown-content hidden">
-                                <div class="cities-search-container mb-3">
-                                    <input type="text" id="cities-search-input" placeholder="ابحث عن مدينة..." class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                </div>
-                                <div class="cities-options">
-                                    <!-- Cities will be populated dynamically -->
-                                </div>
-                                <div class="dropdown-actions">
-                                    <button id="select-all-cities" class="action-btn">تحديد الكل</button>
-                                    <button id="clear-all-cities" class="action-btn">إلغاء الكل</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="selected-cities" class="selected-cities"></div>
-                    </div>
-                </div>
-
-                <!-- Price Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">السعر</label>
-                    <select id="price-filter" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">جميع الأسعار</option>
-                        <option value="0-200">حتى 200 ج.م</option>
-                        <option value="200-500">200 - 500 ج.م</option>
-                        <option value="500-1000">500 - 1000 ج.م</option>
-                        <option value="1000+">أكثر من 1000 ج.م</option>
-                        <option value="negotiable">السعر عند الطلب</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Active Filters Display -->
-            <div id="active-filters" class="active-filters"></div>
         </div>
 
         <!-- Products Count -->
@@ -1680,28 +1105,9 @@
         let totalPages = 1;
 
         // Global functions for cities filter
-        function updateSelectedCities() {
-            const selected = [];
-            const checkboxes = document.querySelectorAll('.city-checkbox');
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    selected.push(checkbox.value);
-                }
-            });
-            activeFilters.cities = selected;
-            displaySelectedCities();
-        }
 
-        function updateCitiesPlaceholder() {
-            const placeholder = document.getElementById('cities-placeholder');
-            if (activeFilters.cities.length === 0) {
-                placeholder.textContent = 'اختر المدن/المناطق';
-            } else if (activeFilters.cities.length === 1) {
-                placeholder.textContent = activeFilters.cities[0];
-            } else {
-                placeholder.textContent = `${activeFilters.cities.length} مدينة مختارة`;
-            }
-        }
+
+
 
         function displaySelectedCities() {
             if (!selectedCitiesContainer) {
@@ -1745,14 +1151,7 @@
             initializePaginationFromURL();
             initializeFiltersFromURL();
             
-            // Initialize simple filter buttons
-            setupSimpleFilterButtons();
             
-            // Initialize simple governorate filter
-            setupSimpleGovernorateFilter();
-            
-            // Initialize simple cities filter
-            setupSimpleCitiesFilter();
             
             await loadCategoryProducts();
             setupAdvancedFilters();
@@ -1789,6 +1188,7 @@
                 
                 if (result.success) {
                     allProducts = result.data;
+                    console.log('تم تحميل المنتجات:', allProducts.length, 'منتج');
                     
                     // ترتيب المنتجات حسب المعايير المطلوبة
                     sortProductsByCriteria();
@@ -1843,6 +1243,10 @@
             const pminParam = params.get('pmin');
             const pmaxParam = params.get('pmax');
 
+            console.log('تهيئة الفلاتر من URL:', {
+                subcats, govs, cities, priceParam, pminParam, pmaxParam
+            });
+
             if (subcats && subcats.length) activeFilters.subcategory = subcats;
             if (govs && govs.length) activeFilters.governorate = govs;
             if (cities && cities.length) activeFilters.cities = cities;
@@ -1879,34 +1283,9 @@
 
             if (priceValue) {
                 activeFilters.price = priceValue;
-                const priceSelect = document.getElementById('price-filter');
-                if (priceSelect) priceSelect.value = priceValue;
             }
 
-            // تحديث واجهة الأزرار البسيطة للتصنيف الفرعي
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(btn => {
-                const category = btn.getAttribute('data-category');
-                if (category === 'all') {
-                    if (!activeFilters.subcategory || activeFilters.subcategory.length === 0) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                } else {
-                    if (activeFilters.subcategory && activeFilters.subcategory.includes(category)) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                }
-            });
-
-            // تحديث حالات مربعات اختيار المحافظات والمدن إن وجدت في DOM
-            const govCheckboxes = document.querySelectorAll('.governorate-checkbox');
-            govCheckboxes.forEach(cb => { cb.checked = !!(activeFilters.governorate && activeFilters.governorate.includes(cb.value)); });
-            const cityCheckboxes = document.querySelectorAll('.city-checkbox');
-            cityCheckboxes.forEach(cb => { cb.checked = !!(activeFilters.cities && activeFilters.cities.includes(cb.value)); });
+            console.log('الفلاتر النهائية بعد التهيئة:', activeFilters);
         }
 
         function buildFiltersQueryString() {
@@ -1944,299 +1323,23 @@
         // Setup toggle filters functionality
         function setupToggleFilters() {
             const toggleBtn = document.getElementById('toggle-filters-btn');
-            const filtersContent = document.getElementById('filters-content');
-            const toggleIcon = document.getElementById('toggle-icon');
-            const toggleText = document.getElementById('toggle-text');
-            const closeFiltersBtn = document.getElementById('close-filters-btn');
-            const filterSection = document.querySelector('.filter-section');
-            
-            let filtersOpen = false;
-            
-            // فتح الفلاتر عند الضغط على أي مكان في قسم الفلاتر
-            filterSection.addEventListener('click', function(event) {
-                // تجاهل النقر على الأزرار الموجودة داخل الفلاتر
-                if (event.target.closest('.filter-btn') || 
-                    event.target.closest('.dropdown-btn') || 
-                    event.target.closest('.governorate-checkbox') ||
-                    event.target.closest('.city-checkbox') ||
-                    event.target.closest('#price-filter') ||
-                    event.target.closest('#cities-search-input') ||
-                    event.target.closest('.action-btn') ||
-                    event.target.closest('.clear-filters-btn') ||
-                    event.target.closest('.close-filters-btn') ||
-                    event.target.closest('.remove-filter') ||
-                    event.target.closest('.active-filter-tag') ||
-                    event.target.closest('#toggle-filters-btn')) {
-                    return;
-                }
-                
-                // فتح الفلاتر إذا كانت مغلقة
-                if (!filtersOpen) {
-                    filtersOpen = true;
-                    filtersContent.classList.remove('hidden');
-                    toggleIcon.classList.add('rotated');
-                    toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
-                    
-                    // إظهار زر الإغلاق على الشاشات الصغيرة
-                    if (window.innerWidth < 640) {
-                        closeFiltersBtn.classList.remove('hidden');
-                    }
-                }
-            });
             
             toggleBtn.addEventListener('click', function() {
                 const qs = buildFiltersQueryString();
                 window.location.href = `cake-filters.html${qs ? '?' + qs : ''}`;
             });
-            
-            // Close filters button functionality
-            closeFiltersBtn.addEventListener('click', function() {
-                filtersContent.classList.add('hidden');
-                toggleIcon.classList.remove('rotated');
-                toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
-                closeFiltersBtn.classList.add('hidden');
-                filtersOpen = false;
-            });
-            
-            // إغلاق الفلاتر عند الضغط خارجها
-            document.addEventListener('click', function(event) {
-                const filterSection = document.querySelector('.filter-section');
-                const filtersContent = document.getElementById('filters-content');
-                
-                // إذا كانت الفلاتر مفتوحة والنقر خارج منطقة الفلاتر
-                if (filtersOpen && filterSection && !filterSection.contains(event.target)) {
-                    filtersContent.classList.add('hidden');
-                    toggleIcon.classList.remove('rotated');
-                    toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
-                    closeFiltersBtn.classList.add('hidden');
-                    filtersOpen = false;
-                }
-            });
-            
-            // Handle resize events
-            window.addEventListener('resize', function() {
-                if (window.innerWidth >= 640) {
-                    closeFiltersBtn.classList.add('hidden');
-                } else if (filtersOpen) {
-                    closeFiltersBtn.classList.remove('hidden');
-                }
-            });
         }
 
-        // Setup simple filter buttons functionality
-        function setupSimpleFilterButtons() {
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const category = this.getAttribute('data-category');
-                    
-                    if (category === 'all') {
-                        // Reset all buttons
-                        filterButtons.forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
-                        activeFilters.subcategory = [];
-                    } else {
-                        // Handle multiple selection
-                        if (this.classList.contains('active')) {
-                            this.classList.remove('active');
-                            // Remove from active filters
-                            const index = activeFilters.subcategory.indexOf(category);
-                            if (index > -1) {
-                                activeFilters.subcategory.splice(index, 1);
-                            }
-                        } else {
-                            this.classList.add('active');
-                            // Add to active filters
-                            if (!activeFilters.subcategory.includes(category)) {
-                                activeFilters.subcategory.push(category);
-                            }
-                        }
-                        
-                        // If no subcategory is selected, show all
-                        if (activeFilters.subcategory.length === 0) {
-                            filterButtons.forEach(btn => {
-                                if (btn.getAttribute('data-category') === 'all') {
-                                    btn.classList.add('active');
-                                } else {
-                                    btn.classList.remove('active');
-                                }
-                            });
-                        } else {
-                            // Remove active from "all" button
-                            const allButton = document.querySelector('[data-category="all"]');
-                            if (allButton) {
-                                allButton.classList.remove('active');
-                            }
-                        }
-                    }
-                    
-                    // Apply filters immediately
-                    applyFilters();
-                });
-            });
-        }
 
-        // Setup simple governorate filter
-        function setupSimpleGovernorateFilter() {
-            const dropdownBtn = document.getElementById('governorate-dropdown-btn');
-            const dropdownContent = document.getElementById('governorate-dropdown-content');
-            const checkboxes = document.querySelectorAll('.governorate-checkbox');
-            const selectAllBtn = document.getElementById('select-all-governorates');
-            const clearAllBtn = document.getElementById('clear-all-governorates');
-            const selectedContainer = document.getElementById('selected-governorates');
 
-            // Toggle dropdown
-            dropdownBtn.addEventListener('click', function() {
-                dropdownContent.classList.toggle('hidden');
-                dropdownBtn.classList.toggle('active');
-            });
 
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!dropdownBtn.contains(event.target) && !dropdownContent.contains(event.target)) {
-                    dropdownContent.classList.add('hidden');
-                    dropdownBtn.classList.remove('active');
-                }
-            });
 
-            // Handle checkbox changes
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    // إذا تم اختيار "توصيل لكل المحافظات"، قم بإلغاء اختيار باقي المحافظات
-                    if (this.value === 'توصيل لكل المحافظات' && this.checked) {
-                        checkboxes.forEach(cb => {
-                            if (cb.value !== 'توصيل لكل المحافظات') {
-                                cb.checked = false;
-                            }
-                        });
-                    } else if (this.value !== 'توصيل لكل المحافظات' && this.checked) {
-                        // إذا تم اختيار أي محافظة أخرى، قم بإلغاء اختيار "توصيل لكل المحافظات"
-                        const allGovernoratesCheckbox = document.querySelector('.governorate-checkbox[value="توصيل لكل المحافظات"]');
-                        if (allGovernoratesCheckbox) {
-                            allGovernoratesCheckbox.checked = false;
-                        }
-                    }
-                    
-                    updateSelectedGovernorates();
-                    updatePlaceholder();
-                    applyFilters();
-                });
-            });
 
-            // Select all
-            selectAllBtn.addEventListener('click', function() {
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = true;
-                });
-                updateSelectedGovernorates();
-                updatePlaceholder();
-                applyFilters();
-            });
-
-            // Clear all
-            clearAllBtn.addEventListener('click', function() {
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-                updateSelectedGovernorates();
-                updatePlaceholder();
-                applyFilters();
-            });
-
-            function updateSelectedGovernorates() {
-                const selected = [];
-                checkboxes.forEach(checkbox => {
-                    if (checkbox.checked) {
-                        selected.push(checkbox.value);
-                    }
-                });
-                activeFilters.governorate = selected;
-                displaySelectedGovernorates();
-            }
-
-            function updatePlaceholder() {
-                const placeholder = document.getElementById('governorate-placeholder');
-                if (activeFilters.governorate.length === 0) {
-                    placeholder.textContent = 'اختر المحافظات';
-                } else if (activeFilters.governorate.includes('توصيل لكل المحافظات')) {
-                    placeholder.textContent = 'توصيل لكل المحافظات';
-                } else if (activeFilters.governorate.length === 1) {
-                    placeholder.textContent = activeFilters.governorate[0];
-                } else {
-                    placeholder.textContent = `${activeFilters.governorate.length} محافظة مختارة`;
-                }
-            }
-
-            function displaySelectedGovernorates() {
-                if (activeFilters.governorate.length === 0) {
-                    selectedContainer.innerHTML = '';
-                    return;
-                }
-
-                selectedContainer.innerHTML = activeFilters.governorate.map(gov => `
-                    <div class="selected-governorate-tag">
-                        ${gov}
-                        <button class="remove-governorate" onclick="removeGovernorate('${gov}')">×</button>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Remove specific governorate
-        function removeGovernorate(governorate) {
-            const checkbox = document.querySelector(`.governorate-checkbox[value="${governorate}"]`);
-            if (checkbox) {
-                checkbox.checked = false;
-                activeFilters.governorate = activeFilters.governorate.filter(g => g !== governorate);
-                document.getElementById('governorate-placeholder').textContent = 
-                    activeFilters.governorate.length === 0 ? 'اختر المحافظات' : 
-                    activeFilters.governorate.length === 1 ? activeFilters.governorate[0] :
-                    `${activeFilters.governorate.length} محافظة مختارة`;
-                
-                // مسح جميع المدن المرتبطة بالمحافظة الممسوحة
-                if (activeFilters.cities && activeFilters.cities.length > 0) {
-                    // إزالة المدن من الفلاتر النشطة
-                    activeFilters.cities = [];
-                    
-                    // إلغاء تحديد جميع المدن في الواجهة
-                    const cityCheckboxes = document.querySelectorAll('.city-checkbox');
-                    cityCheckboxes.forEach(cityCheckbox => {
-                        cityCheckbox.checked = false;
-                    });
-                    
-                                    // تحديث عرض المدن المختارة
-                updateSelectedCities();
-                updateCitiesPlaceholder();
-                }
-                
-                // Update selected display
-                const selectedContainer = document.getElementById('selected-governorates');
-                if (activeFilters.governorate.length === 0) {
-                    selectedContainer.innerHTML = '';
-                } else {
-                    selectedContainer.innerHTML = activeFilters.governorate.map(gov => `
-                        <div class="selected-governorate-tag">
-                            ${gov}
-                            <button class="remove-governorate" onclick="removeGovernorate('${gov}')">×</button>
-                        </div>
-                    `).join('');
-                }
-                
-                applyFilters();
-            }
-        }
 
 
 
         // Setup advanced filters
         function setupAdvancedFilters() {
-            // Price filter
-            document.getElementById('price-filter').addEventListener('change', function() {
-                activeFilters.price = this.value;
-                applyFilters();
-            });
-
             // Clear filters button
             document.getElementById('clear-filters-btn').addEventListener('click', function() {
                 clearAllFilters();
@@ -2246,91 +1349,69 @@
         // Apply all filters
         function applyFilters() {
             filteredProducts = allProducts;
+            console.log('بدء تطبيق الفلاتر - عدد المنتجات قبل التصفية:', filteredProducts.length);
+            console.log('الفلاتر النشطة:', activeFilters);
 
-            // Apply subcategory filter
-            if (activeFilters.subcategory.length > 0) {
+            // تطبيق فلاتر التصنيف الفرعي
+            if (activeFilters.subcategory && activeFilters.subcategory.length > 0) {
+                console.log('تطبيق فلتر التصنيف الفرعي:', activeFilters.subcategory);
                 filteredProducts = filteredProducts.filter(product => {
-                    // خريطة تحويل النصوص العربية إلى أكواد
-                    const arabicToCodeMap = {
-                        'تورتة زفاف': 'cake-wedding',
-                        'تورتة خطوبة': 'cake-engagement',
-                        'تورتة عيد ميلاد': 'cake-birthday',
-                        'تورتة شوكولاتة': 'cake-chocolate',
-                        'تورتة فواكه': 'cake-fruit',
-                        'صينية شوكولاتة': 'cake-chocolate-tray'
-                    };
-                    
-                    // خريطة تحويل الأكواد إلى نصوص عربية
-                    const codeToArabicMap = {
-                        'cake-wedding': 'تورتة زفاف',
-                        'cake-engagement': 'تورتة خطوبة',
-                        'cake-birthday': 'تورتة عيد ميلاد',
-                        'cake-chocolate': 'تورتة شوكولاتة',
-                        'cake-fruit': 'تورتة فواكه',
-                        'cake-chocolate-tray': 'صينية شوكولاتة'
-                    };
-                    
-                    // Handle different subcategory formats
-                    let productSubcategories = [];
-                    
-                    if (product.subcategory) {
-                        if (Array.isArray(product.subcategory)) {
-                            productSubcategories = product.subcategory;
-                        } else if (typeof product.subcategory === 'string') {
-                            try {
-                                const parsed = JSON.parse(product.subcategory);
-                                if (Array.isArray(parsed)) {
-                                    productSubcategories = parsed;
-                                }
-                            } catch (error) {
-                                // If it's not JSON, treat as single value
-                                productSubcategories = [product.subcategory];
-                            }
+                    if (!product.subcategory) {
+                        console.log('منتج بدون تصنيف فرعي:', product.id);
+                        return false;
+                    }
+                    let subcats = [];
+                    if (Array.isArray(product.subcategory)) {
+                        subcats = product.subcategory;
+                    } else if (typeof product.subcategory === 'string') {
+                        try {
+                            subcats = JSON.parse(product.subcategory);
+                        } catch {
+                            subcats = [product.subcategory];
                         }
                     }
-                    
-                    // Check if any of the selected subcategories match the product's subcategories
-                    return activeFilters.subcategory.some(selectedCode => {
-                        // Check direct match with code
-                        if (productSubcategories.includes(selectedCode)) {
-                            return true;
-                        }
-                        
-                        // Check match with Arabic text
-                        const selectedArabic = codeToArabicMap[selectedCode];
-                        if (selectedArabic && productSubcategories.includes(selectedArabic)) {
-                            return true;
-                        }
-                        
-                        // Check if product has Arabic text that matches the selected code
-                        return productSubcategories.some(productSub => {
-                            const productCode = arabicToCodeMap[productSub];
-                            return productCode === selectedCode;
-                        });
-                    });
-                });
-            }
-
-            // Apply governorate filter
-            if (activeFilters.governorate.length > 0) {
-                filteredProducts = filteredProducts.filter(product => {
-                    if (product.governorate) {
-                        const productGovernorates = product.governorate.split(',').map(g => g.trim());
-                        return activeFilters.governorate.some(selected => 
-                            productGovernorates.some(productGov => 
-                                productGov.includes(selected)
-                            )
-                        );
+                    const matches = activeFilters.subcategory.some(filterSubcat => 
+                        subcats.includes(filterSubcat)
+                    );
+                    if (!matches) {
+                        console.log('منتج لا يطابق فلتر التصنيف:', product.id, 'subcats:', subcats);
                     }
-                    return false;
+                    return matches;
                 });
+                console.log('عدد المنتجات بعد فلتر التصنيف الفرعي:', filteredProducts.length);
             }
 
-            // Apply price filter
+            // تطبيق فلاتر المحافظة
+            if (activeFilters.governorate && activeFilters.governorate.length > 0) {
+                console.log('تطبيق فلتر المحافظة:', activeFilters.governorate);
+                filteredProducts = filteredProducts.filter(product => {
+                    if (!product.governorate) return false;
+                    const govs = product.governorate.split(',').map(g => g.trim());
+                    return activeFilters.governorate.some(filterGov => 
+                        govs.some(gov => gov.includes(filterGov))
+                    );
+                });
+                console.log('عدد المنتجات بعد فلتر المحافظة:', filteredProducts.length);
+            }
+
+            // تطبيق فلاتر المدن
+            if (activeFilters.cities && activeFilters.cities.length > 0) {
+                console.log('تطبيق فلتر المدن:', activeFilters.cities);
+                filteredProducts = filteredProducts.filter(product => {
+                    if (!product.cities) return false;
+                    const cities = product.cities.split(',').map(c => c.trim());
+                    return activeFilters.cities.some(filterCity => 
+                        cities.some(city => city.includes(filterCity))
+                    );
+                });
+                console.log('عدد المنتجات بعد فلتر المدن:', filteredProducts.length);
+            }
+
+            // تطبيق فلتر السعر
             if (activeFilters.price) {
+                console.log('تطبيق فلتر السعر:', activeFilters.price);
                 filteredProducts = filteredProducts.filter(product => {
                     const price = parseFloat(product.price) || 0;
-                    
                     switch (activeFilters.price) {
                         case '0-200':
                             return price > 0 && price <= 200;
@@ -2346,24 +1427,10 @@
                             return true;
                     }
                 });
+                console.log('عدد المنتجات بعد فلتر السعر:', filteredProducts.length);
             }
 
-            // Apply cities filter
-            if (activeFilters.cities.length > 0) {
-                filteredProducts = filteredProducts.filter(product => {
-                    if (product.cities) {
-                        const productCities = product.cities.split(',').map(c => c.trim());
-                        return activeFilters.cities.some(selected => 
-                            productCities.some(productCity => 
-                                productCity.includes(selected)
-                            )
-                        );
-                    }
-                    return false;
-                });
-            }
-
-
+            console.log('العدد النهائي للمنتجات المفلترة:', filteredProducts.length);
 
             // إعادة تعيين الصفحة الحالية إلى 1 عند تطبيق فلاتر جديدة
             currentPage = 1;
@@ -2381,25 +1448,6 @@
 
         // Clear all filters
         function clearAllFilters() {
-            // Reset simple filter buttons
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Activate "all" button
-            const allButton = document.querySelector('[data-category="all"]');
-            if (allButton) {
-                allButton.classList.add('active');
-            }
-            
-            // Reset price filter
-            document.getElementById('price-filter').value = '';
-            
-            // Reset governorate filter
-            const checkboxes = document.querySelectorAll('.governorate-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            
             // Reset active filters object
             activeFilters = {
                 subcategory: [],
@@ -2408,23 +1456,10 @@
                 price: ''
             };
 
-            // Update governorate display
-            document.getElementById('governorate-placeholder').textContent = 'اختر المحافظات';
-            document.getElementById('selected-governorates').innerHTML = '';
+            // Clear active filters display
+            document.getElementById('active-filters').innerHTML = '';
 
-            // Reset cities filter
-            const cityCheckboxes = document.querySelectorAll('.city-checkbox');
-            cityCheckboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            document.getElementById('cities-placeholder').textContent = 'اختر المدن/المناطق';
-            document.getElementById('selected-cities').innerHTML = '';
-
-            // Hide close filters button
-            const closeFiltersBtn = document.getElementById('close-filters-btn');
-            closeFiltersBtn.classList.add('hidden');
-
-            // Apply filters
+            // Apply filters to show all products
             applyFilters();
         }
 
@@ -3265,138 +2300,17 @@
         }
 
         // Global functions for cities filter
-        function updateSelectedCities() {
-            const selected = [];
-            const checkboxes = document.querySelectorAll('.city-checkbox');
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    selected.push(checkbox.value);
-                }
-            });
-            activeFilters.cities = selected;
-            displaySelectedCities();
-        }
 
-        function updateCitiesPlaceholder() {
-            const placeholder = document.getElementById('cities-placeholder');
-            if (activeFilters.cities.length === 0) {
-                placeholder.textContent = 'اختر المدن/المناطق';
-            } else if (activeFilters.cities.length === 1) {
-                placeholder.textContent = activeFilters.cities[0];
-            } else {
-                placeholder.textContent = `${activeFilters.cities.length} مدينة مختارة`;
-            }
-        }
 
-        function displaySelectedCities() {
-            const selectedCitiesContainer = document.getElementById('selected-cities');
-            if (activeFilters.cities.length === 0) {
-                selectedCitiesContainer.innerHTML = '';
-                return;
-            }
-            selectedCitiesContainer.innerHTML = activeFilters.cities.map(city => `
-                <div class="selected-city-tag">
-                    ${city}
-                    <button class="remove-city" onclick="removeCity('${city}')">×</button>
-                </div>
-            `).join('');
-        }
 
-        function filterCities(searchTerm) {
-            const cityOptions = document.querySelectorAll('.city-option');
-            cityOptions.forEach(option => {
-                const cityName = option.querySelector('span').textContent.toLowerCase();
-                if (cityName.includes(searchTerm.toLowerCase())) {
-                    option.style.display = 'flex';
-                } else {
-                    option.style.display = 'none';
-                }
-            });
-        }
 
-        function removeCity(cityName) {
-            const checkbox = document.querySelector(`.city-checkbox[value="${cityName}"]`);
-            if (checkbox) {
-                checkbox.checked = false;
-                updateSelectedCities();
-                applyFilters();
-            }
-        }
 
-        // Setup simple cities filter
-        function setupSimpleCitiesFilter() {
-            const dropdownBtn = document.getElementById('cities-dropdown-btn');
-            const dropdownContent = document.getElementById('cities-dropdown-content');
-            const searchInput = document.getElementById('cities-search-input');
-            const selectAllBtn = document.getElementById('select-all-cities');
-            const clearAllBtn = document.getElementById('clear-all-cities');
 
-            // Sample cities data - you can replace this with actual data
-            const cities = [
-                'القاهرة الجديدة', 'مدينة نصر', 'المعادي', 'مصر الجديدة', 'الزمالك', 'جاردن سيتي',
-                'المعادي', 'الزمالك', 'جاردن سيتي', 'القصر العيني', 'السيدة زينب', 'السيدة عائشة',
-                'باب اللوق', 'وسط البلد', 'الأزبكية', 'بولاق', 'شبرا', 'روض الفرج', 'الزاوية الحمراء',
-                'الشرابية', 'الساحل', 'الوايلي', 'العباسية', 'الزيتون', 'حدائق القبة', 'عين شمس',
-                'المطرية', 'السلام', 'المرج', 'مدينة بدر', 'مدينة الشروق', 'مدينة العبور',
-                'مدينة 15 مايو', 'مدينة 6 أكتوبر', 'مدينة الشيخ زايد', 'مدينة العاصمة الإدارية'
-            ];
 
-            // Populate cities options
-            const citiesOptionsContainer = document.querySelector('.cities-options');
-            citiesOptionsContainer.innerHTML = cities.map(city => `
-                <label class="city-option">
-                    <input type="checkbox" value="${city}" class="city-checkbox">
-                    <span>${city}</span>
-                </label>
-            `).join('');
 
-            // Toggle dropdown
-            dropdownBtn.addEventListener('click', function() {
-                dropdownContent.classList.toggle('hidden');
-                dropdownBtn.classList.toggle('active');
-            });
 
-            // Search functionality
-            searchInput.addEventListener('input', function() {
-                filterCities(this.value);
-            });
 
-            // Select all cities
-            selectAllBtn.addEventListener('click', function() {
-                const checkboxes = document.querySelectorAll('.city-checkbox');
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = true;
-                });
-                updateSelectedCities();
-                applyFilters();
-            });
 
-            // Clear all cities
-            clearAllBtn.addEventListener('click', function() {
-                const checkboxes = document.querySelectorAll('.city-checkbox');
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-                updateSelectedCities();
-                applyFilters();
-            });
-
-            // Handle individual city selection
-            citiesOptionsContainer.addEventListener('change', function(e) {
-                if (e.target.classList.contains('city-checkbox')) {
-                    updateSelectedCities();
-                    applyFilters();
-                }
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!dropdownBtn.contains(event.target) && !dropdownContent.contains(event.target)) {
-                    dropdownContent.classList.add('hidden');
-                    dropdownBtn.classList.remove('active');
-                }
-            });
-        }
 
         // ===== وظائف إدارة المفضلة =====
         
