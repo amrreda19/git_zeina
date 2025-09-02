@@ -248,10 +248,10 @@ function apply(){const r=all.filter(p=>passSubcat(p)&&passGov(p)&&passCity(p)&&p
 function renderGov(c){const gb=document.getElementById('gov-box');gb.innerHTML='';c.getAllGovernorates().forEach(g=>{const l=document.createElement('label');l.className='governorate-option';l.innerHTML=`<input type="checkbox" class="governorate-checkbox gov" value="${g}"> <span>${g}</span>`;gb.appendChild(l);});}
 function renderCities(c){const cb=document.getElementById('city-box');cb.innerHTML='';let list=[];if(active.gov.length){active.gov.forEach(g=>{c.getCitiesForGovernorate(g).forEach(x=>list.push(x));});list=[...new Set(list)];}list.forEach(v=>{const l=document.createElement('label');l.className='governorate-option';l.innerHTML=`<input type=\"checkbox\" class=\"governorate-checkbox city\" value=\"${v}\"> <span>${v}</span>`;cb.appendChild(l);});}
 function bind(){const subAll=document.getElementById('subcat-all');if(subAll){subAll.checked=active.subcat.length===0;subAll.onchange=()=>{if(subAll.checked){document.querySelectorAll('.subcat').forEach(c=>c.checked=false);active.subcat=[];apply();}}}
-document.querySelectorAll('.subcat').forEach(el=>{el.checked=active.subcat.includes(el.value);el.onchange=()=>{el.checked?active.subcat.push(el.value):active.subcat=active.subcat.filter(v=>v!==el.value);const a=document.getElementById('subcat-all');if(a) a.checked=active.subcat.length===0;apply();};});
-document.querySelectorAll('.gov').forEach(el=>{el.checked=active.gov.includes(el.value);el.onchange=()=>{el.checked?active.gov.push(el.value):active.gov=active.gov.filter(v=>v!==el.value);renderCities(new CitiesService());bind();apply();};});
-document.querySelectorAll('.city').forEach(el=>{el.checked=active.city.includes(el.value);el.onchange=()=>{el.checked?active.city.push(el.value):active.city=active.city.filter(v=>v!==el.value);apply();};});
-const priceSel=document.getElementById('price-select');if(priceSel){priceSel.onchange=()=>apply();}
+document.querySelectorAll('.subcat').forEach(el=>{el.checked=active.subcat.includes(el.value);el.onchange=()=>{el.checked?active.subcat.push(el.value):active.subcat=active.subcat.filter(v=>v!==el.value);const a=document.getElementById('subcat-all');if(a) a.checked=active.subcat.length===0;updateSelectedSubcats();apply();};});
+document.querySelectorAll('.gov').forEach(el=>{el.checked=active.gov.includes(el.value);el.onchange=()=>{el.checked?active.gov.push(el.value):active.gov=active.gov.filter(v=>v!==el.value);updateSelectedGovernorates();renderCities(new CitiesService());bind();apply();};});
+document.querySelectorAll('.city').forEach(el=>{el.checked=active.city.includes(el.value);el.onchange=()=>{el.checked?active.city.push(el.value):active.city=active.city.filter(v=>v!==el.value);updateSelectedCities();apply();};});
+document.querySelectorAll('input[name="price"]').forEach(el=>{el.onchange=()=>{updateSelectedPrice();apply();};});
 document.getElementById('clear-btn').onclick=()=>{location.replace('category-other.html');};
 document.getElementById('apply-btn').onclick=()=>{const q=toParams();location.href=`category-other.html${q?'?'+q:''}`;};
 
@@ -266,17 +266,27 @@ function setupDropdown(btnId, contentId) {
     const dropdownBtn = document.getElementById(btnId);
     const dropdownContent = document.getElementById(contentId);
     
-    dropdownBtn.addEventListener('click', () => {
+    // Remove any existing event listeners
+    dropdownBtn.replaceWith(dropdownBtn.cloneNode(true));
+    const newDropdownBtn = document.getElementById(btnId);
+    
+    newDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         dropdownContent.classList.toggle('hidden');
-        dropdownBtn.classList.toggle('active');
+        newDropdownBtn.classList.toggle('active');
     });
     
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
-        if (!dropdownBtn.contains(e.target) && !dropdownContent.contains(e.target)) {
+        if (!newDropdownBtn.contains(e.target) && !dropdownContent.contains(e.target)) {
             dropdownContent.classList.add('hidden');
-            dropdownBtn.classList.remove('active');
+            newDropdownBtn.classList.remove('active');
         }
+    });
+    
+    // Prevent dropdown from closing when clicking inside
+    dropdownContent.addEventListener('click', (e) => {
+        e.stopPropagation();
     });
 }
 

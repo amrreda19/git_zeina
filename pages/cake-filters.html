@@ -392,17 +392,27 @@
         const dropdownBtn = document.getElementById(btnId);
         const dropdownContent = document.getElementById(contentId);
         
-        dropdownBtn.addEventListener('click', () => {
+        // Remove any existing event listeners
+        dropdownBtn.replaceWith(dropdownBtn.cloneNode(true));
+        const newDropdownBtn = document.getElementById(btnId);
+        
+        newDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             dropdownContent.classList.toggle('hidden');
-            dropdownBtn.classList.toggle('active');
+            newDropdownBtn.classList.toggle('active');
         });
         
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
-            if (!dropdownBtn.contains(e.target) && !dropdownContent.contains(e.target)) {
+            if (!newDropdownBtn.contains(e.target) && !dropdownContent.contains(e.target)) {
                 dropdownContent.classList.add('hidden');
-                dropdownBtn.classList.remove('active');
+                newDropdownBtn.classList.remove('active');
             }
+        });
+        
+        // Prevent dropdown from closing when clicking inside
+        dropdownContent.addEventListener('click', (e) => {
+            e.stopPropagation();
         });
     }
     
