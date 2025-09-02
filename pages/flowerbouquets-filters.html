@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مرشحات بوكيهات الورد | Zeina</title>
+<link rel="icon" type="image/png" href="../assets/images/zeina.jpeg">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/product-service.js"></script>
+<script src="../js/cities-service.js"></script>
+<style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+<header class="bg-white border-b sticky top-0 z-40"><div class="container mx-auto px-4 py-3 flex items-center justify-between"><a href="category-flowerbouquets.html" class="text-lg font-bold text-yellow-700">زِينَة</a><div class="text-sm text-gray-600">النتائج المتوقعة: <span id="result-count" class="font-semibold">0</span></div></div></header>
+<main class="container mx-auto px-4 py-4 flex-1">
+<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+<details class="bg-white rounded-xl p-4 shadow-sm" open><summary class="font-semibold text-gray-800">التصنيف الفرعي</summary>
+<div class="mt-3 flex flex-wrap gap-2 text-sm" id="subcat-box">
+<label class="inline-flex items-center gap-1"><input type="checkbox" id="subcat-all"> الكل</label>
+<label class="inline-flex items-center gap-1"><input type="checkbox" value="flowerbouquets-natural" class="subcat"> بوكيهات طبيعية</label>
+<label class="inline-flex items-center gap-1"><input type="checkbox" value="flowerbouquets-artificial" class="subcat"> بوكيهات صناعية</label>
+<label class="inline-flex items-center gap-1"><input type="checkbox" value="flowerbouquets-stand" class="subcat"> بوكيهات استاند</label>
+<label class="inline-flex items-center gap-1"><input type="checkbox" value="flowerbouquets-dried" class="subcat"> بوكيهات مجففة</label>
+<label class="inline-flex items-center gap-1"><input type="checkbox" value="flowerbouquets-arranged" class="subcat"> بوكيهات مشكلة</label>
+</div></details>
+<details class="bg-white rounded-xl p-4 shadow-sm" open><summary class="font-semibold text-gray-800">المحافظة</summary><div id="gov-box" class="mt-3 grid grid-cols-2 gap-2 text-sm max-h-60 overflow-auto"></div></details>
+<details class="bg-white rounded-xl p-4 shadow-sm" open><summary class="font-semibold text-gray-800">المدن/المناطق</summary><div id="city-box" class="mt-3 grid grid-cols-2 gap-2 text-sm max-h-60 overflow-auto"></div></details>
+<details class="bg-white rounded-xl p-4 shadow-sm" open><summary class="font-semibold text-gray-800">السعر</summary>
+<select id="price-select" class="mt-3 w-full p-2 border rounded-lg text-sm">
+<option value="">جميع الأسعار</option>
+<option value="0-200">حتى 200 ج.م</option>
+<option value="200-500">200 - 500 ج.م</option>
+<option value="500-1000">500 - 1000 ج.م</option>
+<option value="1000+">أكثر من 1000 ج.م</option>
+<option value="negotiable">السعر عند الطلب</option>
+</select>
+</details>
+</div>
+</main>
+<div class="fixed bottom-0 inset-x-0 bg-white border-t z-40"><div class="container mx-auto px-4 py-3 flex items-center gap-3"><button id="clear-btn" class="flex-1 py-3 rounded-lg border text-gray-700">مسح الفلاتر</button><button id="apply-btn" class="flex-1 py-3 rounded-lg text-white font-semibold" style="background:#845FCE">تطبيق الفلاتر (<span id="apply-count">0</span>)</button></div></div>
+<script>
+let all=[],active={subcat:[],gov:[],city:[]};
+const codeToAr={
+"flowerbouquets-natural":"بوكيهات طبيعية","flowerbouquets-artificial":"بوكيهات صناعية","flowerbouquets-stand":"بوكيهات استاند","flowerbouquets-dried":"بوكيهات مجففة","flowerbouquets-arranged":"بوكيهات مشكلة"
+},arToCode={
+"بوكيهات طبيعية":"flowerbouquets-natural","بوكيهات صناعية":"flowerbouquets-artificial","بوكيهات استاند":"flowerbouquets-stand","بوكيهات مجففة":"flowerbouquets-dried","بوكيهات مشكلة":"flowerbouquets-arranged"
+};
+function setFromURL(){const u=new URL(location),gp=v=>u.searchParams.getAll(v).filter(Boolean);active.subcat=gp('subcat');active.gov=gp('gov');active.city=gp('city');const sel=document.getElementById('price-select');if(sel){const pmin=u.searchParams.get('pmin'),pmax=u.searchParams.get('pmax');if(pmin!==null||pmax!==null){if(pmin==='0'&&pmax==='200') sel.value='0-200';else if(pmin==='201'&&pmax==='500') sel.value='200-500';else if(pmin==='501'&&pmax==='1000') sel.value='500-1000';else if(pmin==='1001'&&(pmax===null||pmax===''||pmax===undefined)) sel.value='1000+';else if(pmin==='0'&&pmax==='0') sel.value='negotiable';}}}
+function toParams(){const p=new URLSearchParams();active.subcat.forEach(v=>p.append('subcat',v));active.gov.forEach(v=>p.append('gov',v));active.city.forEach(v=>p.append('city',v));const val=(document.getElementById('price-select')||{}).value||'';if(val){switch(val){case'0-200':p.set('pmin','0');p.set('pmax','200');break;case'200-500':p.set('pmin','201');p.set('pmax','500');break;case'500-1000':p.set('pmin','501');p.set('pmax','1000');break;case'1000+':p.set('pmin','1001');break;case'negotiable':p.set('pmin','0');p.set('pmax','0');break;}}return p.toString();}
+function parseSubcats(val){let a=[];if(!val) return a;try{const j=JSON.parse(val);if(Array.isArray(j)) a=j;}catch{a=[val];}return a;}
+function passSubcat(p){if(!active.subcat.length) return true;let raw=[];if(Array.isArray(p.subcategory)) raw=p.subcategory;else if(typeof p.subcategory==='string') raw=parseSubcats(p.subcategory);const s=raw.map(x=>arToCode[x]||x);return active.subcat.some(c=>s.includes(c)||s.includes(codeToAr[c]||c));}
+function passGov(p){if(!active.gov.length) return true;const g=(p.governorate||'').split(',').map(s=>s.trim());return active.gov.some(v=>g.some(x=>x.includes(v)));}
+function passCity(p){if(!active.city.length) return true;const c=(p.cities||'').split(',').map(s=>s.trim());return active.city.some(v=>c.some(x=>x.includes(v)));}
+function passPrice(p){const pr=parseFloat(p.price)||0,sel=document.getElementById('price-select'),val=sel?sel.value:'';if(!val) return true;switch(val){case'0-200':return pr>0&&pr<=200;case'200-500':return pr>200&&pr<=500;case'500-1000':return pr>500&&pr<=1000;case'1000+':return pr>1000;case'negotiable':return pr===0||!p.price;default:return true;}}
+function apply(){const r=all.filter(p=>passSubcat(p)&&passGov(p)&&passCity(p)&&passPrice(p));document.getElementById('result-count').textContent=r.length;document.getElementById('apply-count').textContent=`${r.length}`;}
+function renderGov(c){const gb=document.getElementById('gov-box');gb.innerHTML='';c.getAllGovernorates().forEach(g=>{const l=document.createElement('label');l.className='inline-flex items-center gap-1';l.innerHTML=`<input type=\"checkbox\" class=\"gov\" value=\"${g}\"> ${g}`;gb.appendChild(l);});}
+function renderCities(c){const cb=document.getElementById('city-box');cb.innerHTML='';let list=[];if(active.gov.length){active.gov.forEach(g=>{c.getCitiesForGovernorate(g).forEach(x=>list.push(x));});list=[...new Set(list)];}list.forEach(v=>{const l=document.createElement('label');l.className='inline-flex items-center gap-1';l.innerHTML=`<input type=\"checkbox\" class=\"city\" value=\"${v}\"> ${v}`;cb.appendChild(l);});}
+function bind(){const subAll=document.getElementById('subcat-all');if(subAll){subAll.checked=active.subcat.length===0;subAll.onchange=()=>{if(subAll.checked){document.querySelectorAll('.subcat').forEach(c=>c.checked=false);active.subcat=[];apply();}}}
+document.querySelectorAll('.subcat').forEach(el=>{el.checked=active.subcat.includes(el.value);el.onchange=()=>{el.checked?active.subcat.push(el.value):active.subcat=active.subcat.filter(v=>v!==el.value);const a=document.getElementById('subcat-all');if(a) a.checked=active.subcat.length===0;apply();};});
+document.querySelectorAll('.gov').forEach(el=>{el.checked=active.gov.includes(el.value);el.onchange=()=>{el.checked?active.gov.push(el.value):active.gov=active.gov.filter(v=>v!==el.value);renderCities(new CitiesService());bind();apply();};});
+document.querySelectorAll('.city').forEach(el=>{el.checked=active.city.includes(el.value);el.onchange=()=>{el.checked?active.city.push(el.value):active.city=active.city.filter(v=>v!==el.value);apply();};});
+const priceSel=document.getElementById('price-select');if(priceSel){priceSel.onchange=()=>apply();}
+document.getElementById('clear-btn').onclick=()=>{location.replace('category-flowerbouquets.html');};
+document.getElementById('apply-btn').onclick=()=>{const q=toParams();location.href=`category-flowerbouquets.html${q?'?'+q:''}`;};}
+document.addEventListener('DOMContentLoaded',async()=>{setFromURL();const cities=new CitiesService();renderGov(cities);renderCities(cities);try{if(!window.ProductService){await new Promise(res=>{let t=setInterval(()=>{if(window.ProductService){clearInterval(t);res();}},100);setTimeout(()=>{clearInterval(t);res();},5000);});}const r=await window.ProductService.getProductsByCategory('flowerbouquets');all=r.success?r.data:[];}catch{all=[];}bind();apply();});
+</script>
+</body>
+</html>
+
+

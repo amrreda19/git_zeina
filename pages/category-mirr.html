@@ -1275,6 +1275,9 @@
                 }, 100);
             }
             
+            // تهيئة الفلاتر من URL (قادمة من صفحة الفلاتر)
+            initializeFiltersFromURL();
+            
             // Initialize simple filter buttons
             setupSimpleFilterButtons();
             
@@ -1291,6 +1294,127 @@
             // تحديث عداد المفضلة عند تحميل الصفحة
             updateFavoritesCountBadge();
         });
+
+        // تهيئة الفلاتر من URL
+        function initializeFiltersFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const subcats = params.getAll('subcat');
+            const govs = params.getAll('gov');
+            const cities = params.getAll('city');
+            const priceParam = params.get('price');
+            const pminParam = params.get('pmin');
+            const pmaxParam = params.get('pmax');
+
+            function normalizeSubcatCode(x){
+                const arToCode={
+                    'مرآة زفاف':'mirr-wedding','مرايا زفاف':'mirr-wedding',
+                    'مرآة خطوبة':'mirr-engagement','مرايا خطوبة':'mirr-engagement',
+                    'مرآة ديكور':'mirr-decorative','مرايا ديكور':'mirr-decorative',
+                    'مرآة مخصصة':'mirr-custom','مرآة كلاسيكية':'mirr-classic',
+                    'مرآة عصرية':'mirr-modern','مرآة فاخرة':'mirr-luxury'
+                };
+                if (arToCode[x]) return arToCode[x];
+                if (typeof x==='string' && x.startsWith('mirror-')) return x.replace('mirror-','mirr-');
+                return x;
+            }
+            if (subcats && subcats.length) activeFilters.subcategory = subcats.map(normalizeSubcatCode);
+            if (govs && govs.length) activeFilters.governorate = govs;
+            if (cities && cities.length) activeFilters.cities = cities;
+
+            function mapToMirrorPrice(mi, ma) {
+                if (mi === 0 && ma === 0) return 'negotiable';
+                if (ma != null) {
+                    if (ma <= 300) return '0-300';
+                    if (ma <= 800) return '300-800';
+                    if (ma <= 1500) return '800-1500';
+                    return '1500+';
+                }
+                if (mi != null) {
+                    if (mi > 1500) return '1500+';
+                }
+                return '';
+            }
+
+            let priceValue = '';
+            if (priceParam) {
+                if (priceParam === 'negotiable') {
+                    priceValue = 'negotiable';
+                } else {
+                    const parts = String(priceParam).split('-');
+                    const mi = parts[0] !== undefined && parts[0] !== '' ? parseFloat(parts[0]) : null;
+                    const ma = parts[1] !== undefined && parts[1] !== '' ? parseFloat(parts[1]) : null;
+                    priceValue = mapToMirrorPrice(mi, ma);
+                }
+            } else if (pminParam !== null || pmaxParam !== null) {
+                const mi = pminParam !== null && pminParam !== '' ? parseFloat(pminParam) : null;
+                const ma = pmaxParam !== null && pmaxParam !== '' ? parseFloat(pmaxParam) : null;
+                priceValue = mapToMirrorPrice(mi, ma);
+            }
+
+            if (priceValue) {
+                activeFilters.price = priceValue;
+                const priceSelect = document.getElementById('price-filter');
+                if (priceSelect) priceSelect.value = priceValue;
+            }
+
+            // تحديث واجهة أزرار التصنيف الفرعي
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                const category = btn.getAttribute('data-category');
+                if (category === 'all') {
+                    if (!activeFilters.subcategory || activeFilters.subcategory.length === 0) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                } else {
+                    if (activeFilters.subcategory && activeFilters.subcategory.includes(category)) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                }
+            });
+
+            // تحديث حالات مربعات المحافظات والمدن إن وجدت
+            const govCheckboxes = document.querySelectorAll('.governorate-checkbox');
+            govCheckboxes.forEach(cb => { cb.checked = !!(activeFilters.governorate && activeFilters.governorate.includes(cb.value)); });
+            const cityCheckboxes = document.querySelectorAll('.city-checkbox');
+            cityCheckboxes.forEach(cb => { cb.checked = !!(activeFilters.cities && activeFilters.cities.includes(cb.value)); });
+        }
+
+        // بناء معايير الفلاتر في QueryString لنقلها لصفحة الفلاتر
+        function buildFiltersQueryString() {
+            const params = new URLSearchParams();
+            if (activeFilters && Array.isArray(activeFilters.subcategory)) {
+                activeFilters.subcategory.forEach(v => params.append('subcat', v));
+            }
+            if (activeFilters && Array.isArray(activeFilters.governorate)) {
+                activeFilters.governorate.forEach(v => params.append('gov', v));
+            }
+            if (activeFilters && Array.isArray(activeFilters.cities)) {
+                activeFilters.cities.forEach(v => params.append('city', v));
+            }
+            // تحويل السعر الحالي إلى pmin/pmax
+            switch (activeFilters?.price) {
+                case '0-300':
+                    params.set('pmin', '0'); params.set('pmax', '300');
+                    break;
+                case '300-800':
+                    params.set('pmin', '301'); params.set('pmax', '800');
+                    break;
+                case '800-1500':
+                    params.set('pmin', '801'); params.set('pmax', '1500');
+                    break;
+                case '1500+':
+                    params.set('pmin', '1501');
+                    break;
+                case 'negotiable':
+                    params.set('pmin', '0'); params.set('pmax', '0');
+                    break;
+            }
+            return params.toString();
+        }
 
         // Load products by category
         async function loadCategoryProducts() {
@@ -1412,25 +1536,8 @@
             });
             
             toggleBtn.addEventListener('click', function() {
-                filtersOpen = !filtersOpen;
-                
-                if (filtersOpen) {
-                    // Open filters
-                    filtersContent.classList.remove('hidden');
-                    toggleIcon.classList.add('rotated');
-                    toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
-                    
-                    // Show close button on small screens
-                    if (window.innerWidth < 640) {
-                        closeFiltersBtn.classList.remove('hidden');
-                    }
-                } else {
-                    // Close filters
-                    filtersContent.classList.add('hidden');
-                    toggleIcon.classList.remove('rotated');
-                    toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
-                    closeFiltersBtn.classList.add('hidden');
-                }
+                const qs = buildFiltersQueryString();
+                window.location.href = `mirr-filters.html${qs ? '?' + qs : ''}`;
             });
             
             // Close filters button functionality

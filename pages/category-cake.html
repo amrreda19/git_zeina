@@ -1743,6 +1743,7 @@
         document.addEventListener('DOMContentLoaded', async function() {
             // تهيئة الصفحة من URL
             initializePaginationFromURL();
+            initializeFiltersFromURL();
             
             // Initialize simple filter buttons
             setupSimpleFilterButtons();
@@ -1757,6 +1758,7 @@
             setupAdvancedFilters();
             setupToggleFilters();
             setupPagination();
+            applyFilters();
         });
 
         // Load products by category
@@ -1832,6 +1834,113 @@
             }
         }
 
+        function initializeFiltersFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const subcats = params.getAll('subcat');
+            const govs = params.getAll('gov');
+            const cities = params.getAll('city');
+            const priceParam = params.get('price');
+            const pminParam = params.get('pmin');
+            const pmaxParam = params.get('pmax');
+
+            if (subcats && subcats.length) activeFilters.subcategory = subcats;
+            if (govs && govs.length) activeFilters.governorate = govs;
+            if (cities && cities.length) activeFilters.cities = cities;
+
+            function mapToCakePrice(mi, ma) {
+                if (mi === 0 && ma === 0) return 'negotiable';
+                if (ma != null) {
+                    if (ma <= 200) return '0-200';
+                    if (ma <= 500) return '200-500';
+                    if (ma <= 1000) return '500-1000';
+                    return '1000+';
+                }
+                if (mi != null) {
+                    if (mi > 1000) return '1000+';
+                }
+                return '';
+            }
+
+            let priceValue = '';
+            if (priceParam) {
+                if (priceParam === 'negotiable') {
+                    priceValue = 'negotiable';
+                } else {
+                    const parts = String(priceParam).split('-');
+                    const mi = parts[0] !== undefined && parts[0] !== '' ? parseFloat(parts[0]) : null;
+                    const ma = parts[1] !== undefined && parts[1] !== '' ? parseFloat(parts[1]) : null;
+                    priceValue = mapToCakePrice(mi, ma);
+                }
+            } else if (pminParam !== null || pmaxParam !== null) {
+                const mi = pminParam !== null && pminParam !== '' ? parseFloat(pminParam) : null;
+                const ma = pmaxParam !== null && pmaxParam !== '' ? parseFloat(pmaxParam) : null;
+                priceValue = mapToCakePrice(mi, ma);
+            }
+
+            if (priceValue) {
+                activeFilters.price = priceValue;
+                const priceSelect = document.getElementById('price-filter');
+                if (priceSelect) priceSelect.value = priceValue;
+            }
+
+            // تحديث واجهة الأزرار البسيطة للتصنيف الفرعي
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                const category = btn.getAttribute('data-category');
+                if (category === 'all') {
+                    if (!activeFilters.subcategory || activeFilters.subcategory.length === 0) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                } else {
+                    if (activeFilters.subcategory && activeFilters.subcategory.includes(category)) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                }
+            });
+
+            // تحديث حالات مربعات اختيار المحافظات والمدن إن وجدت في DOM
+            const govCheckboxes = document.querySelectorAll('.governorate-checkbox');
+            govCheckboxes.forEach(cb => { cb.checked = !!(activeFilters.governorate && activeFilters.governorate.includes(cb.value)); });
+            const cityCheckboxes = document.querySelectorAll('.city-checkbox');
+            cityCheckboxes.forEach(cb => { cb.checked = !!(activeFilters.cities && activeFilters.cities.includes(cb.value)); });
+        }
+
+        function buildFiltersQueryString() {
+            const params = new URLSearchParams();
+            if (activeFilters && Array.isArray(activeFilters.subcategory)) {
+                activeFilters.subcategory.forEach(v => params.append('subcat', v));
+            }
+            if (activeFilters && Array.isArray(activeFilters.governorate)) {
+                activeFilters.governorate.forEach(v => params.append('gov', v));
+            }
+            if (activeFilters && Array.isArray(activeFilters.cities)) {
+                activeFilters.cities.forEach(v => params.append('city', v));
+            }
+            // تحويل فلتر السعر الحالي إلى pmin/pmax لصفحة الفلاتر
+            switch (activeFilters?.price) {
+                case '0-200':
+                    params.set('pmin', '0'); params.set('pmax', '200');
+                    break;
+                case '200-500':
+                    params.set('pmin', '201'); params.set('pmax', '500');
+                    break;
+                case '500-1000':
+                    params.set('pmin', '501'); params.set('pmax', '1000');
+                    break;
+                case '1000+':
+                    params.set('pmin', '1001');
+                    break;
+                case 'negotiable':
+                    params.set('pmin', '0'); params.set('pmax', '0');
+                    break;
+            }
+            return params.toString();
+        }
+
         // Setup toggle filters functionality
         function setupToggleFilters() {
             const toggleBtn = document.getElementById('toggle-filters-btn');
@@ -1876,25 +1985,8 @@
             });
             
             toggleBtn.addEventListener('click', function() {
-                filtersOpen = !filtersOpen;
-                
-                if (filtersOpen) {
-                    // Open filters
-                    filtersContent.classList.remove('hidden');
-                    toggleIcon.classList.add('rotated');
-                    toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
-                    
-                    // Show close button on small screens
-                    if (window.innerWidth < 640) {
-                        closeFiltersBtn.classList.remove('hidden');
-                    }
-                } else {
-                    // Close filters
-                    filtersContent.classList.add('hidden');
-                    toggleIcon.classList.remove('rotated');
-                    toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
-                    closeFiltersBtn.classList.add('hidden');
-                }
+                const qs = buildFiltersQueryString();
+                window.location.href = `cake-filters.html${qs ? '?' + qs : ''}`;
             });
             
             // Close filters button functionality
@@ -3629,14 +3721,15 @@
                 const finalItems = await window.smartCategoryAdvertising.loadCategorySection('cake', 'products-container');
                 
                 if (finalItems && finalItems.length > 0) {
-                    // تحديث المتغير العام للمنتجات
-                    allProducts = finalItems.filter(item => !item.is_ad);
-                    
-                    // تطبيق الفلاتر والترتيب
-                    sortProductsByCriteria();
-                    filteredProducts = allProducts; // تهيئة المنتجات المفلترة
-                    displayProductsWithPagination();
-                    updateProductsCount();
+                    const nonAdItems = finalItems.filter(item => !item.is_ad);
+                    if (nonAdItems.length > 0) {
+                        allProducts = nonAdItems;
+                        sortProductsByCriteria();
+                        applyFilters();
+                    } else {
+                        await loadCategoryProducts();
+                        applyFilters();
+                    }
                     
                     // تحديث أيقونات المفضلة
                     setTimeout(() => {
@@ -3652,18 +3745,14 @@
                 } else {
                     // استخدام الطريقة القديمة إذا لم تنجح الطريقة الجديدة
                     await loadCategoryProducts();
-                    filteredProducts = allProducts;
-                    displayProductsWithPagination();
-                    updateProductsCount();
+                    applyFilters();
                 }
                 
             } catch (error) {
                 console.error('❌ خطأ في تحميل قسم التصنيف مع الإعلانات:', error);
                 // استخدام الطريقة القديمة في حالة الخطأ
                 await loadCategoryProducts();
-                filteredProducts = allProducts;
-                displayProductsWithPagination();
-                updateProductsCount();
+                applyFilters();
             }
         }
 

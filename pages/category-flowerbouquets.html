@@ -1267,8 +1267,7 @@
                     filteredProducts = [...allProducts];
                     
                     updateProductsCount();
-                    displayProducts(filteredProducts);
-                    hideLoadingState();
+                    applyFilters();
                     
                     if (allProducts.length === 0) {
                         showEmptyState();
@@ -2166,6 +2165,9 @@
             // Initialize other filters
             setupAdvancedFilters();
             setupToggleFilters();
+
+            // Initialize filters from URL
+            initializeFiltersFromURL();
         });
 
         // Apply all active filters
@@ -2364,26 +2366,21 @@
             });
             
             toggleBtn.addEventListener('click', function() {
-                filtersOpen = !filtersOpen;
-                
-                if (filtersOpen) {
-                                            // Open filters
-                        filtersContent.classList.remove('hidden');
-                        if (toggleIcon) toggleIcon.classList.add('rotated');
-                        if (toggleText) toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
-                        // إظهار زر الإغلاق في الشاشة الصغيرة
-                    if (closeFiltersBtn && window.innerWidth < 640) {
-                        closeFiltersBtn.classList.remove('hidden');
-                    }
-                } else {
-                    // Close filters
-                    filtersContent.classList.add('hidden');
-                    if (toggleIcon) toggleIcon.classList.remove('rotated');
-                    // إخفاء زر الإغلاق
-                    if (closeFiltersBtn) {
-                        closeFiltersBtn.classList.add('hidden');
-                    }
+                const params = new URLSearchParams();
+                const filters = window.activeFilters || activeFilters;
+                if (filters?.subcategory?.length) filters.subcategory.forEach(v=>params.append('subcat', v));
+                if (filters?.governorates?.length) filters.governorates.forEach(v=>params.append('gov', v));
+                if (filters?.cities?.length) filters.cities.forEach(v=>params.append('city', v));
+                if (filters?.colors?.length) filters.colors.forEach(v=>params.append('color', v));
+                switch (filters?.price) {
+                    case '0-200': params.set('pmin','0'); params.set('pmax','200'); break;
+                    case '200-500': params.set('pmin','201'); params.set('pmax','500'); break;
+                    case '500-1000': params.set('pmin','501'); params.set('pmax','1000'); break;
+                    case '1000+': params.set('pmin','1001'); break;
+                    case 'negotiable': params.set('pmin','0'); params.set('pmax','0'); break;
                 }
+                const qs = params.toString();
+                window.location.href = `flowerbouquets-filters.html${qs ? '?' + qs : ''}`;
             });
             
             // إضافة وظيفة زر الإغلاق
@@ -2838,6 +2835,79 @@
                 clearFiltersBtn.addEventListener('click', function() {
                     clearAllFilters();
                 });
+            }
+        }
+
+        // Initialize filters from URL (subcategory, governorates, cities, price, colors)
+        function initializeFiltersFromURL() {
+            const params = new URLSearchParams(window.location.search);
+
+            // Subcategories
+            const subcats = params.getAll('subcat').filter(Boolean);
+            if (subcats.length > 0) {
+                const subcategoryCheckboxes = document.querySelectorAll('.subcategory-checkbox');
+                subcategoryCheckboxes.forEach(cb => {
+                    if (subcats.includes(cb.value)) {
+                        cb.checked = true;
+                    }
+                });
+                updateSubcategoryFilter();
+            }
+
+            // Governorates
+            const govs = params.getAll('gov').filter(Boolean);
+            if (govs.length > 0) {
+                const governorateCheckboxes = document.querySelectorAll('.governorate-checkbox');
+                governorateCheckboxes.forEach(cb => {
+                    if (govs.includes(cb.value)) {
+                        cb.checked = true;
+                    }
+                });
+                updateGovernorateFilter();
+            }
+
+            // Cities
+            const cities = params.getAll('city').filter(Boolean);
+            if (cities.length > 0) {
+                const cityCheckboxes = document.querySelectorAll('.city-checkbox');
+                cityCheckboxes.forEach(cb => {
+                    if (cities.includes(cb.value)) {
+                        cb.checked = true;
+                    }
+                });
+                updateCitiesFilter();
+            }
+
+            // Colors
+            const colors = params.getAll('color').filter(Boolean);
+            if (colors.length > 0) {
+                const colorCheckboxes = document.querySelectorAll('.color-checkbox');
+                colorCheckboxes.forEach(cb => {
+                    if (colors.includes(cb.value)) {
+                        cb.checked = true;
+                    }
+                });
+                if (typeof updateColorFilter === 'function') {
+                    updateColorFilter();
+                }
+            }
+
+            // Price
+            const pmin = params.get('pmin');
+            const pmax = params.get('pmax');
+            const priceSelect = document.getElementById('price-filter');
+            if (priceSelect && (pmin !== null || pmax !== null)) {
+                let val = '';
+                if (pmin === '0' && pmax === '200') val = '0-200';
+                else if (pmin === '201' && pmax === '500') val = '200-500';
+                else if (pmin === '501' && pmax === '1000') val = '500-1000';
+                else if (pmin === '1001' && (pmax === null || pmax === '' || typeof pmax === 'undefined')) val = '1000+';
+                else if (pmin === '0' && pmax === '0') val = 'negotiable';
+                if (val) {
+                    priceSelect.value = val;
+                    const filters = window.activeFilters || activeFilters;
+                    filters.price = val;
+                }
             }
         }
 

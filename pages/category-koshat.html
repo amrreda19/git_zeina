@@ -1136,6 +1136,10 @@
         let currentPage = 1;
         const productsPerPage = 18;
         const sliderState = new Map();
+        let sortOption = 'latest';
+        let extrasText = '';
+        let priceMin = null;
+        let priceMax = null;
 
         let activeFilters = {
             subcategory: [],
@@ -1143,6 +1147,33 @@
             cities: [],
             price: ''
         };
+
+        // قراءة معلمات الاستعلام وتطبيقها على الفلاتر
+        function applyQueryParamsToFilters() {
+            const params = new URLSearchParams(window.location.search);
+            const subcats = params.getAll('subcat');
+            const govs = params.getAll('gov');
+            const cities = params.getAll('city');
+            const district = params.get('district') || '';
+            const pmin = params.get('pmin');
+            const pmax = params.get('pmax');
+            extrasText = params.get('extras') || '';
+            sortOption = params.get('sort') || 'latest';
+
+            if (subcats.length) activeFilters.subcategory = subcats;
+            if (govs.length) activeFilters.governorate = govs;
+            if (cities.length) activeFilters.cities = cities;
+            if (district) activeFilters.cities = [...new Set([...(activeFilters.cities||[]), district])];
+
+            priceMin = (pmin !== null && pmin !== '' && !isNaN(parseFloat(pmin))) ? parseFloat(pmin) : null;
+            priceMax = (pmax !== null && pmax !== '' && !isNaN(parseFloat(pmax))) ? parseFloat(pmax) : null;
+
+            if (priceMin === 0 && priceMax === 500) activeFilters.price = '0-500';
+            else if (priceMin === 501 && priceMax === 1000) activeFilters.price = '500-1000';
+            else if (priceMin === 1001 && priceMax === 2000) activeFilters.price = '1000-2000';
+            else if (priceMin === 2001 && priceMax === null) activeFilters.price = '2000+';
+            else if (priceMin === 0 && priceMax === 0) activeFilters.price = 'negotiable';
+        }
 
         // Global functions for cities filter
         function updateSelectedCities() {
@@ -1200,6 +1231,7 @@
             // Get current page from URL
             const urlParams = new URLSearchParams(window.location.search);
             currentPage = parseInt(urlParams.get('page')) || 1;
+            applyQueryParamsToFilters();
             
             // Initialize simple filter buttons
             setupSimpleFilterButtons();
@@ -1271,31 +1303,28 @@
             }
         }
 
-        // ترتيب المنتجات حسب الأولوية: منتجات بسعر أولاً ثم بدون سعر
+        // ترتيب المنتجات حسب خيار الفرز
         function sortProductsByCriteria() {
             if (allProducts && allProducts.length > 0) {
-                allProducts.sort((a, b) => {
-                    const priceA = parseFloat(a.price);
-                    const priceB = parseFloat(b.price);
-                    const hasValidPriceA = !isNaN(priceA) && priceA > 0;
-                    const hasValidPriceB = !isNaN(priceB) && priceB > 0;
-                    
-                    // إذا كان أحدهما له سعر والآخر لا، المنتج الذي له سعر يأتي أولاً
-                    if (hasValidPriceA && !hasValidPriceB) {
-                        return -1; // A يأتي قبل B
-                    }
-                    if (!hasValidPriceA && hasValidPriceB) {
-                        return 1; // B يأتي قبل A
-                    }
-                    
-                    // إذا كان كلاهما له سعر، ترتيب تصاعدي حسب السعر
-                    if (hasValidPriceA && hasValidPriceB) {
-                        return priceA - priceB;
-                    }
-                    
-                    // إذا كان كلاهما بدون سعر، ترتيب حسب تاريخ الإنشاء
-                    return new Date(b.created_at) - new Date(a.created_at);
-                });
+                if (sortOption === 'price_asc') {
+                    allProducts.sort((a,b)=>{
+                        const pa = parseFloat(a.price); const pb = parseFloat(b.price);
+                        const va = isNaN(pa)||pa===0 ? Infinity : pa;
+                        const vb = isNaN(pb)||pb===0 ? Infinity : pb;
+                        return va - vb;
+                    });
+                } else if (sortOption === 'price_desc') {
+                    allProducts.sort((a,b)=>{
+                        const pa = parseFloat(a.price); const pb = parseFloat(b.price);
+                        const va = isNaN(pa)||pa===0 ? -1 : pa;
+                        const vb = isNaN(pb)||pb===0 ? -1 : pb;
+                        return vb - va;
+                    });
+                } else if (sortOption === 'rating_desc') {
+                    allProducts.sort((a,b)=> (parseFloat(b.rating)||0) - (parseFloat(a.rating)||0));
+                } else {
+                    allProducts.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+                }
                 
 
             }
@@ -1311,6 +1340,39 @@
             const filterSection = document.querySelector('.filter-section');
             
             let filtersOpen = false;
+
+            // الانتقال إلى صفحة الفلاتر المستقلة مع تمرير الحالة الحالية كمعلمات رابط
+            function buildFiltersQueryString() {
+                const params = new URLSearchParams();
+                if (activeFilters && Array.isArray(activeFilters.subcategory)) {
+                    activeFilters.subcategory.forEach(v => params.append('subcat', v));
+                }
+                if (activeFilters && Array.isArray(activeFilters.governorate)) {
+                    activeFilters.governorate.forEach(v => params.append('gov', v));
+                }
+                if (activeFilters && Array.isArray(activeFilters.cities)) {
+                    activeFilters.cities.forEach(v => params.append('city', v));
+                }
+                // تحويل فلتر السعر الحالي إلى حد أدنى/أقصى متوافق مع صفحة الفلاتر
+                switch (activeFilters?.price) {
+                    case '0-500':
+                        params.set('pmin', '0'); params.set('pmax', '500');
+                        break;
+                    case '500-1000':
+                        params.set('pmin', '501'); params.set('pmax', '1000');
+                        break;
+                    case '1000-2000':
+                        params.set('pmin', '1001'); params.set('pmax', '2000');
+                        break;
+                    case '2000+':
+                        params.set('pmin', '2001');
+                        break;
+                    case 'negotiable':
+                        params.set('pmin', '0'); params.set('pmax', '0');
+                        break;
+                }
+                return params.toString();
+            }
             
             // فتح الفلاتر عند الضغط على أي مكان في قسم الفلاتر
             filterSection.addEventListener('click', function(event) {
@@ -1345,25 +1407,8 @@
             });
             
             toggleBtn.addEventListener('click', function() {
-                filtersOpen = !filtersOpen;
-                
-                if (filtersOpen) {
-                    // Open filters
-                    filtersContent.classList.remove('hidden');
-                    toggleIcon.classList.add('rotated');
-                    toggleText.textContent = 'إلغاء تحديد المنتج والمحافظة';
-                    
-                    // Show close button on small screens
-                    if (window.innerWidth < 640) {
-                        closeFiltersBtn.classList.remove('hidden');
-                    }
-                } else {
-                    // Close filters
-                    filtersContent.classList.add('hidden');
-                    toggleIcon.classList.remove('rotated');
-                    toggleText.textContent = 'فلاتر اختيار المنتج والمحافظة';
-                    closeFiltersBtn.classList.add('hidden');
-                }
+                const qs = buildFiltersQueryString();
+                window.location.href = `koshat-filters.html${qs ? '?' + qs : ''}`;
             });
             
             // Close filters button functionality
@@ -1971,6 +2016,25 @@
                         default:
                             return true;
                     }
+                });
+            }
+
+            // نطاق سعر مخصص من معلمات الاستعلام
+            if (!activeFilters.price && (priceMin !== null || priceMax !== null)) {
+                filteredProducts = filteredProducts.filter(product => {
+                    const price = parseFloat(product.price) || 0;
+                    if (priceMin !== null && price < priceMin) return false;
+                    if (priceMax !== null && price > priceMax) return false;
+                    return true;
+                });
+            }
+
+            // نص مزايا/بحث إضافي
+            if (extrasText && extrasText.trim() !== '') {
+                const q = extrasText.toLowerCase();
+                filteredProducts = filteredProducts.filter(product => {
+                    const t = ((product.title||'') + ' ' + (product.description||'')).toLowerCase();
+                    return t.includes(q);
                 });
             }
 
@@ -3314,8 +3378,10 @@
                 const newPage = parseInt(urlParams.get('page')) || 1;
                 if (newPage !== currentPage) {
                     currentPage = newPage;
-                    applyFilters(false);
                 }
+                applyQueryParamsToFilters();
+                sortProductsByCriteria();
+                applyFilters(false);
             });
         });
     </script>

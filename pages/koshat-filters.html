@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرشحات كوشات | Zeina Events</title>
+    <link rel="icon" type="image/png" href="../assets/images/zeina.jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/product-service.js"></script>
+    <script src="../js/cities-service.js"></script>
+    <style>body{font-family:'Tajawal',sans-serif}</style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <header class="bg-white border-b sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="category-koshat.html" class="text-lg font-bold text-yellow-700">زِينَة</a>
+            <div class="text-sm text-gray-600">النتائج المتوقعة: <span id="result-count" class="font-semibold">0</span></div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-4 flex-1">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <details class="bg-white rounded-xl p-4 shadow-sm" open>
+                <summary class="font-semibold text-gray-800">التصنيف الفرعي</summary>
+                <div class="mt-3 flex flex-wrap gap-2 text-sm" id="subcat-box">
+                    <label class="inline-flex items-center gap-1"><input type="checkbox" id="subcat-all"> الكل</label>
+                    <label class="inline-flex items-center gap-1"><input type="checkbox" value="koshat-wedding" class="subcat"> زفاف</label>
+                    <label class="inline-flex items-center gap-1"><input type="checkbox" value="koshat-engagement" class="subcat"> خطوبة</label>
+                </div>
+            </details>
+
+            <details class="bg-white rounded-xl p-4 shadow-sm" open>
+                <summary class="font-semibold text-gray-800">المحافظة</summary>
+                <div id="gov-box" class="mt-3 grid grid-cols-2 gap-2 text-sm max-h-60 overflow-auto"></div>
+            </details>
+
+            <details class="bg-white rounded-xl p-4 shadow-sm" open>
+                <summary class="font-semibold text-gray-800">المدن/المناطق</summary>
+                <div id="city-box" class="mt-3 grid grid-cols-2 gap-2 text-sm max-h-60 overflow-auto"></div>
+            </details>
+
+            
+
+            <details class="bg-white rounded-xl p-4 shadow-sm" open>
+                <summary class="font-semibold text-gray-800">السعر</summary>
+                <select id="price-select" class="mt-3 w-full p-2 border rounded-lg text-sm">
+                    <option value="">جميع الأسعار</option>
+                    <option value="0-500">حتى 500 ج.م</option>
+                    <option value="500-1000">500 - 1000 ج.م</option>
+                    <option value="1000-2000">1000 - 2000 ج.م</option>
+                    <option value="2000+">أكثر من 2000 ج.م</option>
+                    <option value="negotiable">السعر عند الطلب</option>
+                </select>
+            </details>
+
+            
+
+            
+        </div>
+    </main>
+
+    <div class="fixed bottom-0 inset-x-0 bg-white border-t z-40">
+        <div class="container mx-auto px-4 py-3 flex items-center gap-3">
+            <button id="clear-btn" class="flex-1 py-3 rounded-lg border text-gray-700">مسح الفلاتر</button>
+            <button id="apply-btn" class="flex-1 py-3 rounded-lg text-white font-semibold" style="background:#845FCE">تطبيق الفلاتر (<span id="apply-count">0</span>)</button>
+        </div>
+    </div>
+
+    <script>
+    let all=[], active={subcat:[], gov:[], city:[], pmin:'', pmax:''};
+    const codeToAr={"koshat-wedding":"كوشات زفاف","koshat-engagement":"كوشات خطوبة"}, arToCode={"كوشات زفاف":"koshat-wedding","كوشات خطوبة":"koshat-engagement"};
+    function qs(k){const u=new URL(location);return u.searchParams.getAll(k).length?u.searchParams.getAll(k):u.searchParams.get(k);} function setFromURL(){const u=new URL(location),gp=v=>u.searchParams.getAll(v).filter(Boolean);active.subcat=gp('subcat');active.gov=gp('gov');active.city=gp('city');const price=u.searchParams.get('price')||'';if(price){const [mi,ma]=price.split('-');active.pmin=mi||'';active.pmax=ma||'';}}
+    function toParams(){const p=new URLSearchParams();active.subcat.forEach(v=>p.append('subcat',v));active.gov.forEach(v=>p.append('gov',v));active.city.forEach(v=>p.append('city',v));if(active.pmin||active.pmax){const val=active.pmax?`${active.pmin}-${active.pmax}`:active.pmin; p.set('price',val);} return p.toString();}
+    function parseSubcats(val){let arr=[];if(!val)return arr;try{const j=JSON.parse(val);if(Array.isArray(j))arr=j;}catch{arr=[val];}return arr.map(s=>arToCode[s]||s);} 
+    function passSubcat(p){if(!active.subcat.length)return true;let subs=[];if(Array.isArray(p.subcategory))subs=p.subcategory;else if(typeof p.subcategory==='string')subs=parseSubcats(p.subcategory);return active.subcat.some(c=>subs.includes(c)||subs.includes(codeToAr[c]||c));}
+    function passGov(p){if(!active.gov.length)return true;const g=(p.governorate||'').split(',').map(s=>s.trim());return active.gov.some(v=>g.some(x=>x.includes(v)));}
+    function passCity(p){if(!active.city.length)return true;const c=(p.cities||'').split(',').map(s=>s.trim());return active.city.some(v=>c.some(x=>x.includes(v)));}
+    function passPrice(p){
+        const price=parseFloat(p.price)||0;
+        const sel=document.getElementById('price-select');
+        const val=sel?sel.value:'';
+        if(!val) return true;
+        switch(val){
+            case '0-500': return price>0 && price<=500;
+            case '500-1000': return price>500 && price<=1000;
+            case '1000-2000': return price>1000 && price<=2000;
+            case '2000+': return price>2000;
+            case 'negotiable': return price===0 || !p.price;
+            default: return true;
+        }
+    }
+    function apply(){const r=all.filter(p=>passSubcat(p)&&passGov(p)&&passCity(p)&&passPrice(p));document.getElementById('result-count').textContent=r.length;document.getElementById('apply-count').textContent=r.length;}
+    function renderGov(cities){const gb=document.getElementById('gov-box');gb.innerHTML='';const allGovs=cities.getAllGovernorates();allGovs.forEach(g=>{const l=document.createElement('label');l.className='inline-flex items-center gap-1';l.innerHTML=`<input type=\"checkbox\" class=\"gov\" value=\"${g}\"> ${g}`;gb.appendChild(l);});}
+    function renderCities(cities){const cb=document.getElementById('city-box');cb.innerHTML='';let list=[];if(active.gov.length){active.gov.forEach(g=>{cities.getCitiesForGovernorate(g).forEach(c=>list.push(c));});list=[...new Set(list)];} list.forEach(c=>{const l=document.createElement('label');l.className='inline-flex items-center gap-1';l.innerHTML=`<input type=\"checkbox\" class=\"city\" value=\"${c}\"> ${c}`;cb.appendChild(l);});}
+    function bind(){
+        const subAll=document.getElementById('subcat-all');if(subAll){subAll.checked=active.subcat.length===0;subAll.onchange=()=>{if(subAll.checked){document.querySelectorAll('.subcat').forEach(c=>c.checked=false);active.subcat=[];apply();}}}
+        document.querySelectorAll('.subcat').forEach(el=>{el.checked=active.subcat.includes(el.value);el.onchange=()=>{el.checked?active.subcat.push(el.value):active.subcat=active.subcat.filter(v=>v!==el.value);const a=document.getElementById('subcat-all');if(a) a.checked=active.subcat.length===0;apply();};});
+        document.querySelectorAll('.gov').forEach(el=>{el.checked=active.gov.includes(el.value);el.onchange=()=>{el.checked?active.gov.push(el.value):active.gov=active.gov.filter(v=>v!==el.value);renderCities(new CitiesService());bind();apply();};});
+        document.querySelectorAll('.city').forEach(el=>{el.checked=active.city.includes(el.value);el.onchange=()=>{el.checked?active.city.push(el.value):active.city=active.city.filter(v=>v!==el.value);apply();};});
+        const priceSel=document.getElementById('price-select');
+        if(priceSel){
+            const u=new URL(location);
+            const pmin=u.searchParams.get('pmin');
+            const pmax=u.searchParams.get('pmax');
+            if(pmin!==null||pmax!==null){
+                if(pmin==='0'&&pmax==='500') priceSel.value='0-500';
+                else if(pmin==='501'&&pmax==='1000') priceSel.value='500-1000';
+                else if(pmin==='1001'&&pmax==='2000') priceSel.value='1000-2000';
+                else if(pmin==='2001'&&(pmax===null||pmax===''||pmax===undefined)) priceSel.value='2000+';
+                else if(pmin==='0'&&pmax==='0') priceSel.value='negotiable';
+            }
+            priceSel.onchange=()=>{apply();}
+        }
+        document.getElementById('clear-btn').onclick=()=>{active={subcat:[],gov:[],city:[],pmin:'',pmax:''};location.replace(location.pathname);};
+        document.getElementById('apply-btn').onclick=()=>{const q=toParams();location.href=`category-koshat.html${q?'?'+q:''}`;};
+    }
+    document.addEventListener('DOMContentLoaded',async()=>{setFromURL();const cities=new CitiesService();renderGov(cities);renderCities(cities);try{if(!window.ProductService){await new Promise(res=>{let t=setInterval(()=>{if(window.ProductService){clearInterval(t);res();}},100);setTimeout(()=>{clearInterval(t);res();},5000);});} const r=await window.ProductService.getProductsByCategory('koshat');all=r.success?r.data:[];}catch{all=[];} bind();apply();});
+    </script>
+</body>
+</html>
+
+
