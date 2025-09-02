@@ -10,7 +10,130 @@
     <script src="../js/supabase-config.js"></script>
     <script src="../js/product-service.js"></script>
     <script src="../js/cities-service.js"></script>
-    <style>body{font-family:'Tajawal',sans-serif}</style>
+    <style>
+        body{font-family:'Tajawal',sans-serif}
+        
+        /* Simple Governorate Filter Styles */
+        .simple-governorate-filter {
+            position: relative;
+            width: 100%;
+        }
+        
+        .filter-dropdown {
+            position: relative;
+        }
+        
+        .dropdown-btn {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #374151;
+            transition: border-color 0.2s ease;
+        }
+        
+        .dropdown-btn:hover {
+            border-color: #d1d5db;
+        }
+        
+        .dropdown-btn.active {
+            border-color: #845FCE;
+            box-shadow: 0 0 0 3px rgba(132, 95, 206, 0.1);
+        }
+        
+        .dropdown-arrow {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.2s ease;
+        }
+        
+        .dropdown-btn.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .governorate-options {
+            padding: 8px;
+        }
+        
+        .governorate-option {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .governorate-option:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .governorate-checkbox {
+            margin-left: 8px;
+            width: 16px;
+            height: 16px;
+            accent-color: #845FCE;
+        }
+        
+        .selected-governorates {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .selected-governorate-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .remove-governorate {
+            background: none;
+            border: none;
+            color: #3730a3;
+            cursor: pointer;
+            font-size: 14px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .remove-governorate:hover {
+            background: rgba(55, 48, 163, 0.1);
+        }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <header class="bg-white border-b sticky top-0 z-40">
@@ -22,38 +145,104 @@
 
     <main class="container mx-auto px-4 py-4 flex-1">
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <details class="bg-white rounded-xl p-4 shadow-sm" open>
-                <summary class="font-semibold text-gray-800">التصنيف الفرعي</summary>
-                <div class="mt-3 flex flex-wrap gap-2 text-sm" id="subcat-box">
-                    <label class="inline-flex items-center gap-1"><input type="checkbox" id="subcat-all"> الكل</label>
-                    <label class="inline-flex items-center gap-1"><input type="checkbox" value="koshat-wedding" class="subcat"> زفاف</label>
-                    <label class="inline-flex items-center gap-1"><input type="checkbox" value="koshat-engagement" class="subcat"> خطوبة</label>
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="font-semibold text-gray-800 mb-3">التصنيف الفرعي</div>
+                <div class="simple-governorate-filter">
+                    <div class="filter-dropdown">
+                        <button type="button" id="subcat-dropdown-btn" class="dropdown-btn">
+                            <span id="subcat-placeholder">اختر التصنيفات</span>
+                            <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6,9 12,15 18,9"></polyline>
+                            </svg>
+                        </button>
+                        <div id="subcat-dropdown-content" class="dropdown-content hidden">
+                            <div class="governorate-options" id="subcat-box"></div>
+                        </div>
+                    </div>
+                    <div id="selected-subcats" class="selected-governorates"></div>
                 </div>
-            </details>
+            </div>
 
-            <details class="bg-white rounded-xl p-4 shadow-sm" open>
-                <summary class="font-semibold text-gray-800">المحافظة</summary>
-                <div id="gov-box" class="mt-3 grid grid-cols-2 gap-2 text-sm max-h-60 overflow-auto"></div>
-            </details>
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="font-semibold text-gray-800 mb-3">المحافظة</div>
+                <div class="simple-governorate-filter">
+                    <div class="filter-dropdown">
+                        <button type="button" id="governorate-dropdown-btn" class="dropdown-btn">
+                            <span id="governorate-placeholder">اختر المحافظات</span>
+                            <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6,9 12,15 18,9"></polyline>
+                            </svg>
+                        </button>
+                        <div id="governorate-dropdown-content" class="dropdown-content hidden">
+                            <div class="governorate-options" id="gov-box"></div>
+                        </div>
+                    </div>
+                    <div id="selected-governorates" class="selected-governorates"></div>
+                </div>
+            </div>
 
-            <details class="bg-white rounded-xl p-4 shadow-sm" open>
-                <summary class="font-semibold text-gray-800">المدن/المناطق</summary>
-                <div id="city-box" class="mt-3 grid grid-cols-2 gap-2 text-sm max-h-60 overflow-auto"></div>
-            </details>
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="font-semibold text-gray-800 mb-3">المدن/المناطق</div>
+                <div class="simple-governorate-filter">
+                    <div class="filter-dropdown">
+                        <button type="button" id="city-dropdown-btn" class="dropdown-btn">
+                            <span id="city-placeholder">اختر المدن</span>
+                            <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6,9 12,15 18,9"></polyline>
+                            </svg>
+                        </button>
+                        <div id="city-dropdown-content" class="dropdown-content hidden">
+                            <div class="governorate-options" id="city-box"></div>
+                        </div>
+                    </div>
+                    <div id="selected-cities" class="selected-governorates"></div>
+                </div>
+            </div>
 
             
 
-            <details class="bg-white rounded-xl p-4 shadow-sm" open>
-                <summary class="font-semibold text-gray-800">السعر</summary>
-                <select id="price-select" class="mt-3 w-full p-2 border rounded-lg text-sm">
-                    <option value="">جميع الأسعار</option>
-                    <option value="0-500">حتى 500 ج.م</option>
-                    <option value="500-1000">500 - 1000 ج.م</option>
-                    <option value="1000-2000">1000 - 2000 ج.م</option>
-                    <option value="2000+">أكثر من 2000 ج.م</option>
-                    <option value="negotiable">السعر عند الطلب</option>
-                </select>
-            </details>
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="font-semibold text-gray-800 mb-3">السعر</div>
+                <div class="simple-governorate-filter">
+                    <div class="filter-dropdown">
+                        <button type="button" id="price-dropdown-btn" class="dropdown-btn">
+                            <span id="price-placeholder">اختر نطاق السعر</span>
+                            <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6,9 12,15 18,9"></polyline>
+                            </svg>
+                        </button>
+                        <div id="price-dropdown-content" class="dropdown-content hidden">
+                            <div class="governorate-options">
+                                <label class="governorate-option">
+                                    <input type="radio" name="price" value="" class="governorate-checkbox">
+                                    <span>جميع الأسعار</span>
+                                </label>
+                                <label class="governorate-option">
+                                    <input type="radio" name="price" value="0-500" class="governorate-checkbox">
+                                    <span>حتى 500 ج.م</span>
+                                </label>
+                                <label class="governorate-option">
+                                    <input type="radio" name="price" value="500-1000" class="governorate-checkbox">
+                                    <span>500 - 1000 ج.م</span>
+                                </label>
+                                <label class="governorate-option">
+                                    <input type="radio" name="price" value="1000-2000" class="governorate-checkbox">
+                                    <span>1000 - 2000 ج.م</span>
+                                </label>
+                                <label class="governorate-option">
+                                    <input type="radio" name="price" value="2000+" class="governorate-checkbox">
+                                    <span>أكثر من 2000 ج.م</span>
+                                </label>
+                                <label class="governorate-option">
+                                    <input type="radio" name="price" value="negotiable" class="governorate-checkbox">
+                                    <span>السعر عند الطلب</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="selected-price" class="selected-governorates"></div>
+                </div>
+            </div>
 
             
 
@@ -63,7 +252,7 @@
 
     <div class="fixed bottom-0 inset-x-0 bg-white border-t z-40">
         <div class="container mx-auto px-4 py-3 flex items-center gap-3">
-            <button id="clear-btn" class="flex-1 py-3 rounded-lg border text-gray-700">مسح الفلاتر</button>
+            <button id="clear-btn" class="flex-1 py-3 rounded-lg text-white font-semibold bg-red-600 hover:bg-red-700">مسح الفلاتر</button>
             <button id="apply-btn" class="flex-1 py-3 rounded-lg text-white font-semibold" style="background:#845FCE">تطبيق الفلاتر (<span id="apply-count">0</span>)</button>
         </div>
     </div>
@@ -92,31 +281,197 @@
         }
     }
     function apply(){const r=all.filter(p=>passSubcat(p)&&passGov(p)&&passCity(p)&&passPrice(p));document.getElementById('result-count').textContent=r.length;document.getElementById('apply-count').textContent=r.length;}
-    function renderGov(cities){const gb=document.getElementById('gov-box');gb.innerHTML='';const allGovs=cities.getAllGovernorates();allGovs.forEach(g=>{const l=document.createElement('label');l.className='inline-flex items-center gap-1';l.innerHTML=`<input type=\"checkbox\" class=\"gov\" value=\"${g}\"> ${g}`;gb.appendChild(l);});}
-    function renderCities(cities){const cb=document.getElementById('city-box');cb.innerHTML='';let list=[];if(active.gov.length){active.gov.forEach(g=>{cities.getCitiesForGovernorate(g).forEach(c=>list.push(c));});list=[...new Set(list)];} list.forEach(c=>{const l=document.createElement('label');l.className='inline-flex items-center gap-1';l.innerHTML=`<input type=\"checkbox\" class=\"city\" value=\"${c}\"> ${c}`;cb.appendChild(l);});}
+    function renderGov(cities){const gb=document.getElementById('gov-box');gb.innerHTML='';const allGovs=cities.getAllGovernorates();allGovs.forEach(g=>{const l=document.createElement('label');l.className='governorate-option';l.innerHTML=`<input type=\"checkbox\" class=\"governorate-checkbox gov\" value=\"${g}\"> <span>${g}</span>`;gb.appendChild(l);});}
+    function renderCities(cities){const cb=document.getElementById('city-box');cb.innerHTML='';let list=[];if(active.gov.length){active.gov.forEach(g=>{cities.getCitiesForGovernorate(g).forEach(c=>list.push(c));});list=[...new Set(list)];} list.forEach(c=>{const l=document.createElement('label');l.className='governorate-option';l.innerHTML=`<input type=\"checkbox\" class=\"governorate-checkbox city\" value=\"${c}\"> <span>${c}</span>`;cb.appendChild(l);});}
     function bind(){
         const subAll=document.getElementById('subcat-all');if(subAll){subAll.checked=active.subcat.length===0;subAll.onchange=()=>{if(subAll.checked){document.querySelectorAll('.subcat').forEach(c=>c.checked=false);active.subcat=[];apply();}}}
-        document.querySelectorAll('.subcat').forEach(el=>{el.checked=active.subcat.includes(el.value);el.onchange=()=>{el.checked?active.subcat.push(el.value):active.subcat=active.subcat.filter(v=>v!==el.value);const a=document.getElementById('subcat-all');if(a) a.checked=active.subcat.length===0;apply();};});
-        document.querySelectorAll('.gov').forEach(el=>{el.checked=active.gov.includes(el.value);el.onchange=()=>{el.checked?active.gov.push(el.value):active.gov=active.gov.filter(v=>v!==el.value);renderCities(new CitiesService());bind();apply();};});
-        document.querySelectorAll('.city').forEach(el=>{el.checked=active.city.includes(el.value);el.onchange=()=>{el.checked?active.city.push(el.value):active.city=active.city.filter(v=>v!==el.value);apply();};});
-        const priceSel=document.getElementById('price-select');
-        if(priceSel){
+        document.querySelectorAll('.subcat').forEach(el=>{el.checked=active.subcat.includes(el.value);el.onchange=()=>{el.checked?active.subcat.push(el.value):active.subcat=active.subcat.filter(v=>v!==el.value);updateSelectedSubcats();apply();};});
+        document.querySelectorAll('.gov').forEach(el=>{el.checked=active.gov.includes(el.value);el.onchange=()=>{el.checked?active.gov.push(el.value):active.gov=active.gov.filter(v=>v!==el.value);updateSelectedGovernorates();renderCities(new CitiesService());bind();apply();};});
+        document.querySelectorAll('.city').forEach(el=>{el.checked=active.city.includes(el.value);el.onchange=()=>{el.checked?active.city.push(el.value):active.city=active.city.filter(v=>v!==el.value);updateSelectedCities();apply();};});
+        document.querySelectorAll('input[name="price"]').forEach(el=>{
             const u=new URL(location);
             const pmin=u.searchParams.get('pmin');
             const pmax=u.searchParams.get('pmax');
+            let selectedValue = '';
             if(pmin!==null||pmax!==null){
-                if(pmin==='0'&&pmax==='500') priceSel.value='0-500';
-                else if(pmin==='501'&&pmax==='1000') priceSel.value='500-1000';
-                else if(pmin==='1001'&&pmax==='2000') priceSel.value='1000-2000';
-                else if(pmin==='2001'&&(pmax===null||pmax===''||pmax===undefined)) priceSel.value='2000+';
-                else if(pmin==='0'&&pmax==='0') priceSel.value='negotiable';
+                if(pmin==='0'&&pmax==='500') selectedValue='0-500';
+                else if(pmin==='501'&&pmax==='1000') selectedValue='500-1000';
+                else if(pmin==='1001'&&pmax==='2000') selectedValue='1000-2000';
+                else if(pmin==='2001'&&(pmax===null||pmax===''||pmax===undefined)) selectedValue='2000+';
+                else if(pmin==='0'&&pmax==='0') selectedValue='negotiable';
             }
-            priceSel.onchange=()=>{apply();}
-        }
+            el.checked = el.value === selectedValue;
+            el.onchange=()=>{updateSelectedPrice();apply();}
+        });
         document.getElementById('clear-btn').onclick=()=>{active={subcat:[],gov:[],city:[],pmin:'',pmax:''};location.replace(location.pathname);};
         document.getElementById('apply-btn').onclick=()=>{const q=toParams();location.href=`category-koshat.html${q?'?'+q:''}`;};
+        
+        // Dropdown functionality for all filters
+        setupDropdown('governorate-dropdown-btn', 'governorate-dropdown-content');
+        setupDropdown('subcat-dropdown-btn', 'subcat-dropdown-content');
+        setupDropdown('city-dropdown-btn', 'city-dropdown-content');
+        setupDropdown('price-dropdown-btn', 'price-dropdown-content');
     }
-    document.addEventListener('DOMContentLoaded',async()=>{setFromURL();const cities=new CitiesService();renderGov(cities);renderCities(cities);try{if(!window.ProductService){await new Promise(res=>{let t=setInterval(()=>{if(window.ProductService){clearInterval(t);res();}},100);setTimeout(()=>{clearInterval(t);res();},5000);});} const r=await window.ProductService.getProductsByCategory('koshat');all=r.success?r.data:[];}catch{all=[];} bind();apply();});
+    
+    function setupDropdown(btnId, contentId) {
+        const dropdownBtn = document.getElementById(btnId);
+        const dropdownContent = document.getElementById(contentId);
+        
+        dropdownBtn.addEventListener('click', () => {
+            dropdownContent.classList.toggle('hidden');
+            dropdownBtn.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dropdownBtn.contains(e.target) && !dropdownContent.contains(e.target)) {
+                dropdownContent.classList.add('hidden');
+                dropdownBtn.classList.remove('active');
+            }
+        });
+    }
+    
+    function updateSelectedGovernorates() {
+        const container = document.getElementById('selected-governorates');
+        container.innerHTML = '';
+        
+        active.gov.forEach(gov => {
+            const tag = document.createElement('div');
+            tag.className = 'selected-governorate-tag';
+            tag.innerHTML = `
+                <span>${gov}</span>
+                <button type="button" class="remove-governorate" onclick="removeGovernorate('${gov}')">×</button>
+            `;
+            container.appendChild(tag);
+        });
+        
+        const placeholder = document.getElementById('governorate-placeholder');
+        if (active.gov.length > 0) {
+            placeholder.textContent = `تم اختيار ${active.gov.length} محافظة`;
+        } else {
+            placeholder.textContent = 'اختر المحافظات';
+        }
+    }
+    
+    function removeGovernorate(gov) {
+        active.gov = active.gov.filter(g => g !== gov);
+        document.querySelectorAll('.gov').forEach(el => {
+            if (el.value === gov) el.checked = false;
+        });
+        updateSelectedGovernorates();
+        renderCities(new CitiesService());
+        bind();
+        apply();
+    }
+    
+    function renderSubcats(){
+        const sb=document.getElementById('subcat-box'); sb.innerHTML='';
+        const subcats = [
+            {value: 'koshat-wedding', text: 'زفاف'},
+            {value: 'koshat-engagement', text: 'خطوبة'}
+        ];
+        subcats.forEach(s=>{const l=document.createElement('label'); l.className='governorate-option'; l.innerHTML=`<input type="checkbox" class="governorate-checkbox subcat" value="${s.value}"> <span>${s.text}</span>`; sb.appendChild(l);});
+    }
+    
+    function updateSelectedSubcats() {
+        const container = document.getElementById('selected-subcats');
+        container.innerHTML = '';
+        
+        active.subcat.forEach(subcat => {
+            const tag = document.createElement('div');
+            tag.className = 'selected-governorate-tag';
+            tag.innerHTML = `
+                <span>${codeToAr[subcat] || subcat}</span>
+                <button type="button" class="remove-governorate" onclick="removeSubcat('${subcat}')">×</button>
+            `;
+            container.appendChild(tag);
+        });
+        
+        const placeholder = document.getElementById('subcat-placeholder');
+        if (active.subcat.length > 0) {
+            placeholder.textContent = `تم اختيار ${active.subcat.length} تصنيف`;
+        } else {
+            placeholder.textContent = 'اختر التصنيفات';
+        }
+    }
+    
+    function removeSubcat(subcat) {
+        active.subcat = active.subcat.filter(s => s !== subcat);
+        document.querySelectorAll('.subcat').forEach(el => {
+            if (el.value === subcat) el.checked = false;
+        });
+        updateSelectedSubcats();
+        apply();
+    }
+    
+    function updateSelectedCities() {
+        const container = document.getElementById('selected-cities');
+        container.innerHTML = '';
+        
+        active.city.forEach(city => {
+            const tag = document.createElement('div');
+            tag.className = 'selected-governorate-tag';
+            tag.innerHTML = `
+                <span>${city}</span>
+                <button type="button" class="remove-governorate" onclick="removeCity('${city}')">×</button>
+            `;
+            container.appendChild(tag);
+        });
+        
+        const placeholder = document.getElementById('city-placeholder');
+        if (active.city.length > 0) {
+            placeholder.textContent = `تم اختيار ${active.city.length} مدينة`;
+        } else {
+            placeholder.textContent = 'اختر المدن';
+        }
+    }
+    
+    function removeCity(city) {
+        active.city = active.city.filter(c => c !== city);
+        document.querySelectorAll('.city').forEach(el => {
+            if (el.value === city) el.checked = false;
+        });
+        updateSelectedCities();
+        apply();
+    }
+    
+    function updateSelectedPrice() {
+        const container = document.getElementById('selected-price');
+        container.innerHTML = '';
+        
+        const selectedPrice = document.querySelector('input[name="price"]:checked');
+        if (selectedPrice && selectedPrice.value) {
+            const priceTexts = {
+                '0-500': 'حتى 500 ج.م',
+                '500-1000': '500 - 1000 ج.م',
+                '1000-2000': '1000 - 2000 ج.م',
+                '2000+': 'أكثر من 2000 ج.م',
+                'negotiable': 'السعر عند الطلب'
+            };
+            
+            const tag = document.createElement('div');
+            tag.className = 'selected-governorate-tag';
+            tag.innerHTML = `
+                <span>${priceTexts[selectedPrice.value]}</span>
+                <button type="button" class="remove-governorate" onclick="removePrice()">×</button>
+            `;
+            container.appendChild(tag);
+        }
+        
+        const placeholder = document.getElementById('price-placeholder');
+        if (selectedPrice && selectedPrice.value) {
+            placeholder.textContent = 'تم اختيار نطاق السعر';
+        } else {
+            placeholder.textContent = 'اختر نطاق السعر';
+        }
+    }
+    
+    function removePrice() {
+        document.querySelectorAll('input[name="price"]').forEach(el => el.checked = false);
+        updateSelectedPrice();
+        apply();
+    }
+    document.addEventListener('DOMContentLoaded',async()=>{setFromURL();const cities=new CitiesService();renderGov(cities);renderCities(cities);try{if(!window.ProductService){await new Promise(res=>{let t=setInterval(()=>{if(window.ProductService){clearInterval(t);res();}},100);setTimeout(()=>{clearInterval(t);res();},5000);});} const r=await window.ProductService.getProductsByCategory('koshat');all=r.success?r.data:[];}catch{all=[];} renderSubcats(); bind();apply();updateSelectedGovernorates();updateSelectedSubcats();updateSelectedCities();updateSelectedPrice();});
     </script>
 </body>
 </html>

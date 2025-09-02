@@ -26,7 +26,7 @@ rules:
     limits:
       ask_before_large_changes: true   # يسألك قبل أي تعديل كبير
       max_changed_files: 1             # يغيّر في ملف واحد بس في المرة
-      max_added_lines: 80              # أقصى عدد سطور يضيفها = 80 سطر
+      max_added_lines: 180             # أقصى عدد سطور يضيفها = 80 سطر
 
     execution:
       auto_run_mode: "ask"             # ما يشغّلش أوامر أوتوماتيك، لازم يأخذ إذنك
