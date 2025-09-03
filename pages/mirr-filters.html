@@ -194,6 +194,39 @@
         .remove-governorate:hover {
             background: rgba(55, 48, 163, 0.1);
         }
+        
+        .selected-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 16px;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 0 4px;
+        }
+        
+        .selected-item-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 14px;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+            margin-right: 2px;
+        }
+        
+        .selected-item-remove:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -364,22 +397,13 @@ function renderSubcats(){
 }
 
 function updateSelectedGovernorates() {
-    const container = document.getElementById('selected-governorates');
-    container.innerHTML = '';
-    
-    active.gov.forEach(gov => {
-        const tag = document.createElement('div');
-        tag.className = 'selected-governorate-tag';
-        tag.innerHTML = `
-            <span>${gov}</span>
-            <button type="button" class="remove-governorate" onclick="removeGovernorate('${gov}')">×</button>
-        `;
-        container.appendChild(tag);
-    });
-    
     const placeholder = document.getElementById('governorate-placeholder');
+    
     if (active.gov.length > 0) {
-        placeholder.textContent = `تم اختيار ${active.gov.length} محافظة`;
+        const selectedItems = active.gov.map(gov => {
+            return `<span class="selected-item"><button class="selected-item-remove" onclick="removeGovernorate('${gov}')">×</button>${gov}</span>`;
+        }).join('');
+        placeholder.innerHTML = `اختر المحافظات: ${selectedItems}`;
     } else {
         placeholder.textContent = 'اختر المحافظات';
     }
@@ -397,22 +421,14 @@ function removeGovernorate(gov) {
 }
 
 function updateSelectedSubcats() {
-    const container = document.getElementById('selected-subcats');
-    container.innerHTML = '';
-    
-    active.subcat.forEach(subcat => {
-        const tag = document.createElement('div');
-        tag.className = 'selected-governorate-tag';
-        tag.innerHTML = `
-            <span>${codeToAr[subcat] || subcat}</span>
-            <button type="button" class="remove-governorate" onclick="removeSubcat('${subcat}')">×</button>
-        `;
-        container.appendChild(tag);
-    });
-    
     const placeholder = document.getElementById('subcat-placeholder');
+    
     if (active.subcat.length > 0) {
-        placeholder.textContent = `تم اختيار ${active.subcat.length} تصنيف`;
+        const selectedItems = active.subcat.map(subcat => {
+            const text = codeToAr[subcat] || subcat;
+            return `<span class="selected-item"><button class="selected-item-remove" onclick="removeSubcat('${subcat}')">×</button>${text}</span>`;
+        }).join('');
+        placeholder.innerHTML = `اختر التصنيفات: ${selectedItems}`;
     } else {
         placeholder.textContent = 'اختر التصنيفات';
     }
@@ -428,22 +444,13 @@ function removeSubcat(subcat) {
 }
 
 function updateSelectedCities() {
-    const container = document.getElementById('selected-cities');
-    container.innerHTML = '';
-    
-    active.city.forEach(city => {
-        const tag = document.createElement('div');
-        tag.className = 'selected-governorate-tag';
-        tag.innerHTML = `
-            <span>${city}</span>
-            <button type="button" class="remove-governorate" onclick="removeCity('${city}')">×</button>
-        `;
-        container.appendChild(tag);
-    });
-    
     const placeholder = document.getElementById('city-placeholder');
+    
     if (active.city.length > 0) {
-        placeholder.textContent = `تم اختيار ${active.city.length} مدينة`;
+        const selectedItems = active.city.map(city => {
+            return `<span class="selected-item"><button class="selected-item-remove" onclick="removeCity('${city}')">×</button>${city}</span>`;
+        }).join('');
+        placeholder.innerHTML = `اختر المدن: ${selectedItems}`;
     } else {
         placeholder.textContent = 'اختر المدن';
     }
@@ -459,8 +466,7 @@ function removeCity(city) {
 }
 
 function updateSelectedPrice() {
-    const container = document.getElementById('selected-price');
-    container.innerHTML = '';
+    const placeholder = document.getElementById('price-placeholder');
     
     const selectedPrice = document.querySelector('input[name="price"]:checked');
     if (selectedPrice && selectedPrice.value) {
@@ -472,18 +478,8 @@ function updateSelectedPrice() {
             'negotiable': 'السعر عند الطلب'
         };
         
-        const tag = document.createElement('div');
-        tag.className = 'selected-governorate-tag';
-        tag.innerHTML = `
-            <span>${priceTexts[selectedPrice.value]}</span>
-            <button type="button" class="remove-governorate" onclick="removePrice()">×</button>
-        `;
-        container.appendChild(tag);
-    }
-    
-    const placeholder = document.getElementById('price-placeholder');
-    if (selectedPrice && selectedPrice.value) {
-        placeholder.textContent = 'تم اختيار نطاق السعر';
+        const selectedItem = `<span class="selected-item"><button class="selected-item-remove" onclick="removePrice()">×</button>${priceTexts[selectedPrice.value]}</span>`;
+        placeholder.innerHTML = `اختر نطاق السعر: ${selectedItem}`;
     } else {
         placeholder.textContent = 'اختر نطاق السعر';
     }
