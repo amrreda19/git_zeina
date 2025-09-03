@@ -260,6 +260,45 @@
         }
 
 
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .active-filter-tag {
+            background: #3b82f6;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .remove-filter {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .remove-filter:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+
 
 
 
@@ -562,7 +601,7 @@
 
         <!-- Advanced Filters -->
         <div class="filter-section" id="filter-section" style="cursor: pointer;">
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex justify-between items-center mb-6">
                 <button id="toggle-filters-btn" class="toggle-filters-btn">
                     <svg id="toggle-icon" class="toggle-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -573,6 +612,10 @@
                     <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
                 </div>
             </div>
+
+
+            <!-- Active Filters Display -->
+            <div id="active-filters" class="active-filters"></div>
         </div>
 
         <!-- Products Count -->
@@ -882,8 +925,12 @@
             });
             
             filterSection.addEventListener('click', function(e) {
-                // منع الانتقال عند النقر على زر مسح الفلاتر
-                if (e.target.id === 'clear-filters-btn' || e.target.closest('#clear-filters-btn')) {
+                // منع الانتقال عند النقر على زر مسح الفلاتر أو الفلاتر النشطة
+                if (e.target.id === 'clear-filters-btn' || 
+                    e.target.closest('#clear-filters-btn') ||
+                    e.target.closest('#active-filters') ||
+                    e.target.closest('.active-filter-tag') ||
+                    e.target.closest('.remove-filter')) {
                     return;
                 }
                 navigateToFilters();
@@ -1051,6 +1098,7 @@
             }
 
             displayProducts(filteredProducts);
+            updateActiveFiltersDisplay();
             
             // Update URL to reflect current page
             updateURL();
@@ -1066,12 +1114,107 @@
                 price: ''
             };
 
+            // Clear active filters display
+            document.getElementById('active-filters').innerHTML = '';
+
             // Reset to first page
             currentPage = 1;
             updateURL();
 
             // Apply filters
             applyFilters();
+        }
+
+        // Update active filters display
+        function updateActiveFiltersDisplay() {
+            const activeFiltersContainer = document.getElementById('active-filters');
+            const filters = [];
+
+            // Add subcategory filters
+            if (activeFilters.subcategory.length > 0) {
+                const subcategoryMap = {
+                    'koshat-wedding': 'كوشات زفاف',
+                    'koshat-engagement': 'كوشات خطوبة'
+                };
+                
+                activeFilters.subcategory.forEach(subcat => {
+                    const displayName = subcategoryMap[subcat] || subcat;
+                    filters.push({
+                        type: 'subcategory',
+                        value: subcat,
+                        displayName: displayName
+                    });
+                });
+            }
+
+            // Add governorate filters
+            if (activeFilters.governorate.length > 0) {
+                activeFilters.governorate.forEach(gov => {
+                    filters.push({
+                        type: 'governorate',
+                        value: gov,
+                        displayName: gov
+                    });
+                });
+            }
+
+            // Add cities filters
+            if (activeFilters.cities.length > 0) {
+                activeFilters.cities.forEach(city => {
+                    filters.push({
+                        type: 'cities',
+                        value: city,
+                        displayName: city
+                    });
+                });
+            }
+
+            // Add price filter
+            if (activeFilters.price) {
+                const priceMap = {
+                    '0-500': 'حتى 500 ج.م',
+                    '500-1000': '500 - 1000 ج.م',
+                    '1000-2000': '1000 - 2000 ج.م',
+                    '2000+': 'أكثر من 2000 ج.م',
+                    'negotiable': 'السعر عند الطلب'
+                };
+                
+                filters.push({
+                    type: 'price',
+                    value: activeFilters.price,
+                    displayName: priceMap[activeFilters.price] || activeFilters.price
+                });
+            }
+
+            // Render filters
+            if (filters.length > 0) {
+                activeFiltersContainer.innerHTML = filters.map(filter => `
+                    <div class="active-filter-tag">
+                        <span>${filter.displayName}</span>
+                        <button class="remove-filter" onclick="removeFilter('${filter.type}', '${filter.value}')">×</button>
+                    </div>
+                `).join('');
+            } else {
+                activeFiltersContainer.innerHTML = '';
+            }
+        }
+
+        // Remove individual filter
+        function removeFilter(type, value) {
+            if (type === 'subcategory') {
+                activeFilters.subcategory = activeFilters.subcategory.filter(item => item !== value);
+            } else if (type === 'governorate') {
+                activeFilters.governorate = activeFilters.governorate.filter(item => item !== value);
+            } else if (type === 'cities') {
+                activeFilters.cities = activeFilters.cities.filter(item => item !== value);
+            } else if (type === 'price') {
+                activeFilters.price = '';
+            }
+
+            currentPage = 1;
+            updateURL();
+            applyFilters();
+            updateActiveFiltersDisplay();
         }
 
 

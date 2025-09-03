@@ -1128,8 +1128,12 @@
             });
             
             filterSection.addEventListener('click', function(e) {
-                // منع الانتقال عند النقر على زر مسح الفلاتر
-                if (e.target.id === 'clear-filters-btn' || e.target.closest('#clear-filters-btn')) {
+                // منع الانتقال عند النقر على زر مسح الفلاتر أو الفلاتر النشطة
+                if (e.target.id === 'clear-filters-btn' || 
+                    e.target.closest('#clear-filters-btn') ||
+                    e.target.closest('#active-filters') ||
+                    e.target.closest('.active-filter-tag') ||
+                    e.target.closest('.remove-filter')) {
                     return;
                 }
                 navigateToFilters();
