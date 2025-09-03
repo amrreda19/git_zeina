@@ -2133,8 +2133,8 @@
                 <div class="bg-white rounded-lg shadow-md overflow-hidden border-2 border-yellow-200 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105 flex-shrink-0 cursor-pointer" style="width: 200px;" data-ad-id="${ad.id}" data-product-id="${ad.id}" data-ad-info='${JSON.stringify(ad)}' onclick="viewProductDetails('${ad.id}')">
                     <div class="relative image-container" data-product-id="${ad.id}" tabindex="0">
                         ${imgs.map((u,i)=>`<img src="${u}" alt="${ad.title}" class="w-full h-40 object-cover slider-image ${i===0?'':'hidden'}" loading="${i===0?'eager':'lazy'}">`).join('')}
-                        ${imgs.length>1?`<button class=\"slider-btn slider-prev\" aria-label=\"السابق\">‹</button><button class=\"slider-btn slider-next\" aria-label=\"التالي\">›</button>`:''}
-                        <div class="slider-dots">${imgs.map((_,i)=>`<button class="slider-dot ${i===0?'active':''}" aria-label="الصورة ${i+1}" data-index="${i}"></button>`).join('')}</div>
+                        ${imgs.length>1?`<button class=\"slider-btn slider-prev\" aria-label=\"السابق\" onclick=\"event.stopPropagation(); event.preventDefault(); handleSliderClick(this, 'prev');\">‹</button><button class=\"slider-btn slider-next\" aria-label=\"التالي\" onclick=\"event.stopPropagation(); event.preventDefault(); handleSliderClick(this, 'next');\">›</button>`:''}
+                        <div class="slider-dots">${imgs.map((_,i)=>`<button class="slider-dot ${i===0?'active':''}" aria-label="الصورة ${i+1}" data-index="${i}" onclick="event.stopPropagation(); event.preventDefault(); handleDotClick(this);"></button>`).join('')}</div>
                         <div class="absolute top-1 right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">⭐ مميز</div>
                         <button onclick="toggleFavorite(event, '${ad.id}', '${ad.title}', '${ad.image_url || '../assets/images/f.jpg'}', ${ad.price || 0}, '${ad.governorate || ''}', '${ad.cities || ''}', '${ad.subcategories ? ad.subcategories.join(',') : ''}')" class="absolute top-1 left-1 bg-white rounded-full p-1.5 shadow-lg hover:shadow-xl transition-all duration-200 favorite-btn border-2 border-white"><svg class="w-4 h-4 ${isFavorite('${ad.id}') ? 'text-pink-500 fill-current' : 'text-gray-400'}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>
                     </div>
@@ -2294,6 +2294,19 @@
             const dots = container.querySelectorAll('.slider-dot');
             dots.forEach((d, i) => d.classList.toggle('active', i === idx));
             window.sliderState.set(id, idx);
+        }
+
+        function handleSliderClick(button, direction) {
+            const container = button.closest('.image-container');
+            const id = container.getAttribute('data-product-id');
+            const curr = (window.sliderState && window.sliderState.get(id)) || 0;
+            updateCardSlide(container, direction === 'prev' ? curr - 1 : curr + 1);
+        }
+
+        function handleDotClick(dot) {
+            const container = dot.closest('.image-container');
+            const index = parseInt(dot.getAttribute('data-index')) || 0;
+            updateCardSlide(container, index);
         }
 
         document.addEventListener('click', function(e) {

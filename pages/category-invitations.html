@@ -2062,8 +2062,8 @@
                      onclick="viewProductDetails('${ad.id}')">
                     <div class="relative image-container" data-product-id="${ad.id}" tabindex="0">
                         ${imgs.map((u,i)=>`<img src="${u}" alt="${ad.title}" class="w-full h-40 object-cover slider-image ${i===0?'':'hidden'}" loading="${i===0?'eager':'lazy'}">`).join('')}
-                        ${imgs.length>1?`<button class=\"slider-btn slider-prev\" aria-label=\"السابق\">‹</button><button class=\"slider-btn slider-next\" aria-label=\"التالي\">›</button>`:''}
-                        <div class="slider-dots">${imgs.map((_,i)=>`<button class="slider-dot ${i===0?'active':''}" aria-label="الصورة ${i+1}" data-index="${i}"></button>`).join('')}</div>
+                        ${imgs.length>1?`<button class=\"slider-btn slider-prev\" aria-label=\"السابق\" onclick=\"event.stopPropagation(); event.preventDefault(); handleSliderClick(this, 'prev');\">‹</button><button class=\"slider-btn slider-next\" aria-label=\"التالي\" onclick=\"event.stopPropagation(); event.preventDefault(); handleSliderClick(this, 'next');\">›</button>`:''}
+                        <div class="slider-dots">${imgs.map((_,i)=>`<button class="slider-dot ${i===0?'active':''}" aria-label="الصورة ${i+1}" data-index="${i}" onclick="event.stopPropagation(); event.preventDefault(); handleDotClick(this);"></button>`).join('')}</div>
                         <div class="absolute top-1 right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">⭐ مميز</div>
                         <button onclick="toggleFavorite(event, '${ad.id}', '${ad.title}', '${ad.image_url || '../assets/images/f.jpg'}', ${ad.price || 0}, '${ad.governorate || ''}', '${ad.cities || ''}', '${ad.subcategories ? ad.subcategories.join(',') : ''}')" 
                                 class="absolute top-1 left-1 bg-white rounded-full p-1.5 shadow-lg hover:shadow-xl transition-all duration-200 favorite-btn border-2 border-white">
@@ -2238,6 +2238,19 @@
             const dots = container.querySelectorAll('.slider-dot');
             dots.forEach((d, i) => d.classList.toggle('active', i === idx));
             window.sliderState.set(id, idx);
+        }
+
+        function handleSliderClick(button, direction) {
+            const container = button.closest('.image-container');
+            const id = container.getAttribute('data-product-id');
+            const curr = (window.sliderState && window.sliderState.get(id)) || 0;
+            updateCardSlide(container, direction === 'prev' ? curr - 1 : curr + 1);
+        }
+
+        function handleDotClick(dot) {
+            const container = dot.closest('.image-container');
+            const index = parseInt(dot.getAttribute('data-index')) || 0;
+            updateCardSlide(container, index);
         }
 
         document.addEventListener('click', function(e) {
