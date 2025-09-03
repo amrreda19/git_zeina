@@ -2259,10 +2259,19 @@
                     // Add to DOM
                     slot.appendChild(fileInput);
                     
-                    // Add click event to select button
-                    selectBtn.addEventListener('click', () => {
-                        fileInput.click();
-                    });
+                                                // Add click event to select button
+                            selectBtn.addEventListener('click', () => {
+                                fileInput.click();
+                            });
+                            
+                            // Add click event to entire slot
+                            slot.addEventListener('click', (e) => {
+                                // Don't trigger if clicking on buttons or actions
+                                if (e.target.closest('.image-actions') || e.target.closest('.select-image-btn')) {
+                                    return;
+                                }
+                                fileInput.click();
+                            });
                     
                     // Handle file selection
                     fileInput.addEventListener('change', (e) => {
@@ -2478,6 +2487,15 @@
                     slot.appendChild(fileInput);
                     
                     selectBtn.addEventListener('click', () => {
+                        fileInput.click();
+                    });
+                    
+                    // Add click event to entire slot
+                    slot.addEventListener('click', (e) => {
+                        // Don't trigger if clicking on buttons or actions
+                        if (e.target.closest('.image-actions') || e.target.closest('.select-image-btn')) {
+                            return;
+                        }
                         fileInput.click();
                     });
                     
