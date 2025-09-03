@@ -671,14 +671,14 @@
 
 
         <!-- Filter Buttons -->
-        <div class="filter-section">
+        <div class="filter-section" id="filter-section" style="cursor: pointer;">
             <div class="flex justify-between items-center mb-3 sm:mb-4">
-                <a href="mirr-filters.html" class="toggle-filters-btn">
+                <button id="toggle-filters-btn" class="toggle-filters-btn">
                     <svg class="toggle-icon h-4 w-4 sm:h-5 sm:w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                     <span class="text-sm sm:text-base">فلاتر اختيار المنتج والمحافظة</span>
-                </a>
+                </button>
                 <button id="clear-filters-btn" class="clear-filters-btn">مسح الفلاتر</button>
             </div>
         </div>
@@ -2552,6 +2552,36 @@
                 }
             }
         }
+
+        // Setup toggle filters functionality
+        function setupToggleFilters() {
+            const toggleBtn = document.getElementById('toggle-filters-btn');
+            const filterSection = document.getElementById('filter-section');
+            
+            if (!toggleBtn) return;
+            
+            function navigateToFilters() {
+                window.location.href = 'mirr-filters.html';
+            }
+            
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navigateToFilters();
+            });
+            
+            filterSection.addEventListener('click', function(e) {
+                // منع الانتقال عند النقر على زر مسح الفلاتر
+                if (e.target.id === 'clear-filters-btn' || e.target.closest('#clear-filters-btn')) {
+                    return;
+                }
+                navigateToFilters();
+            });
+        }
+
+        // استدعاء الدالة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            setupToggleFilters();
+        });
     </script>
     
     <!-- ملف التمرير السلس -->

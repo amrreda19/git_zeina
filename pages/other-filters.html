@@ -9,8 +9,70 @@
 <script src="../js/supabase-config.js"></script>
 <script src="../js/product-service.js"></script>
 <script src="../js/cities-service.js"></script>
-<style>
+    <style>
         body{font-family:'Tajawal',sans-serif}
+        
+        /* Mobile-first responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem !important;
+            }
+            
+            .filter-card {
+                padding: 0.75rem !important;
+            }
+            
+            .filter-title {
+                font-size: 0.875rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .dropdown-btn {
+                padding: 0.625rem !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .governorate-option {
+                padding: 0.5rem 0.75rem !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .selected-governorate-tag {
+                font-size: 0.7rem !important;
+                padding: 0.25rem 0.5rem !important;
+            }
+            
+            .bottom-buttons {
+                padding: 0.75rem !important;
+                gap: 0.5rem !important;
+            }
+            
+            .bottom-buttons button {
+                padding: 0.75rem !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .header-content {
+                padding: 0.75rem !important;
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+                text-align: center !important;
+            }
+            
+            .header-title {
+                font-size: 1rem !important;
+            }
+            
+            .result-text {
+                font-size: 0.75rem !important;
+            }
+        }
         
         /* Simple Governorate Filter Styles */
         .simple-governorate-filter {
@@ -135,11 +197,11 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
-<header class="bg-white border-b sticky top-0 z-40"><div class="container mx-auto px-4 py-3 flex items-center justify-between"><a href="category-other.html" class="text-lg font-bold text-yellow-700">زِينَة</a><div class="text-sm text-gray-600">النتائج المتوقعة: <span id="result-count" class="font-semibold">0</span></div></div></header>
+<header class="bg-white border-b sticky top-0 z-40"><div class="container mx-auto px-4 py-3 flex items-center justify-between header-content"><a href="category-other.html" class="text-lg font-bold text-yellow-700 header-title">زِينَة</a><div class="text-sm text-gray-600 result-text">النتائج المتوقعة: <span id="result-count" class="font-semibold">0</span></div></div></header>
 <main class="container mx-auto px-4 py-4 flex-1">
 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-<div class="bg-white rounded-xl p-4 shadow-sm">
-    <div class="font-semibold text-gray-800 mb-3">التصنيف الفرعي</div>
+<div class="bg-white rounded-xl p-4 shadow-sm filter-card">
+    <div class="font-semibold text-gray-800 mb-3 filter-title">التصنيف الفرعي</div>
     <div class="simple-governorate-filter">
         <div class="filter-dropdown">
             <button type="button" id="subcat-dropdown-btn" class="dropdown-btn">
@@ -155,8 +217,8 @@
         <div id="selected-subcats" class="selected-governorates"></div>
     </div>
 </div>
-<div class="bg-white rounded-xl p-4 shadow-sm">
-    <div class="font-semibold text-gray-800 mb-3">المحافظة</div>
+<div class="bg-white rounded-xl p-4 shadow-sm filter-card">
+    <div class="font-semibold text-gray-800 mb-3 filter-title">المحافظة</div>
     <div class="simple-governorate-filter">
         <div class="filter-dropdown">
             <button type="button" id="governorate-dropdown-btn" class="dropdown-btn">
@@ -172,8 +234,8 @@
         <div id="selected-governorates" class="selected-governorates"></div>
     </div>
 </div>
-<div class="bg-white rounded-xl p-4 shadow-sm">
-    <div class="font-semibold text-gray-800 mb-3">المدن/المناطق</div>
+<div class="bg-white rounded-xl p-4 shadow-sm filter-card">
+    <div class="font-semibold text-gray-800 mb-3 filter-title">المدن/المناطق</div>
     <div class="simple-governorate-filter">
         <div class="filter-dropdown">
             <button type="button" id="city-dropdown-btn" class="dropdown-btn">
@@ -189,8 +251,8 @@
         <div id="selected-cities" class="selected-governorates"></div>
     </div>
 </div>
-<div class="bg-white rounded-xl p-4 shadow-sm">
-    <div class="font-semibold text-gray-800 mb-3">السعر</div>
+<div class="bg-white rounded-xl p-4 shadow-sm filter-card">
+    <div class="font-semibold text-gray-800 mb-3 filter-title">السعر</div>
     <div class="simple-governorate-filter">
         <div class="filter-dropdown">
             <button type="button" id="price-dropdown-btn" class="dropdown-btn">
@@ -233,7 +295,7 @@
 </div>
 </div>
 </main>
-<div class="fixed bottom-0 inset-x-0 bg-white border-t z-40"><div class="container mx-auto px-4 py-3 flex items-center gap-3"><button id="clear-btn" class="flex-1 py-3 rounded-lg text-white font-semibold bg-red-600 hover:bg-red-700">مسح الفلاتر</button><button id="apply-btn" class="flex-1 py-3 rounded-lg text-white font-semibold" style="background:#845FCE">تطبيق الفلاتر (<span id="apply-count">0</span>)</button></div></div>
+<div class="fixed bottom-0 inset-x-0 bg-white border-t z-40"><div class="container mx-auto px-4 py-3 flex items-center gap-3 bottom-buttons"><button id="clear-btn" class="flex-1 py-3 rounded-lg text-white font-semibold bg-red-600 hover:bg-red-700">مسح الفلاتر</button><button id="apply-btn" class="flex-1 py-3 rounded-lg text-white font-semibold" style="background:#845FCE">تطبيق الفلاتر (<span id="apply-count">0</span>)</button></div></div>
 <script>
 let all=[],active={subcat:[],gov:[],city:[]};
 const codeToAr={"other-birthday":"ديكور عيد ميلاد","other-hospital":"استقبال مستشفى","other-bride":"استقبال عروسة","other-party":"حفلات بسيطة","other-balloons":"بالونات وهدايا","other-flowers":"زهور وأزهار","other-lights":"إضاءات ديكور"},arToCode={"ديكور عيد ميلاد":"other-birthday","استقبال مستشفى":"other-hospital","استقبال عروسة":"other-bride","حفلات بسيطة":"other-party","بالونات وهدايا":"other-balloons","زهور وأزهار":"other-flowers","إضاءات ديكور":"other-lights"};
@@ -245,14 +307,14 @@ function passGov(p){if(!active.gov.length) return true;const g=(p.governorate||'
 function passCity(p){if(!active.city.length) return true;const c=(p.cities||'').split(',').map(s=>s.trim());return active.city.some(v=>c.some(x=>x.includes(v)));}
 function passPrice(p){const pr=parseFloat(p.price)||0,sel=document.getElementById('price-select'),val=sel?sel.value:'';if(!val) return true;switch(val){case'0-200':return pr>0&&pr<=200;case'200-500':return pr>200&&pr<=500;case'500-1000':return pr>500&&pr<=1000;case'1000+':return pr>1000;case'negotiable':return pr===0||!p.price;default:return true;}}
 function apply(){const r=all.filter(p=>passSubcat(p)&&passGov(p)&&passCity(p)&&passPrice(p));document.getElementById('result-count').textContent=r.length;document.getElementById('apply-count').textContent=`${r.length}`;}
-function renderGov(c){const gb=document.getElementById('gov-box');gb.innerHTML='';c.getAllGovernorates().forEach(g=>{const l=document.createElement('label');l.className='governorate-option';l.innerHTML=`<input type="checkbox" class="governorate-checkbox gov" value="${g}"> <span>${g}</span>`;gb.appendChild(l);});}
+function renderGov(c){const gb=document.getElementById('gov-box');gb.innerHTML='';const l1=document.createElement('label');l1.className='governorate-option';l1.innerHTML=`<input type="checkbox" class="governorate-checkbox gov" value="توصيل لكل المحافظات"> <span>توصيل لكل المحافظات</span>`;gb.appendChild(l1);c.getAllGovernorates().forEach(g=>{const l=document.createElement('label');l.className='governorate-option';l.innerHTML=`<input type="checkbox" class="governorate-checkbox gov" value="${g}"> <span>${g}</span>`;gb.appendChild(l);});}
 function renderCities(c){const cb=document.getElementById('city-box');cb.innerHTML='';let list=[];if(active.gov.length){active.gov.forEach(g=>{c.getCitiesForGovernorate(g).forEach(x=>list.push(x));});list=[...new Set(list)];}list.forEach(v=>{const l=document.createElement('label');l.className='governorate-option';l.innerHTML=`<input type=\"checkbox\" class=\"governorate-checkbox city\" value=\"${v}\"> <span>${v}</span>`;cb.appendChild(l);});}
 function bind(){const subAll=document.getElementById('subcat-all');if(subAll){subAll.checked=active.subcat.length===0;subAll.onchange=()=>{if(subAll.checked){document.querySelectorAll('.subcat').forEach(c=>c.checked=false);active.subcat=[];apply();}}}
 document.querySelectorAll('.subcat').forEach(el=>{el.checked=active.subcat.includes(el.value);el.onchange=()=>{el.checked?active.subcat.push(el.value):active.subcat=active.subcat.filter(v=>v!==el.value);const a=document.getElementById('subcat-all');if(a) a.checked=active.subcat.length===0;updateSelectedSubcats();apply();document.getElementById('subcat-dropdown-content').classList.add('hidden');document.getElementById('subcat-dropdown-btn').classList.remove('active');};});
 document.querySelectorAll('.gov').forEach(el=>{el.checked=active.gov.includes(el.value);el.onchange=()=>{el.checked?active.gov.push(el.value):active.gov=active.gov.filter(v=>v!==el.value);updateSelectedGovernorates();renderCities(new CitiesService());bind();apply();document.getElementById('governorate-dropdown-content').classList.add('hidden');document.getElementById('governorate-dropdown-btn').classList.remove('active');};});
 document.querySelectorAll('.city').forEach(el=>{el.checked=active.city.includes(el.value);el.onchange=()=>{el.checked?active.city.push(el.value):active.city=active.city.filter(v=>v!==el.value);updateSelectedCities();apply();document.getElementById('city-dropdown-content').classList.add('hidden');document.getElementById('city-dropdown-btn').classList.remove('active');};});
 document.querySelectorAll('input[name="price"]').forEach(el=>{el.onchange=()=>{updateSelectedPrice();apply();document.getElementById('price-dropdown-content').classList.add('hidden');document.getElementById('price-dropdown-btn').classList.remove('active');};});
-document.getElementById('clear-btn').onclick=()=>{location.replace('category-other.html');};
+document.getElementById('clear-btn').onclick=()=>{location.replace('other-filters.html');};
 document.getElementById('apply-btn').onclick=()=>{const q=toParams();location.href=`category-other.html${q?'?'+q:''}`;};
 
 // Dropdown functionality for all filters
@@ -294,12 +356,9 @@ function renderSubcats(){
     const sb=document.getElementById('subcat-box'); sb.innerHTML='';
     const subcats = [
         {value: 'other-birthday', text: 'ديكور عيد ميلاد'},
-        {value: 'other-hospital', text: 'استقبال مستشفى'},
-        {value: 'other-bride', text: 'استقبال عروسة'},
-        {value: 'other-party', text: 'حفلات بسيطة'},
-        {value: 'other-balloons', text: 'بالونات وهدايا'},
-        {value: 'other-flowers', text: 'زهور وأزهار'},
-        {value: 'other-lights', text: 'إضاءات ديكور'}
+        {value: 'other-hospital', text: 'استقبال المولود بالمستشفى'},
+        {value: 'other-bride', text: 'ديكور استقبال عروسة'},
+        {value: 'other-party', text: 'ديكور حفلات بسيطة'}
     ];
     subcats.forEach(s=>{const l=document.createElement('label'); l.className='governorate-option'; l.innerHTML=`<input type="checkbox" class="governorate-checkbox subcat" value="${s.value}"> <span>${s.text}</span>`; sb.appendChild(l);});
 }

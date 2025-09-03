@@ -628,7 +628,7 @@
 
 
         <!-- Advanced Filters -->
-        <div class="filter-section">
+        <div class="filter-section" id="filter-section" style="cursor: pointer;">
             <div class="flex justify-between items-center mb-6">
                 <button id="toggle-filters-btn" class="toggle-filters-btn">
                     <svg id="toggle-icon" class="toggle-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1906,7 +1906,7 @@
             
             let filtersOpen = false;
             
-            // فتح الفلاتر عند الضغط على أي مكان في قسم الفلاتر (فقط إذا كانت مغلقة)
+            // الانتقال إلى صفحة الفلاتر عند الضغط على أي مكان في قسم الفلاتر
             filterSection.addEventListener('click', function(event) {
                 // تجاهل النقر على الأزرار الموجودة داخل الفلاتر
                 if (event.target.closest('.filter-btn') || 
@@ -1926,20 +1926,26 @@
                     return;
                 }
                 
-                // فتح الفلاتر إذا كانت مغلقة
-                if (!filtersOpen) {
-                    filtersOpen = true;
-                    if (toggleIcon) toggleIcon.classList.add('rotated');
-                    if (toggleText) toggleText.textContent = 'إلغاء تحديد نوع البوكيه والمحافظة';
-                    
-                    // إظهار زر الإغلاق على الشاشات الصغيرة
-                    if (closeFiltersBtn && window.innerWidth < 640) {
-                        closeFiltersBtn.classList.remove('hidden');
-                    }
+                // الانتقال إلى صفحة الفلاتر
+                const params = new URLSearchParams();
+                const filters = window.activeFilters || activeFilters;
+                if (filters?.subcategory?.length) filters.subcategory.forEach(v=>params.append('subcat', v));
+                if (filters?.governorates?.length) filters.governorates.forEach(v=>params.append('gov', v));
+                if (filters?.cities?.length) filters.cities.forEach(v=>params.append('city', v));
+                if (filters?.colors?.length) filters.colors.forEach(v=>params.append('color', v));
+                switch (filters?.price) {
+                    case '0-200': params.set('pmin','0'); params.set('pmax','200'); break;
+                    case '200-500': params.set('pmin','201'); params.set('pmax','500'); break;
+                    case '500-1000': params.set('pmin','501'); params.set('pmax','1000'); break;
+                    case '1000+': params.set('pmin','1001'); break;
+                    case 'negotiable': params.set('pmin','0'); params.set('pmax','0'); break;
                 }
+                const qs = params.toString();
+                window.location.href = `flowerbouquets-filters.html${qs ? '?' + qs : ''}`;
             });
             
-            toggleBtn.addEventListener('click', function() {
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
                 console.log('Toggle filters button clicked');
                 const params = new URLSearchParams();
                 const filters = window.activeFilters || activeFilters;

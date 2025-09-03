@@ -12,6 +12,68 @@
     <style>
         body{font-family:'Tajawal',sans-serif}
         
+        /* Mobile-first responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem !important;
+            }
+            
+            .filter-card {
+                padding: 0.75rem !important;
+            }
+            
+            .filter-title {
+                font-size: 0.875rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .dropdown-btn {
+                padding: 0.625rem !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .governorate-option {
+                padding: 0.5rem 0.75rem !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .selected-governorate-tag {
+                font-size: 0.7rem !important;
+                padding: 0.25rem 0.5rem !important;
+            }
+            
+            .bottom-buttons {
+                padding: 0.75rem !important;
+                gap: 0.5rem !important;
+            }
+            
+            .bottom-buttons button {
+                padding: 0.75rem !important;
+                font-size: 0.8rem !important;
+            }
+            
+            .header-content {
+                padding: 0.75rem !important;
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+                text-align: center !important;
+            }
+            
+            .header-title {
+                font-size: 1rem !important;
+            }
+            
+            .result-text {
+                font-size: 0.75rem !important;
+            }
+        }
+        
         /* Simple Governorate Filter Styles */
         .simple-governorate-filter {
             position: relative;
@@ -136,15 +198,15 @@
     </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <header class="bg-white border-b sticky top-0 z-40">
-        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="category-cake.html" class="text-lg font-bold text-yellow-700">زِينَة</a>
-            <div class="text-sm text-gray-600">النتائج المتوقعة: <span id="result-count" class="font-semibold">0</span></div>
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between header-content">
+            <a href="category-cake.html" class="text-lg font-bold text-yellow-700 header-title">زِينَة</a>
+            <div class="text-sm text-gray-600 result-text">النتائج المتوقعة: <span id="result-count" class="font-semibold">0</span></div>
         </div>
     </header>
     <main class="container mx-auto px-4 py-4 flex-1">
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div class="bg-white rounded-xl p-4 shadow-sm">
-                <div class="font-semibold text-gray-800 mb-3">التصنيف الفرعي</div>
+            <div class="bg-white rounded-xl p-4 shadow-sm filter-card">
+                <div class="font-semibold text-gray-800 mb-3 filter-title">التصنيف الفرعي</div>
                 <div class="simple-governorate-filter">
                     <div class="filter-dropdown">
                         <button type="button" id="subcat-dropdown-btn" class="dropdown-btn">
@@ -160,8 +222,8 @@
                     <div id="selected-subcats" class="selected-governorates"></div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl p-4 shadow-sm">
-                <div class="font-semibold text-gray-800 mb-3">المحافظة</div>
+            <div class="bg-white rounded-xl p-4 shadow-sm filter-card">
+                <div class="font-semibold text-gray-800 mb-3 filter-title">المحافظة</div>
                 <div class="simple-governorate-filter">
                     <div class="filter-dropdown">
                         <button type="button" id="governorate-dropdown-btn" class="dropdown-btn">
@@ -177,8 +239,8 @@
                     <div id="selected-governorates" class="selected-governorates"></div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl p-4 shadow-sm">
-                <div class="font-semibold text-gray-800 mb-3">المدن/المناطق</div>
+            <div class="bg-white rounded-xl p-4 shadow-sm filter-card">
+                <div class="font-semibold text-gray-800 mb-3 filter-title">المدن/المناطق</div>
                 <div class="simple-governorate-filter">
                     <div class="filter-dropdown">
                         <button type="button" id="city-dropdown-btn" class="dropdown-btn">
@@ -194,8 +256,8 @@
                     <div id="selected-cities" class="selected-governorates"></div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl p-4 shadow-sm">
-                <div class="font-semibold text-gray-800 mb-3">السعر</div>
+            <div class="bg-white rounded-xl p-4 shadow-sm filter-card">
+                <div class="font-semibold text-gray-800 mb-3 filter-title">السعر</div>
                 <div class="simple-governorate-filter">
                     <div class="filter-dropdown">
                         <button type="button" id="price-dropdown-btn" class="dropdown-btn">
@@ -239,7 +301,7 @@
         </div>
     </main>
     <div class="fixed bottom-0 inset-x-0 bg-white border-t z-40">
-        <div class="container mx-auto px-4 py-3 flex items-center gap-3">
+        <div class="container mx-auto px-4 py-3 flex items-center gap-3 bottom-buttons">
             <button id="clear-btn" class="flex-1 py-3 rounded-lg text-white font-semibold bg-red-600 hover:bg-red-700">مسح الفلاتر</button>
             <button id="apply-btn" class="flex-1 py-3 rounded-lg text-white font-semibold" style="background:#845FCE">تطبيق الفلاتر (<span id="apply-count">0</span>)</button>
         </div>
@@ -350,6 +412,7 @@
     }
     function renderGov(c){
         const gb=document.getElementById('gov-box'); gb.innerHTML='';
+        const l1=document.createElement('label'); l1.className='governorate-option'; l1.innerHTML=`<input type="checkbox" class="governorate-checkbox gov" value="توصيل لكل المحافظات"> <span>توصيل لكل المحافظات</span>`; gb.appendChild(l1);
         c.getAllGovernorates().forEach(g=>{const l=document.createElement('label'); l.className='governorate-option'; l.innerHTML=`<input type="checkbox" class="governorate-checkbox gov" value="${g}"> <span>${g}</span>`; gb.appendChild(l);});
     }
     
@@ -394,7 +457,7 @@
             el.checked = el.value === selectedValue;
             el.onchange=()=>{updateSelectedPrice(); apply();document.getElementById('price-dropdown-content').classList.add('hidden');document.getElementById('price-dropdown-btn').classList.remove('active');}
         });
-        document.getElementById('clear-btn').onclick=()=>{active={subcat:[],gov:[],city:[],pmin:'',pmax:''}; location.replace(location.pathname);};
+        document.getElementById('clear-btn').onclick=()=>{location.replace('cake-filters.html');};
         document.getElementById('apply-btn').onclick=()=>{const q=toParams(); location.href=`category-cake.html${q?'?'+q:''}`;};
         
         // Dropdown functionality for all filters

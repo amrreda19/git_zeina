@@ -561,7 +561,7 @@
 
 
         <!-- Advanced Filters -->
-        <div class="filter-section">
+        <div class="filter-section" id="filter-section" style="cursor: pointer;">
             <div class="flex justify-between items-center mb-4">
                 <button id="toggle-filters-btn" class="toggle-filters-btn">
                     <svg id="toggle-icon" class="toggle-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -836,6 +836,7 @@
         // Setup toggle filters functionality
         function setupToggleFilters() {
             const toggleBtn = document.getElementById('toggle-filters-btn');
+            const filterSection = document.getElementById('filter-section');
 
             // الانتقال إلى صفحة الفلاتر المستقلة مع تمرير الحالة الحالية كمعلمات رابط
             function buildFiltersQueryString() {
@@ -870,9 +871,22 @@
                 return params.toString();
             }
             
-            toggleBtn.addEventListener('click', function() {
+            function navigateToFilters() {
                 const qs = buildFiltersQueryString();
                 window.location.href = `koshat-filters.html${qs ? '?' + qs : ''}`;
+            }
+            
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navigateToFilters();
+            });
+            
+            filterSection.addEventListener('click', function(e) {
+                // منع الانتقال عند النقر على زر مسح الفلاتر
+                if (e.target.id === 'clear-filters-btn' || e.target.closest('#clear-filters-btn')) {
+                    return;
+                }
+                navigateToFilters();
             });
         }
 
