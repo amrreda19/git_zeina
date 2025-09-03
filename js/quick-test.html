@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار سريع للرفع</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/advanced-image-upload-service.js"></script>
+</head>
+<body>
+    <h1>اختبار سريع</h1>
+    <input type="file" id="fileInput" accept="image/*">
+    <button onclick="testUpload()">اختبار الرفع</button>
+    <div id="result"></div>
+
+    <script>
+        async function testUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const result = document.getElementById('result');
+
+            if (!fileInput.files[0]) {
+                result.innerHTML = '❌ يرجى اختيار ملف أولاً';
+                return;
+            }
+
+            result.innerHTML = '⏳ جاري الرفع...';
+
+            try {
+                const service = new AdvancedImageUploadService();
+                await service.ensureInitialized();
+
+                const uploadResult = await service.uploadImage(fileInput.files[0]);
+
+                if (uploadResult.success) {
+                    result.innerHTML = `
+                        ✅ تم الرفع بنجاح!<br>
+                        📏 الحجم الأصلي: ${formatBytes(uploadResult.data.originalSize)}<br>
+                        🗜️ الحجم بعد المعالجة: ${formatBytes(uploadResult.data.processedSize)}<br>
+                        📉 نسبة التقليل: ${uploadResult.data.compressionRatio}%<br>
+                        🔗 <a href="${uploadResult.data.url}" target="_blank">عرض الصورة</a>
+                    `;
+                } else {
+                    result.innerHTML = `❌ فشل في الرفع: ${uploadResult.error}`;
+                }
+            } catch (error) {
+                result.innerHTML = `❌ خطأ: ${error.message}`;
+                console.error(error);
+            }
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>

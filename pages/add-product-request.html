@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H3XBCDY4W0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H3XBCDY4W0');
+    </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1994970196400389"
      crossorigin="anonymous"></script>
     <meta charset="UTF-8">
@@ -46,6 +55,7 @@
     
     <!-- Services -->
     <script src="../js/product-requests-service.js?v=2025-08-22-1" defer></script>
+    <script src="../js/advanced-image-upload-service.js?v=2025-01-01" defer></script>
     <script src="../js/cities-service.js?v=2025-08-22-1" defer></script>
     <script src="../js/common-utils.js?v=2025-08-22-1" defer></script>
     
@@ -1502,51 +1512,73 @@
                         colors: getSelectedColors() // إضافة الألوان المختارة
                     };
                     
-                    // Get image files from the new slot system
-                    const imageFiles = [];
+                    // Get image URLs from the new slot system (images are already uploaded)
+                    const imageUrls = [];
                     if (window.currentImages) {
-                        Object.values(window.currentImages).forEach(image => {
-                            if (image) {
-                                imageFiles.push(image);
+                        Object.values(window.currentImages).forEach((image, index) => {
+                            if (image && image.url) {
+                                console.log(`🖼️ Processing image ${index + 1}:`, {
+                                    url: image.url,
+                                    path: image.path,
+                                    originalName: image.originalName
+                                });
+
+                                imageUrls.push({
+                                    url: image.url,
+                                    path: image.path,
+                                    original_name: image.originalName || `image_${index + 1}.jpg`
+                                });
                             }
                         });
                     }
-                    
+
+                    console.log(`📊 Collected ${imageUrls.length} images for submission`);
+                    console.log('📁 Images will be stored in Product_requests/ folder temporarily');
+
+                    // Log detailed image information for debugging
+                    imageUrls.forEach((img, index) => {
+                        console.log(`🖼️ Image ${index + 1}:`, {
+                            url: img.url ? img.url.substring(0, 50) + '...' : 'No URL',
+                            path: img.path || 'No path',
+                            original_name: img.original_name || 'No name'
+                        });
+                    });
+
                     console.log('📝 Form data collected:', formData);
-                    console.log('🖼️ Image files:', imageFiles.length);
-                    
+                    console.log('🖼️ Image URLs:', imageUrls.length);
+
                     // Submit using the service
                     let result = null;
-                    
+
                     if (window.ProductRequestsService) {
                         console.log('🔍 ProductRequestsService found:', typeof window.ProductRequestsService);
-                        
+
                         // Check if it's a class constructor
                         if (typeof window.ProductRequestsService === 'function') {
                             try {
                                 // Create an instance
                                 const serviceInstance = new window.ProductRequestsService();
                                 console.log('✅ ProductRequestsService instance created');
-                                
+
                                 // Wait for initialization
                                 await serviceInstance.ensureInitialized();
                                 console.log('✅ ProductRequestsService initialized');
-                                
-                                result = await serviceInstance.submitProductRequest(formData, imageFiles);
+
+                                result = await serviceInstance.submitProductRequest(formData, imageUrls);
                             } catch (error) {
                                 console.error('❌ Error with ProductRequestsService:', error);
                                 result = { success: false, error: error.message };
                             }
                         } else if (typeof window.ProductRequestsService === 'object' && window.ProductRequestsService.submitProductRequest) {
                             // It's already an instance
-                            result = await window.ProductRequestsService.submitProductRequest(formData, imageFiles);
+                            result = await window.ProductRequestsService.submitProductRequest(formData, imageUrls);
                         } else {
                             console.error('❌ ProductRequestsService is not properly structured');
                             result = { success: false, error: 'ProductRequestsService is not properly structured' };
                         }
                     } else {
                         console.log('❌ ProductRequestsService not found, using fallback');
-                        result = await submitFormFallback(formData, imageFiles);
+                        result = await submitFormFallback(formData, imageUrls);
                     }
                     
                     if (result && result.success) {
@@ -1569,7 +1601,7 @@
             }
             
             // Fallback form submission function
-            async function submitFormFallback(formData, imageFiles) {
+            async function submitFormFallback(formData, imageUrls) {
                 try {
                     console.log('🔄 Using fallback form submission');
                     
@@ -2213,349 +2245,283 @@
             }
         });
         
-        // Image upload functionality - New Simplified Version
-        document.addEventListener('DOMContentLoaded', function() {
-            const imageCounter = document.getElementById('image-counter');
-            
-            // Store image slots
+        // Image upload functionality with compression
+        let uploadService = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Initializing image upload system...');
+
+            try {
+                // Initialize upload service for product requests
+                uploadService = new AdvancedImageUploadService({
+                    maxFileSize: 1024 * 1024, // 1MB
+                    maxWidth: 1200,
+                    maxHeight: 1200,
+                    quality: 0.85,
+                    alwaysCompress: true,
+                    folderPath: 'Product_requests', // رفع الصور إلى مجلد الطلبات المؤقت
+                    storageBucket: 'images'
+                });
+
+                console.log('✅ Upload service initialized');
+
+                // Setup image slots
+                setupImageSlots();
+
+            } catch (error) {
+                console.error('❌ Failed to initialize upload service:', error);
+            }
+        });
+
+        function setupImageSlots() {
             const imageSlots = {
                 main: document.querySelector('[data-slot="main"]'),
                 extra1: document.querySelector('[data-slot="extra1"]'),
                 extra2: document.querySelector('[data-slot="extra2"]')
             };
-            
+
             // Store current images
-            let currentImages = {
-                main: null,
-                extra1: null,
-                extra2: null
-            };
-            
-            // Make it globally accessible for clearForm function
+            let currentImages = { main: null, extra1: null, extra2: null };
             window.currentImages = currentImages;
-            
-            // Setup file inputs for each slot
-            setupFileInputs();
-            
-            // Setup slot event listeners
-            setupSlotEventListeners();
-            
-            function setupFileInputs() {
-                // Create hidden file inputs for each slot
-                Object.keys(imageSlots).forEach(slotName => {
-                    const slot = imageSlots[slotName];
-                    if (!slot) return; // Skip if slot doesn't exist
-                    
-                    const selectBtn = slot.querySelector('.select-image-btn');
-                    if (!selectBtn) return; // Skip if button doesn't exist
-                    
-                    // Create hidden file input
-                    const fileInput = document.createElement('input');
-                    fileInput.type = 'file';
-                    fileInput.accept = 'image/*';
-                    fileInput.className = 'hidden';
-                    fileInput.dataset.slot = slotName;
-                    
-                    // Add to DOM
-                    slot.appendChild(fileInput);
-                    
-                                                // Add click event to select button
-                            selectBtn.addEventListener('click', () => {
-                                fileInput.click();
-                            });
-                            
-                            // Add click event to entire slot
-                            slot.addEventListener('click', (e) => {
-                                // Don't trigger if clicking on buttons or actions
-                                if (e.target.closest('.image-actions') || e.target.closest('.select-image-btn')) {
-                                    return;
-                                }
-                                fileInput.click();
-                            });
-                    
-                    // Handle file selection
-                    fileInput.addEventListener('change', (e) => {
-                        const files = Array.from(e.target.files);
-                        if (files.length > 0) {
-                            assignImageToSlot(files[0], slotName);
-                        }
-                    });
+
+            // Setup each slot
+            Object.keys(imageSlots).forEach(slotName => {
+                setupSlot(slotName, imageSlots[slotName]);
+            });
+
+            function setupSlot(slotName, slotElement) {
+                if (!slotElement) return;
+
+                const selectBtn = slotElement.querySelector('.select-image-btn');
+                if (!selectBtn) return;
+
+                // Create hidden file input
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.className = 'hidden';
+                slotElement.appendChild(fileInput);
+
+                // Add click handlers
+                selectBtn.addEventListener('click', () => fileInput.click());
+                slotElement.addEventListener('click', (e) => {
+                    if (!e.target.closest('.image-actions') && !e.target.closest('.select-image-btn')) {
+                        fileInput.click();
+                    }
+                });
+
+                // Handle file selection with compression
+                fileInput.addEventListener('change', async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    await handleFileUpload(slotElement, slotName, file);
                 });
             }
-            
-            function assignImageToSlot(file, slotName) {
-                const slot = imageSlots[slotName];
-                if (!slot) return; // Skip if slot doesn't exist
-                
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    slot.innerHTML = `
-                        <div class="relative w-full h-full">
-                            <img src="${e.target.result}" alt="صورة المنتج" class="w-full h-full object-cover rounded-lg">
-                            
-                            <!-- أزرار الإجراءات - تظهر دائماً في الجانب -->
-                            <div class="absolute bottom-2 right-2">
-                                <div class="image-actions bg-black bg-opacity-60 rounded-md p-1 space-y-1">
-                                    ${getSlotActions(slotName)}
-                                </div>
-                            </div>
-                            
-                            <div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                                ${slotName === 'main' ? '⭐' : slotName === 'extra1' ? '2️⃣' : '3️⃣'}
+
+            async function handleFileUpload(slotElement, slotName, file) {
+                try {
+                    console.log(`📁 Processing ${slotName}: ${file.name} (${formatBytes(file.size)})`);
+
+                    // Show loading state
+                    const originalContent = slotElement.innerHTML;
+                    slotElement.innerHTML = `
+                        <div class="text-center p-4">
+                            <div class="text-blue-500 text-sm">⏳ جاري ضغط الصورة...</div>
+                            <div class="mt-2">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
                             </div>
                         </div>
                     `;
-                    
-                    currentImages[slotName] = file;
 
-                    // Trigger validation update
-                    window.dispatchEvent(new CustomEvent('imageChanged'));
+                    // Upload and compress
+                    const result = await uploadService.uploadImage(file);
 
-                    // Re-setup event listeners for this slot
-                    if (typeof window.setupSlotEventListeners === 'function') {
-                        window.setupSlotEventListeners();
+                    if (result.success) {
+                        console.log('✅ Upload successful:', result.data);
+
+                        // Update UI with compressed image
+                        const isMain = slotName === 'main';
+                        slotElement.innerHTML = `
+                            <div class="relative w-full h-full">
+                                <img src="${result.data.url}" alt="صورة المنتج" class="w-full h-full object-cover rounded-lg">
+
+                                <!-- Compression info overlay -->
+                                <div class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                                    📦 ${result.data.compressionRatio}% توفير
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="absolute bottom-2 right-2">
+                                    <div class="image-actions bg-black bg-opacity-60 rounded-md p-1 space-y-1">
+                                        ${getSlotActions(slotName)}
+                                    </div>
+                                </div>
+
+                                <div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                                    ${isMain ? '⭐' : slotName === 'extra1' ? '2️⃣' : '3️⃣'}
+                                </div>
+                            </div>
+                        `;
+
+                        currentImages[slotName] = result.data;
+                        updateImageCounter();
+                        window.dispatchEvent(new CustomEvent('imageChanged'));
+
+                        // Re-setup actions
+                        setupSlotActions(slotElement, slotName);
+
+                    } else {
+                        throw new Error(result.error);
                     }
-                    updateImageCounter();
-                };
-                
-                reader.readAsDataURL(file);
+
+                } catch (error) {
+                    console.error('❌ Upload failed:', error);
+
+                    // Restore original content
+                    slotElement.innerHTML = originalContent;
+                    alert(`خطأ في رفع الصورة: ${error.message}`);
+                }
             }
-            
+
             function getSlotActions(slotName) {
                 if (slotName === 'main') {
-                    return `<button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition-colors font-medium">
+                    return `<button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition-colors">
                         🗑️ إزالة
                     </button>`;
                 } else {
                     return `
-                        <button type="button" class="set-main-btn bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-yellow-600 transition-colors font-medium mb-0.5">
+                        <button type="button" class="set-main-btn bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-yellow-600 transition-colors mb-0.5">
                             ⭐ تعيين كصورة رئيسية
                         </button>
-                        <button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-red-600 transition-colors font-medium mb-0.5">
+                        <button type="button" class="remove-image-btn bg-red-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-red-600 transition-colors mb-0.5">
                             🗑️ إزالة
                         </button>
-                        <button type="button" class="swap-btn bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-blue-600 transition-colors font-medium">
+                        <button type="button" class="swap-btn bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded hover:bg-blue-600 transition-colors">
                             🔄 تبديل مع ${slotName === 'extra1' ? '3' : '2'}
                         </button>
                     `;
                 }
             }
-            
-            function setupSlotEventListeners() {
-                // Remove existing event listeners to prevent duplicates
-                document.querySelectorAll('.set-main-btn, .remove-image-btn, .swap-btn').forEach(btn => {
-                    btn.replaceWith(btn.cloneNode(true));
-                });
-                
-                // Set main image button
-                document.querySelectorAll('.set-main-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const slot = this.closest('.image-slot');
-                        if (!slot) return;
-                        const slotName = slot.dataset.slot;
-                        if (slotName) {
-                            setAsMainImage(slotName);
-                        }
-                    });
-                });
-                
-                // Remove image button
-                document.querySelectorAll('.remove-image-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const slot = this.closest('.image-slot');
-                        if (!slot) return;
-                        const slotName = slot.dataset.slot;
-                        if (slotName) {
-                            removeImageFromSlot(slotName);
-                        }
-                    });
-                });
-                
+
+            function setupSlotActions(slotElement, slotName) {
+                // Set main button
+                const setMainBtn = slotElement.querySelector('.set-main-btn');
+                if (setMainBtn) {
+                    setMainBtn.addEventListener('click', () => setAsMain(slotName));
+                }
+
+                // Remove button
+                const removeBtn = slotElement.querySelector('.remove-image-btn');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', () => removeImage(slotName));
+                }
+
                 // Swap button
-                document.querySelectorAll('.swap-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const slot = this.closest('.image-slot');
-                        if (!slot) return;
-                        const slotName = slot.dataset.slot;
-                        if (slotName === 'extra1') {
-                            swapImages('extra1', 'extra2');
-                        } else if (slotName === 'extra2') {
-                            swapImages('extra2', 'extra1');
-                        }
+                const swapBtn = slotElement.querySelector('.swap-btn');
+                if (swapBtn) {
+                    swapBtn.addEventListener('click', () => {
+                        swapImages(slotName, slotName === 'extra1' ? 'extra2' : 'extra1');
                     });
-                });
+                }
             }
-            
-            // Make setupSlotEventListeners globally accessible
-            window.setupSlotEventListeners = setupSlotEventListeners;
-            
-            function setAsMainImage(sourceSlot) {
+
+            function setAsMain(sourceSlot) {
                 if (!currentImages[sourceSlot]) return;
-                
-                // Swap main with source
+
                 const temp = currentImages.main;
                 currentImages.main = currentImages[sourceSlot];
                 currentImages[sourceSlot] = temp;
-                
-                // Re-render both slots
-                if (currentImages.main) {
-                    assignImageToSlot(currentImages.main, 'main');
-                }
-                if (currentImages[sourceSlot]) {
-                    assignImageToSlot(currentImages[sourceSlot], sourceSlot);
-                }
-            }
-            
-            function removeImageFromSlot(slotName) {
-                currentImages[slotName] = null;
-                resetSlot(slotName);
-                updateImageCounter();
 
-                // Trigger validation update
+                // Re-render slots
+                Object.keys(imageSlots).forEach(slotName => {
+                    if (currentImages[slotName]) {
+                        renderSlot(slotName, imageSlots[slotName]);
+                    }
+                });
+            }
+
+            function removeImage(slotName) {
+                currentImages[slotName] = null;
+                resetSlot(slotName, imageSlots[slotName]);
+                updateImageCounter();
                 window.dispatchEvent(new CustomEvent('imageChanged'));
             }
-            
+
             function swapImages(slot1, slot2) {
                 const temp = currentImages[slot1];
                 currentImages[slot1] = currentImages[slot2];
                 currentImages[slot2] = temp;
 
                 // Re-render both slots
-                if (currentImages[slot1]) {
-                    assignImageToSlot(currentImages[slot1], slot1);
-                }
-                if (currentImages[slot2]) {
-                    assignImageToSlot(currentImages[slot2], slot2);
-                }
+                if (currentImages[slot1]) renderSlot(slot1, imageSlots[slot1]);
+                if (currentImages[slot2]) renderSlot(slot2, imageSlots[slot2]);
+            }
 
-                // Trigger validation update (since main image might have changed)
-                window.dispatchEvent(new CustomEvent('imageChanged'));
-            }
-            
-            function clearAllSlots() {
-                Object.keys(imageSlots).forEach(slotName => {
-                    resetSlot(slotName);
-                });
-                
-                // Re-setup event listeners for all slots
-                if (typeof window.setupSlotEventListeners === 'function') {
-                    window.setupSlotEventListeners();
-                }
-            }
-            
-            function resetSlot(slotName) {
-                const slot = imageSlots[slotName];
-                if (!slot) return; // Skip if slot doesn't exist
-                
+            function renderSlot(slotName, slotElement) {
+                const data = currentImages[slotName];
                 const isMain = slotName === 'main';
-                
-                slot.innerHTML = `
+
+                slotElement.innerHTML = `
+                    <div class="relative w-full h-full">
+                        <img src="${data.url}" alt="صورة المنتج" class="w-full h-full object-cover rounded-lg">
+
+                        <!-- Compression info overlay -->
+                        <div class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                            📦 ${data.compressionRatio}% توفير
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="absolute bottom-2 right-2">
+                            <div class="image-actions bg-black bg-opacity-60 rounded-md p-1 space-y-1">
+                                ${getSlotActions(slotName)}
+                            </div>
+                        </div>
+
+                        <div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                            ${isMain ? '⭐' : slotName === 'extra1' ? '2️⃣' : '3️⃣'}
+                        </div>
+                    </div>
+                `;
+
+                setupSlotActions(slotElement, slotName);
+            }
+
+            function resetSlot(slotName, slotElement) {
+                const isMain = slotName === 'main';
+                slotElement.innerHTML = `
                     <div class="text-center p-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="${isMain ? 'h-12 w-12 text-yellow-500' : 'h-8 w-8 text-gray-400'} mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            ${isMain ? 
-                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />' :
-                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />'
-                            }
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                         </svg>
                         <p class="text-sm font-medium ${isMain ? 'text-yellow-700' : 'text-gray-600'}">${isMain ? 'الصورة الرئيسية' : 'صورة إضافية'}</p>
                         <p class="text-xs ${isMain ? 'text-yellow-600' : 'text-gray-500'}">${isMain ? 'إلزامية' : 'اختيارية'}</p>
-                    </div>
-                    
-                    <!-- زر اختيار الصورة -->
-                    <button type="button" class="select-image-btn ${isMain ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-gray-500 hover:bg-gray-600'} text-white text-sm px-4 py-2 rounded-lg transition-colors font-medium">
-                        اختيار صورة
-                    </button>
-                    
-                    <!-- أزرار الإجراءات (تظهر عند وجود صورة) -->
-                    <div class="image-actions hidden space-y-2 mt-3">
-                        ${getSlotActions(slotName)}
+                        <button type="button" class="select-image-btn ${isMain ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-gray-500 hover:bg-gray-600'} text-white text-sm px-4 py-2 rounded-lg transition-colors font-medium">
+                            اختيار صورة
+                        </button>
                     </div>
                 `;
-                
-                currentImages[slotName] = null;
-                
-                // Re-setup file input for this slot
-                const selectBtn = slot.querySelector('.select-image-btn');
-                if (selectBtn) {
-                    const fileInput = document.createElement('input');
-                    fileInput.type = 'file';
-                    fileInput.accept = 'image/*';
-                    fileInput.className = 'hidden';
-                    fileInput.dataset.slot = slotName;
-                    
-                    slot.appendChild(fileInput);
-                    
-                    selectBtn.addEventListener('click', () => {
-                        fileInput.click();
-                    });
-                    
-                    // Add click event to entire slot
-                    slot.addEventListener('click', (e) => {
-                        // Don't trigger if clicking on buttons or actions
-                        if (e.target.closest('.image-actions') || e.target.closest('.select-image-btn')) {
-                            return;
-                        }
-                        fileInput.click();
-                    });
-                    
-                    fileInput.addEventListener('change', (e) => {
-                        const files = Array.from(e.target.files);
-                        if (files.length > 0) {
-                            assignImageToSlot(files[0], slotName);
-                        }
-                    });
-                }
-                
-                // Re-setup event listeners for this slot
-                if (typeof window.setupSlotEventListeners === 'function') {
-                    window.setupSlotEventListeners();
-                }
+
+                // Re-setup the slot
+                setupSlot(slotName, slotElement);
             }
-            
+
             function updateImageCounter() {
                 const count = Object.values(currentImages).filter(img => img !== null).length;
-                if (imageCounter) {
-                    imageCounter.textContent = `${count}/3`;
+                const counter = document.getElementById('image-counter');
+                if (counter) {
+                    counter.textContent = `${count}/3`;
                 }
-            }
-            
-            // Mobile touch events removed - no drag and drop functionality
-        
-        // Add responsive form handling for mobile devices
-        function handleMobileFormBehavior() {
-            if (window.innerWidth <= 768) {
-                // Add touch-friendly interactions for mobile
-                const form = document.getElementById('product-request-form');
-                if (form) {
-                    // Ensure form is properly scrollable on mobile
-                    form.style.webkitOverflowScrolling = 'touch';
-                }
-                
-                // Add mobile-specific event listeners
-                const mobileElements = document.querySelectorAll('.dropdown-btn, .select-image-btn, button[type="submit"]');
-                mobileElements.forEach(element => {
-                    element.addEventListener('touchstart', function() {
-                        this.style.transform = 'scale(0.95)';
-                    });
-                    
-                    element.addEventListener('touchend', function() {
-                        this.style.transform = 'scale(1)';
-                    });
-                });
             }
         }
-        
-        // Initialize mobile behavior when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            handleMobileFormBehavior();
-            
-            // Handle window resize for responsive behavior
-            window.addEventListener('resize', function() {
-                handleMobileFormBehavior();
-            });
-        });
-        });
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
         
         // Success popup functionality
         function showSuccessPopup() {

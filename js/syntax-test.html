@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Syntax Test</title>
+    <script src="../js/advanced-image-upload-service.js"></script>
+    <script src="../js/enhanced-image-upload-integration.js"></script>
+</head>
+<body>
+    <h1>Syntax Test</h1>
+    <div id="result"></div>
+
+    <script>
+        window.addEventListener('load', function() {
+            const result = document.getElementById('result');
+
+            try {
+                // Test if classes can be instantiated
+                const service = new AdvancedImageUploadService();
+                const integration = new EnhancedImageUploadIntegration();
+
+                result.innerHTML = '✅ جميع الملفات خالية من أخطاء syntax';
+                result.style.color = 'green';
+
+                console.log('✅ Syntax test passed');
+                console.log('📋 Service:', service);
+                console.log('📋 Integration:', integration);
+
+            } catch (error) {
+                result.innerHTML = `❌ خطأ syntax: ${error.message}`;
+                result.style.color = 'red';
+
+                console.error('❌ Syntax error:', error);
+                console.error('📋 Stack trace:', error.stack);
+            }
+        });
+    </script>
+</body>
+</html>
+

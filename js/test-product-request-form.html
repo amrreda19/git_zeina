@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار رفع الصور البسيط</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/advanced-image-upload-service.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .upload-area { border: 2px dashed #007bff; border-radius: 10px; padding: 30px; text-align: center; margin: 20px 0; cursor: pointer; background: #f8f9fa; }
+        .upload-area:hover { background: #e3f2fd; }
+        .uploaded { border-color: #28a745; background: #d4edda; }
+        .btn { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px; }
+        .btn:hover { background: #0056b3; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .image-preview { max-width: 100%; max-height: 200px; border-radius: 5px; margin: 10px 0; }
+        .status { padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 اختبار رفع الصور البسيط</h1>
+
+        <div class="status info">
+            <strong>الميزات:</strong>
+            <ul style="text-align: right; margin: 10px 0;">
+                <li>✅ ضغط تلقائي للصور</li>
+                <li>📏 حد أقصى 1MB لكل صورة</li>
+                <li>🎨 جودة عالية محفوظة</li>
+            </ul>
+        </div>
+
+        <!-- الصورة الأولى -->
+        <div class="upload-area" id="upload1">
+            <h3>الصورة الأولى</h3>
+            <p>انقر هنا لاختيار الصورة</p>
+            <input type="file" id="file1" accept="image/*">
+        </div>
+
+        <!-- الصورة الثانية -->
+        <div class="upload-area" id="upload2">
+            <h3>الصورة الثانية (اختيارية)</h3>
+            <p>انقر هنا لاختيار الصورة</p>
+            <input type="file" id="file2" accept="image/*">
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button id="test-btn" class="btn">🧪 اختبار النظام</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        let uploadService = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 بدء التحميل...');
+
+            try {
+                // تهيئة خدمة الرفع
+                uploadService = new AdvancedImageUploadService({
+                    maxFileSize: 1024 * 1024,
+                    maxWidth: 1200,
+                    maxHeight: 1200,
+                    quality: 0.85,
+                    alwaysCompress: true
+                });
+
+                console.log('✅ تم تهيئة خدمة الرفع');
+
+                // ربط الأحداث
+                setupUploadAreas();
+
+                // زر الاختبار
+                document.getElementById('test-btn').addEventListener('click', testSystem);
+
+            } catch (error) {
+                console.error('❌ خطأ في التهيئة:', error);
+                showMessage('خطأ في تحميل النظام', 'error');
+            }
+        });
+
+        function setupUploadAreas() {
+            // إعداد المربع الأول
+            setupUploadArea('upload1', 'file1');
+
+            // إعداد المربع الثاني
+            setupUploadArea('upload2', 'file2');
+        }
+
+        function setupUploadArea(areaId, fileId) {
+            const area = document.getElementById(areaId);
+            const fileInput = document.getElementById(fileId);
+
+            // عند النقر على المربع
+            area.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // عند اختيار الملف
+            fileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                await handleFileUpload(area, file);
+            });
+        }
+
+        async function handleFileUpload(area, file) {
+            try {
+                console.log(`📁 رفع الملف: ${file.name} (${formatBytes(file.size)})`);
+
+                // إظهار حالة التحميل
+                area.innerHTML = `
+                    <h3>جاري الرفع...</h3>
+                    <div class="status info">⏳ يرجى الانتظار</div>
+                `;
+
+                // رفع الصورة
+                const result = await uploadService.uploadImage(file);
+
+                if (result.success) {
+                    console.log('✅ تم الرفع بنجاح:', result.data);
+
+                    // إظهار الصورة والإحصائيات
+                    area.classList.add('uploaded');
+                    area.innerHTML = `
+                        <h3>✅ تم الرفع بنجاح</h3>
+                        <img src="${result.data.url}" class="image-preview" alt="الصورة المرفوعة">
+                        <div class="status success">
+                            <p><strong>الحجم الأصلي:</strong> ${formatBytes(result.data.originalSize)}</p>
+                            <p><strong>الحجم المضغوط:</strong> ${formatBytes(result.data.processedSize)}</p>
+                            <p><strong>نسبة الضغط:</strong> ${result.data.compressionRatio}%</p>
+                        </div>
+                        <button class="btn" onclick="resetUpload('${area.id}')">❌ إزالة</button>
+                    `;
+
+                    showMessage('تم رفع الصورة بنجاح!', 'success');
+
+                } else {
+                    throw new Error(result.error);
+                }
+
+            } catch (error) {
+                console.error('❌ خطأ في الرفع:', error);
+
+                // إعادة تعيين المربع
+                resetUpload(area.id);
+                showMessage(`خطأ في رفع الصورة: ${error.message}`, 'error');
+            }
+        }
+
+        function resetUpload(areaId) {
+            const area = document.getElementById(areaId);
+            const fileInput = document.getElementById(areaId.replace('upload', 'file'));
+
+            area.classList.remove('uploaded');
+            area.innerHTML = `
+                <h3>الصورة ${areaId === 'upload1' ? 'الأولى' : 'الثانية'}</h3>
+                <p>انقر هنا لاختيار الصورة</p>
+            `;
+
+            // إعادة ربط الحدث
+            area.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // مسح قيمة الإدخال
+            fileInput.value = '';
+        }
+
+        async function testSystem() {
+            console.log('🧪 اختبار النظام...');
+
+            const testBtn = document.getElementById('test-btn');
+            testBtn.disabled = true;
+            testBtn.textContent = 'جاري الاختبار...';
+
+            try {
+                // اختبار إنشاء صورة تجريبية
+                const testImage = await createTestImage();
+                const testFile = new File([testImage], 'test-image.png', { type: 'image/png' });
+
+                console.log(`📏 تم إنشاء صورة اختبار: ${formatBytes(testFile.size)}`);
+
+                // اختبار الرفع
+                const result = await uploadService.uploadImage(testFile);
+
+                if (result.success) {
+                    showMessage('✅ النظام يعمل بشكل صحيح!', 'success');
+                    console.log('🧪 الاختبار نجح:', result.data);
+                } else {
+                    throw new Error(result.error);
+                }
+
+            } catch (error) {
+                console.error('❌ فشل الاختبار:', error);
+                showMessage(`❌ فشل الاختبار: ${error.message}`, 'error');
+            }
+
+            testBtn.disabled = false;
+            testBtn.textContent = '🧪 اختبار النظام';
+        }
+
+        async function createTestImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = 800;
+            canvas.height = 600;
+
+            // إنشاء خلفية متدرجة
+            const gradient = ctx.createLinearGradient(0, 0, 800, 600);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 800, 600);
+
+            // إضافة نص
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 32px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('صورة تجريبية', 400, 300);
+
+            return new Promise(resolve => {
+                canvas.toBlob(resolve, 'image/png', 0.9);
+            });
+        }
+
+        function showMessage(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            results.appendChild(div);
+
+            // تمرير تلقائي للأعلى
+            setTimeout(() => {
+                results.scrollTop = results.scrollHeight;
+            }, 100);
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
