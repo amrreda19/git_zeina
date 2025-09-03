@@ -1039,37 +1039,40 @@
                                 resolve();
                             }
                         }, 100);
-                        
+
                         setTimeout(() => {
                             clearInterval(checkInterval);
                             resolve();
                         }, 5000);
                     });
                 }
-                
+
                 if (!window.ProductService) {
                     throw new Error('ProductService not available');
                 }
-                
+
                 const result = await window.ProductService.getProductsByCategory('other');
-                
+
                 if (result.success) {
-                    allProducts = result.data;
+                    allProducts = result.data || [];
                     filteredProducts = [...allProducts];
 
                     // ترتيب المنتجات حسب المعايير المطلوبة
                     sortProductsByCriteria();
-                    
+
                     // تحديث filteredProducts بعد الترتيب
                     filteredProducts = [...allProducts];
-                    
+
+                    console.log('Products loaded successfully:', allProducts.length, 'products');
                     applyFilters();
                 } else {
-                    showError('حدث خطأ في تحميل المنتجات: ' + result.error);
+                    console.error('Failed to load products:', result.error);
+                    showError('حدث خطأ في تحميل المنتجات: ' + (result.error || 'خطأ غير معروف'));
                 }
-                
+
             } catch (error) {
-                showError('حدث خطأ في تحميل المنتجات');
+                console.error('Error in loadCategoryProducts:', error);
+                showError('حدث خطأ في تحميل المنتجات: ' + error.message);
             }
         }
 
@@ -1177,11 +1180,15 @@
             const pmax = params.get('pmax');
             if (pmin !== null || pmax !== null) {
                 let val = '';
-                if (pmin === '0' && pmax === '200') val = '0-200';
-                else if (pmin === '201' && pmax === '500') val = '200-500';
-                else if (pmin === '501' && pmax === '1000') val = '500-1000';
-                else if (pmin === '1001' && (pmax === null || pmax === '' || typeof pmax === 'undefined')) val = '1000+';
-                else if (pmin === '0' && pmax === '0') val = 'negotiable';
+                const pminNum = pmin ? parseInt(pmin) : null;
+                const pmaxNum = pmax ? parseInt(pmax) : null;
+
+                if (pminNum === 0 && pmaxNum === 200) val = '0-200';
+                else if (pminNum === 201 && pmaxNum === 500) val = '200-500';
+                else if (pminNum === 501 && pmaxNum === 1000) val = '500-1000';
+                else if (pminNum === 1001) val = '1000+';
+                else if (pminNum === 0 && pmaxNum === 0) val = 'negotiable';
+
                 if (val) {
                     activeFilters.price = val;
                 }
@@ -1190,7 +1197,9 @@
 
         // Apply all filters
         function applyFilters(resetPage = true) {
-            let filteredProducts = allProducts;
+            console.log('Applying filters with activeFilters:', activeFilters);
+            let filteredProducts = [...allProducts];
+            const initialCount = filteredProducts.length;
 
             // Apply subcategory filter - فلتر التصنيفات الفرعية
             if (activeFilters.subcategory.length > 0) {
@@ -1254,22 +1263,24 @@
                 });
             }
 
-            // Apply price filter
+                // Apply price filter
             if (activeFilters.price) {
                 filteredProducts = filteredProducts.filter(product => {
                     const price = parseFloat(product.price) || 0;
-                    
+                    const priceValue = product.price ? parseFloat(product.price) : 0;
+                    const hasPrice = product.price !== null && product.price !== undefined && product.price !== '' && product.price !== '0';
+
                     switch (activeFilters.price) {
                         case '0-200':
-                            return price > 0 && price <= 200;
+                            return hasPrice && priceValue > 0 && priceValue <= 200;
                         case '200-500':
-                            return price > 200 && price <= 500;
+                            return hasPrice && priceValue > 200 && priceValue <= 500;
                         case '500-1000':
-                            return price > 500 && price <= 1000;
+                            return hasPrice && priceValue > 500 && priceValue <= 1000;
                         case '1000+':
-                            return price > 1000;
+                            return hasPrice && priceValue > 1000;
                         case 'negotiable':
-                            return price === 0 || !product.price;
+                            return !hasPrice || priceValue === 0;
                         default:
                             return true;
                     }
@@ -1295,15 +1306,14 @@
 
 
             // Update filtered products and display
-            filteredProducts = filteredProducts;
+            console.log(`Filter results: ${initialCount} -> ${filteredProducts.length} products`);
             if (resetPage) {
                 currentPage = 1;
-                updateURL();
             }
             displayProducts(filteredProducts);
             updateActiveFiltersDisplay();
             updateURL();
-            console.log('applyFilters called with resetPage:', resetPage, 'currentPage:', currentPage);
+            console.log('applyFilters completed, currentPage:', currentPage);
         }
 
         // Clear all filters
@@ -1360,9 +1370,14 @@
 
             // Add price filter
             if (activeFilters.price) {
-                const priceText = document.getElementById('price-filter').options[
-                    document.getElementById('price-filter').selectedIndex
-                ].text;
+                const priceLabels = {
+                    '0-200': 'حتى 200 ج.م',
+                    '200-500': '200 - 500 ج.م',
+                    '500-1000': '500 - 1000 ج.م',
+                    '1000+': 'أكثر من 1000 ج.م',
+                    'negotiable': 'السعر عند الطلب'
+                };
+                const priceText = priceLabels[activeFilters.price] || activeFilters.price;
                 filters.push({
                     type: 'price',
                     text: priceText,
@@ -1424,12 +1439,17 @@
             const container = document.getElementById('products-container');
             const loadingState = document.getElementById('loading-state');
             const emptyState = document.getElementById('empty-state');
-            
+
+            console.log('Displaying products:', products ? products.length : 0, 'products');
+
             // Hide loading state
             loadingState.classList.add('hidden');
-            
+
             if (!products || products.length === 0) {
-                container.innerHTML = '<div class="text-center py-12"><p class="text-gray-500 text-lg">لا توجد منتجات</p></div>';
+                const message = activeFilters.price || activeFilters.subcategory.length > 0 || activeFilters.governorate.length > 0 || activeFilters.cities.length > 0
+                    ? 'لا توجد منتجات تطابق معايير البحث المحددة'
+                    : 'لا توجد منتجات متاحة حالياً';
+                container.innerHTML = `<div class="text-center py-12"><p class="text-gray-500 text-lg">${message}</p></div>`;
                 document.getElementById('pagination-container').classList.add('hidden');
                 return;
             }
