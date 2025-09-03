@@ -2002,8 +2002,7 @@
                     return; // updateCitiesFilter() already calls applyFilters()
                 case 'price':
                     activeFilters.price = '';
-                    const priceFilter = document.getElementById('price-filter');
-                    if (priceFilter) priceFilter.value = '';
+                    updateActiveFiltersDisplay();
                     break;
             }
             applyFilters();

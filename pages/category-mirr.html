@@ -876,8 +876,6 @@
 
             if (priceValue) {
                 activeFilters.price = priceValue;
-                const priceSelect = document.getElementById('price-filter');
-                if (priceSelect) priceSelect.value = priceValue;
             }
 
             // تحديث واجهة أزرار التصنيف الفرعي
@@ -1237,7 +1235,7 @@
             }
             
             // Reset price filter
-            document.getElementById('price-filter').value = '';
+            activeFilters.price = '';
             
             // Reset governorate filter
             const checkboxes = document.querySelectorAll('.governorate-checkbox');
@@ -1322,9 +1320,14 @@
 
             // Add price filter
             if (activeFilters.price) {
-                const priceText = document.getElementById('price-filter').options[
-                    document.getElementById('price-filter').selectedIndex
-                ].text;
+                const priceLabels = {
+                    '0-300': 'حتى 300 ج.م',
+                    '300-800': '300 - 800 ج.م',
+                    '800-1500': '800 - 1500 ج.م',
+                    '1500+': 'أكثر من 1500 ج.م',
+                    'negotiable': 'السعر عند الطلب'
+                };
+                const priceText = priceLabels[activeFilters.price] || activeFilters.price;
                 filters.push({
                     type: 'price',
                     text: priceText,
@@ -1378,7 +1381,6 @@
                     return; // removeCity already calls applyFilters
                     break;
                 case 'price':
-                    document.getElementById('price-filter').value = '';
                     activeFilters.price = '';
                     break;
             }

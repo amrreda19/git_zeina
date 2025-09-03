@@ -355,16 +355,16 @@
     <script>
     let all=[], active={subcat:[], gov:[], city:[], pmin:'', pmax:''};
     const codeToAr={"koshat-wedding":"كوشات زفاف","koshat-engagement":"كوشات خطوبة"}, arToCode={"كوشات زفاف":"koshat-wedding","كوشات خطوبة":"koshat-engagement"};
-    function qs(k){const u=new URL(location);return u.searchParams.getAll(k).length?u.searchParams.getAll(k):u.searchParams.get(k);} function setFromURL(){const u=new URL(location),gp=v=>u.searchParams.getAll(v).filter(Boolean);active.subcat=gp('subcat');active.gov=gp('gov');active.city=gp('city');const price=u.searchParams.get('price')||'';if(price){const [mi,ma]=price.split('-');active.pmin=mi||'';active.pmax=ma||'';}}
-    function toParams(){const p=new URLSearchParams();active.subcat.forEach(v=>p.append('subcat',v));active.gov.forEach(v=>p.append('gov',v));active.city.forEach(v=>p.append('city',v));if(active.pmin||active.pmax){const val=active.pmax?`${active.pmin}-${active.pmax}`:active.pmin; p.set('price',val);} return p.toString();}
+    function qs(k){const u=new URL(location);return u.searchParams.getAll(k).length?u.searchParams.getAll(k):u.searchParams.get(k);} function setFromURL(){const u=new URL(location),gp=v=>u.searchParams.getAll(v).filter(Boolean);active.subcat=gp('subcat');active.gov=gp('gov');active.city=gp('city');const pmin=u.searchParams.get('pmin'),pmax=u.searchParams.get('pmax');if(pmin!==null||pmax!==null){let priceValue='';if(pmin==='0'&&pmax==='500') priceValue='0-500';else if(pmin==='501'&&pmax==='1000') priceValue='500-1000';else if(pmin==='1001'&&pmax==='2000') priceValue='1000-2000';else if(pmin==='2001'&&(pmax===null||pmax===''||pmax===undefined)) priceValue='2000+';else if(pmin==='0'&&pmax==='0') priceValue='negotiable';if(priceValue){const radio=document.querySelector(`input[name="price"][value="${priceValue}"]`);if(radio) radio.checked=true;}}}
+    function toParams(){const p=new URLSearchParams();active.subcat.forEach(v=>p.append('subcat',v));active.gov.forEach(v=>p.append('gov',v));active.city.forEach(v=>p.append('city',v));const selectedPrice=document.querySelector('input[name="price"]:checked');const val=selectedPrice?selectedPrice.value:'';if(val){switch(val){case'0-500':p.set('pmin','0');p.set('pmax','500');break;case'500-1000':p.set('pmin','501');p.set('pmax','1000');break;case'1000-2000':p.set('pmin','1001');p.set('pmax','2000');break;case'2000+':p.set('pmin','2001');break;case'negotiable':p.set('pmin','0');p.set('pmax','0');break;}}return p.toString();}
     function parseSubcats(val){let arr=[];if(!val)return arr;try{const j=JSON.parse(val);if(Array.isArray(j))arr=j;}catch{arr=[val];}return arr.map(s=>arToCode[s]||s);} 
     function passSubcat(p){if(!active.subcat.length)return true;let subs=[];if(Array.isArray(p.subcategory))subs=p.subcategory;else if(typeof p.subcategory==='string')subs=parseSubcats(p.subcategory);return active.subcat.some(c=>subs.includes(c)||subs.includes(codeToAr[c]||c));}
     function passGov(p){if(!active.gov.length)return true;const g=(p.governorate||'').split(',').map(s=>s.trim());return active.gov.some(v=>g.some(x=>x.includes(v)));}
     function passCity(p){if(!active.city.length)return true;const c=(p.cities||'').split(',').map(s=>s.trim());return active.city.some(v=>c.some(x=>x.includes(v)));}
     function passPrice(p){
         const price=parseFloat(p.price)||0;
-        const sel=document.getElementById('price-select');
-        const val=sel?sel.value:'';
+        const selectedPrice=document.querySelector('input[name="price"]:checked');
+        const val=selectedPrice?selectedPrice.value:'';
         if(!val) return true;
         switch(val){
             case '0-500': return price>0 && price<=500;
