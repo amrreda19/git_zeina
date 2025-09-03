@@ -1706,10 +1706,17 @@
             // Apply filters from URL after initialization
             setTimeout(() => {
                 applyFilters(false);
+                updateActiveFiltersDisplay();
             }, 100);
             
             // Initialize toggle filters
             setupToggleFilters();
+            
+            // Setup clear filters button
+            const clearFiltersBtn = document.getElementById('clear-filters-btn');
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', clearAllFilters);
+            }
         });
 
         // Apply all active filters
@@ -2032,24 +2039,108 @@
                 price: '',
                 colors: []
             };
+            updateActiveFiltersDisplay();
             applyFilters();
         }
 
         // Update active filters display
         function updateActiveFiltersDisplay() {
             const activeFiltersContainer = document.getElementById('active-filters');
-            const allFilters = [];
+            const filters = [];
             
+            // Use global activeFilters if available
+            const activeFilters = window.activeFilters || {
+                subcategory: [],
+                governorates: [],
+                cities: [],
+                price: '',
+                colors: []
+            };
+
+            // Add subcategory filters
+            activeFilters.subcategory.forEach(sub => {
+                const subcategoryLabels = {
+                    'flowerbouquets-natural': 'بوكيهات طبيعية',
+                    'flowerbouquets-artificial': 'بوكيهات صناعية',
+                    'flowerbouquets-stand': 'بوكيهات استاند',
+                    'flowerbouquets-dried': 'بوكيهات مجففة',
+                    'flowerbouquets-arranged': 'بوكيهات مشكلة'
+                };
+                filters.push({
+                    type: 'subcategory',
+                    text: subcategoryLabels[sub] || sub,
+                    value: sub
+                });
+            });
+
+            // Add governorate filters
+            activeFilters.governorates.forEach(gov => {
+                filters.push({
+                    type: 'governorate',
+                    text: gov,
+                    value: gov
+                });
+            });
+
+            // Add cities filters
+            activeFilters.cities.forEach(city => {
+                filters.push({
+                    type: 'city',
+                    text: city,
+                    value: city
+                });
+            });
+
+            // Add color filters
+            if (activeFilters.colors && activeFilters.colors.length > 0) {
+                activeFilters.colors.forEach(color => {
+                    const colorLabels = {
+                        'red': 'أحمر',
+                        'pink': 'وردي',
+                        'white': 'أبيض',
+                        'yellow': 'أصفر',
+                        'purple': 'بنفسجي',
+                        'orange': 'برتقالي',
+                        'blue': 'أزرق',
+                        'mixed': 'مختلط'
+                    };
+                    filters.push({
+                        type: 'color',
+                        text: colorLabels[color] || color,
+                        value: color
+                    });
+                });
+            }
+
+            // Add price filter
+            if (activeFilters.price) {
+                const priceLabels = {
+                    '0-200': 'حتى 200 ج.م',
+                    '200-500': '200 - 500 ج.م',
+                    '500-1000': '500 - 1000 ج.م',
+                    '1000+': 'أكثر من 1000 ج.م',
+                    'negotiable': 'السعر عند الطلب'
+                };
+                filters.push({
+                    type: 'price',
+                    text: priceLabels[activeFilters.price] || activeFilters.price,
+                    value: activeFilters.price
+                });
+            }
+
             // Display active filters
-            if (allFilters.length === 0) {
-                activeFiltersContainer.innerHTML = '<p class="text-gray-500 text-sm">لا توجد فلاتر نشطة</p>';
-            } else {
-                activeFiltersContainer.innerHTML = allFilters.map(filter => `
-                    <span class="active-filter-tag">
-                        ${filter.label}
-                        <button class="remove-filter" onclick="removeFilter('${filter.type}', '${filter.value}')">×</button>
-                    </span>
+            if (filters.length > 0) {
+                activeFiltersContainer.innerHTML = filters.map(filter => `
+                    <div class="active-filter-tag">
+                        ${filter.text}
+                        <button class="remove-filter" onclick="removeFilter('${filter.type}', '${filter.value}')">
+                            ×
+                        </button>
+                    </div>
                 `).join('');
+                activeFiltersContainer.style.display = 'flex';
+            } else {
+                activeFiltersContainer.style.display = 'none';
             }
         }
 
@@ -2079,6 +2170,54 @@
 
         // Remove specific filter
         function removeFilter(type, value) {
+            const activeFilters = window.activeFilters || {
+                subcategory: [],
+                governorates: [],
+                cities: [],
+                price: '',
+                colors: []
+            };
+            
+            switch (type) {
+                case 'subcategory':
+                    activeFilters.subcategory = activeFilters.subcategory.filter(s => s !== value);
+                    break;
+                case 'governorate':
+                    activeFilters.governorates = activeFilters.governorates.filter(g => g !== value);
+                    break;
+                case 'city':
+                    activeFilters.cities = activeFilters.cities.filter(c => c !== value);
+                    break;
+                case 'color':
+                    if (activeFilters.colors) {
+                        activeFilters.colors = activeFilters.colors.filter(c => c !== value);
+                    }
+                    break;
+                case 'price':
+                    activeFilters.price = '';
+                    break;
+            }
+            
+            // Update global activeFilters
+            window.activeFilters = activeFilters;
+            applyFilters();
+        }
+
+        // Remove governorate filter
+        function removeGovernorate(governorate) {
+            if (window.activeFilters && window.activeFilters.governorates) {
+                window.activeFilters.governorates = window.activeFilters.governorates.filter(g => g !== governorate);
+            }
+            updateActiveFiltersDisplay();
+            applyFilters();
+        }
+
+        // Remove city filter
+        function removeCity(city) {
+            if (window.activeFilters && window.activeFilters.cities) {
+                window.activeFilters.cities = window.activeFilters.cities.filter(c => c !== city);
+            }
+            updateActiveFiltersDisplay();
             applyFilters();
         }
 

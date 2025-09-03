@@ -1386,16 +1386,33 @@
         // Remove specific filter
         function removeFilter(type, value) {
             switch (type) {
+                case 'subcategory':
+                    activeFilters.subcategory = activeFilters.subcategory.filter(s => s !== value);
+                    break;
                 case 'governorate':
-                    activeFilters.governorate = activeFilters.governorate.filter(item => item !== value);
-                    break;
+                    removeGovernorate(value);
+                    return; // removeGovernorate already calls applyFilters
                 case 'city':
-                    activeFilters.cities = activeFilters.cities.filter(item => item !== value);
-                    break;
+                    removeCity(value);
+                    return; // removeCity already calls applyFilters
                 case 'price':
                     activeFilters.price = '';
                     break;
             }
+            applyFilters();
+        }
+
+        // Remove governorate filter
+        function removeGovernorate(governorate) {
+            activeFilters.governorate = activeFilters.governorate.filter(g => g !== governorate);
+            updateActiveFiltersDisplay();
+            applyFilters();
+        }
+
+        // Remove city filter
+        function removeCity(city) {
+            activeFilters.cities = activeFilters.cities.filter(c => c !== city);
+            updateActiveFiltersDisplay();
             applyFilters();
         }
 

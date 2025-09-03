@@ -1852,6 +1852,20 @@
             applyFilters();
         }
 
+        // Remove governorate filter
+        function removeGovernorate(governorate) {
+            activeFilters.governorate = activeFilters.governorate.filter(g => g !== governorate);
+            updateActiveFiltersDisplay();
+            applyFilters();
+        }
+
+        // Remove city filter
+        function removeCity(city) {
+            activeFilters.cities = activeFilters.cities.filter(c => c !== city);
+            updateActiveFiltersDisplay();
+            applyFilters();
+        }
+
         // Display products
         function displayProducts(products) {
             const container = document.getElementById('products-container');

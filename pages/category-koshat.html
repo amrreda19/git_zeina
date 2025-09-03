@@ -773,6 +773,9 @@
             else if (priceMin === 1001 && priceMax === 2000) activeFilters.price = '1000-2000';
             else if (priceMin === 2001 && priceMax === null) activeFilters.price = '2000+';
             else if (priceMin === 0 && priceMax === 0) activeFilters.price = 'negotiable';
+            
+            // Update active filters display after setting price filter
+            updateActiveFiltersDisplay();
         }
 
 
@@ -1204,13 +1207,33 @@
             if (type === 'subcategory') {
                 activeFilters.subcategory = activeFilters.subcategory.filter(item => item !== value);
             } else if (type === 'governorate') {
-                activeFilters.governorate = activeFilters.governorate.filter(item => item !== value);
+                removeGovernorate(value);
+                return; // removeGovernorate already calls applyFilters
             } else if (type === 'cities') {
-                activeFilters.cities = activeFilters.cities.filter(item => item !== value);
+                removeCity(value);
+                return; // removeCity already calls applyFilters
             } else if (type === 'price') {
                 activeFilters.price = '';
             }
 
+            currentPage = 1;
+            updateURL();
+            applyFilters();
+            updateActiveFiltersDisplay();
+        }
+
+        // Remove governorate filter
+        function removeGovernorate(governorate) {
+            activeFilters.governorate = activeFilters.governorate.filter(g => g !== governorate);
+            currentPage = 1;
+            updateURL();
+            applyFilters();
+            updateActiveFiltersDisplay();
+        }
+
+        // Remove city filter
+        function removeCity(city) {
+            activeFilters.cities = activeFilters.cities.filter(c => c !== city);
             currentPage = 1;
             updateURL();
             applyFilters();

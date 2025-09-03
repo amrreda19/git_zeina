@@ -1799,8 +1799,12 @@
             });
             
             filterSection.addEventListener('click', function(e) {
-                // منع الانتقال عند النقر على زر مسح الفلاتر
-                if (e.target.id === 'clear-filters-btn' || e.target.closest('#clear-filters-btn')) {
+                // منع الانتقال عند النقر على زر مسح الفلاتر أو الفلاتر النشطة
+                if (e.target.id === 'clear-filters-btn' || 
+                    e.target.closest('#clear-filters-btn') ||
+                    e.target.closest('#active-filters') ||
+                    e.target.closest('.active-filter-tag') ||
+                    e.target.closest('.remove-filter')) {
                     return;
                 }
                 navigateToFilters();
@@ -2002,6 +2006,27 @@
                     if (priceFilter) priceFilter.value = '';
                     break;
             }
+            applyFilters();
+        }
+
+        // Remove governorate filter
+        function removeGovernorate(governorate) {
+            activeFilters.governorates = activeFilters.governorates.filter(g => g !== governorate);
+            updateActiveFiltersDisplay();
+            applyFilters();
+        }
+
+        // Remove city filter
+        function removeCity(city) {
+            activeFilters.cities = activeFilters.cities.filter(c => c !== city);
+            updateActiveFiltersDisplay();
+            applyFilters();
+        }
+
+        // Remove subcategory filter
+        function removeSubcategory(subcategory) {
+            activeFilters.subcategory = activeFilters.subcategory.filter(s => s !== subcategory);
+            updateActiveFiltersDisplay();
             applyFilters();
         }
 

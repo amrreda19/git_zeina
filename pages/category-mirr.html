@@ -1370,18 +1370,32 @@
                         }
                     }
                     break;
-                            case 'governorate':
-                removeGovernorate(value);
-                return; // removeGovernorate already calls applyFilters
-            case 'city':
-                removeCity(value);
-                return; // removeCity already calls applyFilters
+                case 'governorate':
+                    removeGovernorate(value);
+                    return; // removeGovernorate already calls applyFilters
+                case 'city':
+                    removeCity(value);
+                    return; // removeCity already calls applyFilters
                     break;
                 case 'price':
                     document.getElementById('price-filter').value = '';
                     activeFilters.price = '';
                     break;
             }
+            applyFilters();
+        }
+
+        // Remove governorate filter
+        function removeGovernorate(governorate) {
+            activeFilters.governorate = activeFilters.governorate.filter(g => g !== governorate);
+            updateActiveFiltersDisplay();
+            applyFilters();
+        }
+
+        // Remove city filter
+        function removeCity(city) {
+            activeFilters.cities = activeFilters.cities.filter(c => c !== city);
+            updateActiveFiltersDisplay();
             applyFilters();
         }
 
