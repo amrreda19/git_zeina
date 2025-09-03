@@ -760,7 +760,17 @@
                 
                 if (result.success) {
                     allProducts = result.data || [];
-                    console.log('🔍 Loaded products:', allProducts.length, 'First product colors:', allProducts[0]?.colors);
+                    console.log('🔍 Loaded products:', allProducts.length);
+                    if (allProducts.length > 0) {
+                        console.log('Sample product data:', {
+                            id: allProducts[0].id,
+                            governorate: allProducts[0].governorate,
+                            cities: allProducts[0].cities,
+                            price: allProducts[0].price,
+                            subcategory: allProducts[0].subcategory,
+                            colors: allProducts[0].colors
+                        });
+                    }
                     
                     // Process products
                     if (allProducts.length > 0) {
@@ -1523,80 +1533,7 @@
             }, 3000);
         }
 
-        // تحديث جميع أيقونات المفضلة عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            // قراءة رقم الصفحة من URL
-            const urlParams = new URLSearchParams(window.location.search);
-            currentPage = parseInt(urlParams.get('page')) || 1;
-            
-            // تأكيد تهيئة كائن الفلاتر قبل استخدامها
-            if (!window.activeFilters) {
-                window.activeFilters = {
-                    subcategory: [],
-                    governorates: [],
-                    cities: [],
-                    price: '',
-                    colors: []
-                };
-            }
 
-            // قراءة الفلاتر من URL
-            const subcatParams = urlParams.getAll('subcat');
-            const govParams = urlParams.getAll('gov');
-            const cityParams = urlParams.getAll('city');
-            const colorParams = urlParams.getAll('color');
-            const pmin = urlParams.get('pmin');
-            const pmax = urlParams.get('pmax');
-            
-            console.log('URL params:', { subcatParams, govParams, cityParams, colorParams, pmin, pmax });
-            
-            // تطبيق الفلاتر من URL
-            if (subcatParams.length > 0) {
-                window.activeFilters.subcategory = subcatParams;
-            }
-            if (govParams.length > 0) {
-                window.activeFilters.governorates = govParams;
-            }
-            if (cityParams.length > 0) {
-                window.activeFilters.cities = cityParams;
-            }
-            if (colorParams.length > 0) {
-                window.activeFilters.colors = colorParams;
-            }
-            if (pmin !== null || pmax !== null) {
-                window.activeFilters.price = { min: pmin, max: pmax };
-            }
-            
-            console.log('Applied filters to window.activeFilters:', window.activeFilters);
-            
-            // التمرير لأعلى إذا كانت الصفحة ليست الأولى
-            if (currentPage > 1) {
-                setTimeout(() => {
-                    scrollToTop();
-                }, 100);
-            }
-            
-            // تحديث أيقونات المفضلة بعد تحميل المنتجات
-            setTimeout(() => {
-                const productCards = document.querySelectorAll('.product-card');
-                productCards.forEach(card => {
-                    const productId = card.getAttribute('data-product-id');
-                    if (productId) {
-                        updateFavoriteIcon(productId);
-                    }
-                });
-            }, 1000);
-            
-            // تحديث عداد المفضلة عند تحميل الصفحة
-            updateFavoritesCountBadge();
-            
-            // مراقبة التغييرات في localStorage (المفضلة)
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'favorites') {
-                    updateFavoritesCountBadge();
-                }
-            });
-        });
 
         // Filter System Variables
         let currentFilter = 'all';
@@ -1687,37 +1624,7 @@
             });
         }
 
-        // Initialize filters when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // إنشاء كائن CitiesService للتأكد من توفره
-            if (window.CitiesService && !window.citiesServiceInstance) {
-                window.citiesServiceInstance = new window.CitiesService();
-    
-            }
-            
-            // Initialize active filters object without overwriting URL-applied filters
-            if (!window.activeFilters) window.activeFilters = {};
-            window.activeFilters.subcategory = window.activeFilters.subcategory || [];
-            window.activeFilters.governorates = window.activeFilters.governorates || [];
-            window.activeFilters.cities = window.activeFilters.cities || [];
-            window.activeFilters.price = window.activeFilters.price || '';
-            window.activeFilters.colors = window.activeFilters.colors || [];
-            
-            // Apply filters from URL after initialization
-            setTimeout(() => {
-                applyFilters(false);
-                updateActiveFiltersDisplay();
-            }, 100);
-            
-            // Initialize toggle filters
-            setupToggleFilters();
-            
-            // Setup clear filters button
-            const clearFiltersBtn = document.getElementById('clear-filters-btn');
-            if (clearFiltersBtn) {
-                clearFiltersBtn.addEventListener('click', clearAllFilters);
-            }
-        });
+
 
         // Apply all active filters
         function applyFilters(resetPage = true) {
@@ -1816,45 +1723,59 @@
             }
             
             // Apply governorate filter
-            if (activeFilters.governorates.length > 0) {
+            if (filters.governorates.length > 0) {
+                console.log('Applying governorate filter with:', filters.governorates);
                 filtered = filtered.filter(product => {
                     if (product.governorate) {
                         const productGovernorates = product.governorate.split(',').map(g => g.trim());
-                        return activeFilters.governorates.some(selected => 
-                            productGovernorates.some(productGov => 
-                                productGov.includes(selected)
+                        console.log('Product governorates:', productGovernorates, 'for product:', product.id);
+                        const match = filters.governorates.some(selected =>
+                            productGovernorates.some(productGov =>
+                                productGov.toLowerCase().includes(selected.toLowerCase()) ||
+                                selected.toLowerCase().includes(productGov.toLowerCase())
                             )
                         );
+                        if (match) console.log('Match found for product:', product.id);
+                        return match;
                     }
                     return false;
                 });
+                console.log('Products after governorate filter:', filtered.length);
             }
-            
+
             // Apply cities filter
-            if (activeFilters.cities.length > 0) {
+            if (filters.cities.length > 0) {
+                console.log('Applying cities filter with:', filters.cities);
                 filtered = filtered.filter(product => {
                     if (product.cities) {
                         const productCities = product.cities.split(',').map(c => c.trim());
-                        return activeFilters.cities.some(selected => 
-                            productCities.some(productCity => 
-                                productCity.includes(selected)
+                        console.log('Product cities:', productCities, 'for product:', product.id);
+                        const match = filters.cities.some(selected =>
+                            productCities.some(productCity =>
+                                productCity.toLowerCase().includes(selected.toLowerCase()) ||
+                                selected.toLowerCase().includes(productCity.toLowerCase())
                             )
                         );
+                        if (match) console.log('City match found for product:', product.id);
+                        return match;
                     }
                     return false;
                 });
+                console.log('Products after cities filter:', filtered.length);
             }
-            
-            // Apply price filter
-            if (activeFilters.price) {
+
+                        // Apply price filter
+            if (filters.price) {
+                console.log('Applying price filter with:', filters.price);
                 filtered = filtered.filter(product => {
                     const price = parseFloat(product.price) || 0;
-                    
+                    console.log('Product price:', price, 'for product:', product.id);
+
                     // Handle price range from URL parameters
-                    if (typeof activeFilters.price === 'object' && activeFilters.price.min !== undefined) {
-                        const min = parseFloat(activeFilters.price.min) || 0;
-                        const max = parseFloat(activeFilters.price.max) || Infinity;
-                        
+                    if (typeof filters.price === 'object' && filters.price.min !== undefined) {
+                        const min = parseFloat(filters.price.min) || 0;
+                        const max = parseFloat(filters.price.max) || Infinity;
+
                         if (min === 0 && max === 0) {
                             return price === 0 || !product.price;
                         } else if (max === Infinity) {
@@ -1863,9 +1784,9 @@
                             return price >= min && price <= max;
                         }
                     }
-                    
+
                     // Handle price range from filter selection
-                    switch (activeFilters.price) {
+                    switch (filters.price) {
                         case '0-200':
                             return price > 0 && price <= 200;
                         case '200-500':
@@ -1880,6 +1801,7 @@
                             return true;
                     }
                 });
+                console.log('Products after price filter:', filtered.length);
             }
             
             // Update filtered products and display
@@ -2359,9 +2281,110 @@
 
         // إضافة الأحداث عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
-            // تحميل الإعلانات المميزة في التصنيف
+            // قراءة رقم الصفحة من URL
+            const urlParams = new URLSearchParams(window.location.search);
+            currentPage = parseInt(urlParams.get('page')) || 1;
+
+            // تأكيد تهيئة كائن الفلاتر قبل استخدامها
+            if (!window.activeFilters) {
+                window.activeFilters = {
+                    subcategory: [],
+                    governorates: [],
+                    cities: [],
+                    price: '',
+                    colors: []
+                };
+            }
+
+            // قراءة الفلاتر من URL
+            const subcatParams = urlParams.getAll('subcat');
+            const govParams = urlParams.getAll('gov');
+            const cityParams = urlParams.getAll('city');
+            const colorParams = urlParams.getAll('color');
+            const pmin = urlParams.get('pmin');
+            const pmax = urlParams.get('pmax');
+
+            console.log('URL params:', { subcatParams, govParams, cityParams, colorParams, pmin, pmax });
+
+            // تطبيق الفلاتر من URL
+            if (subcatParams.length > 0) {
+                window.activeFilters.subcategory = subcatParams;
+            }
+            if (govParams.length > 0) {
+                window.activeFilters.governorates = govParams;
+            }
+            if (cityParams.length > 0) {
+                window.activeFilters.cities = cityParams;
+            }
+            if (colorParams.length > 0) {
+                window.activeFilters.colors = colorParams;
+            }
+            if (pmin !== null || pmax !== null) {
+                window.activeFilters.price = { min: pmin, max: pmax };
+            }
+
+            console.log('Applied filters to window.activeFilters:', window.activeFilters);
+
+            // التمرير لأعلى إذا كانت الصفحة ليست الأولى
+            if (currentPage > 1) {
+                setTimeout(() => {
+                    scrollToTop();
+                }, 100);
+            }
+
+            // تحديث أيقونات المفضلة بعد تحميل المنتجات
+            setTimeout(() => {
+                const productCards = document.querySelectorAll('.product-card');
+                productCards.forEach(card => {
+                    const productId = card.getAttribute('data-product-id');
+                    if (productId) {
+                        updateFavoriteIcon(productId);
+                    }
+                });
+            }, 1000);
+
+            // تحديث عداد المفضلة عند تحميل الصفحة
+            updateFavoritesCountBadge();
+
+            // مراقبة التغييرات في localStorage (المفضلة)
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'favorites') {
+                    updateFavoritesCountBadge();
+                }
+            });
+
+                        // تحميل الإعلانات المميزة في التصنيف
             loadCategoryFeaturedAds();
-            
+
+            // Initialize filters when DOM is loaded
+            // إنشاء كائن CitiesService للتأكد من توفره
+            if (window.CitiesService && !window.citiesServiceInstance) {
+                window.citiesServiceInstance = new window.CitiesService();
+            }
+
+            // Initialize active filters object without overwriting URL-applied filters
+            if (!window.activeFilters) window.activeFilters = {};
+            window.activeFilters.subcategory = window.activeFilters.subcategory || [];
+            window.activeFilters.governorates = window.activeFilters.governorates || [];
+            window.activeFilters.cities = window.activeFilters.cities || [];
+            window.activeFilters.price = window.activeFilters.price || '';
+            window.activeFilters.colors = window.activeFilters.colors || [];
+
+            // Apply filters from URL after initialization
+            setTimeout(() => {
+                applyFilters(false);
+                updateActiveFiltersDisplay();
+            }, 100);
+
+            // Initialize toggle filters
+            setupToggleFilters();
+
+            // Setup clear filters button
+            const clearFiltersBtn = document.getElementById('clear-filters-btn');
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', clearAllFilters);
+            }
+
             // انتظار تحميل ProductService قبل تحميل المنتجات
             const waitForProductService = () => {
                 if (window.ProductService && window.ProductService.initialized) {

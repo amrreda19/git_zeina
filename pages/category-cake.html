@@ -1429,9 +1429,35 @@
                             subcats = [product.subcategory];
                         }
                     }
-                    const matches = activeFilters.subcategory.some(filterSubcat => 
-                        subcats.includes(filterSubcat)
-                    );
+                    const matches = activeFilters.subcategory.some(filterSubcat => {
+                        // التحقق من الكود مباشرة
+                        if (subcats.includes(filterSubcat)) return true;
+
+                        // التحقق من النص العربي المقابل للكود
+                        const arabicText = {
+                            'cake-wedding': 'تورتة زفاف',
+                            'cake-engagement': 'تورتة خطوبة',
+                            'cake-birthday': 'تورتة عيد ميلاد',
+                            'cake-chocolate': 'تورتة شوكولاتة',
+                            'cake-fruit': 'تورتة فواكه',
+                            'cake-chocolate-tray': 'صينية شوكولاتة'
+                        };
+
+                        const arabicVersion = arabicText[filterSubcat];
+                        if (arabicVersion && subcats.includes(arabicVersion)) return true;
+
+                        // التحقق من النصوص البديلة الشائعة
+                        const alternativeTexts = {
+                            'cake-wedding': ['تورتة زواج', 'تورتة الزفاف'],
+                            'cake-engagement': ['تورتة الخطوبة'],
+                            'cake-birthday': ['تورتة عيد الميلاد'],
+                            'cake-fruit': ['تورتة الفواكه'],
+                            'cake-chocolate-tray': ['صينية الشوكولاتة']
+                        };
+
+                        const alternatives = alternativeTexts[filterSubcat] || [];
+                        return alternatives.some(alt => subcats.includes(alt));
+                    });
                     if (!matches) {
                         console.log('منتج لا يطابق فلتر التصنيف:', product.id, 'subcats:', subcats);
                     }
@@ -1918,11 +1944,17 @@
                     // خريطة للنصوص العربية المباشرة
                     const arabicToCodeMap = {
                         'تورتة زفاف': 'cake-wedding',
+                        'تورتة زواج': 'cake-wedding',
+                        'تورتة الزفاف': 'cake-wedding',
                         'تورتة خطوبة': 'cake-engagement',
+                        'تورتة الخطوبة': 'cake-engagement',
                         'تورتة عيد ميلاد': 'cake-birthday',
+                        'تورتة عيد الميلاد': 'cake-birthday',
                         'تورتة شوكولاتة': 'cake-chocolate',
                         'تورتة فواكه': 'cake-fruit',
-                        'صينية شوكولاتة': 'cake-chocolate-tray'
+                        'تورتة الفواكه': 'cake-fruit',
+                        'صينية شوكولاتة': 'cake-chocolate-tray',
+                        'صينية الشوكولاتة': 'cake-chocolate-tray'
                     };
                     
                     try {
