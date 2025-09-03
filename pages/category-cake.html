@@ -1815,12 +1815,16 @@
 
             // Add price filter
             if (activeFilters.price) {
-                const priceText = document.getElementById('price-filter').options[
-                    document.getElementById('price-filter').selectedIndex
-                ].text;
+                const priceLabels = {
+                    '0-200': 'السعر: 0 - 200 ج.م',
+                    '200-500': 'السعر: 200 - 500 ج.م',
+                    '500-1000': 'السعر: 500 - 1000 ج.م',
+                    '1000+': 'السعر: أكثر من 1000 ج.م',
+                    'negotiable': 'السعر: قابل للتفاوض'
+                };
                 filters.push({
                     type: 'price',
-                    text: priceText,
+                    text: priceLabels[activeFilters.price] || activeFilters.price,
                     value: activeFilters.price
                 });
             }
