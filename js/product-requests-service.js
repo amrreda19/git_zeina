@@ -299,13 +299,29 @@ class ProductRequestsService {
                 ? finalImageUrls.map(img => img?.url).filter(url => url)
                 : [];
 
+            // معالجة التصنيفات الفرعية
+            let processedSubcategories = [];
+            if (request.subcategory) {
+                if (typeof request.subcategory === 'string' && request.subcategory.includes(', ')) {
+                    // تحويل النص المفصول بفواصل إلى array
+                    processedSubcategories = request.subcategory.split(', ').filter(item => item.trim() !== '');
+                } else if (Array.isArray(request.subcategory)) {
+                    processedSubcategories = request.subcategory;
+                } else if (typeof request.subcategory === 'string') {
+                    processedSubcategories = [request.subcategory];
+                }
+            }
+
+            console.log('🔍 Original subcategory from request:', request.subcategory);
+            console.log('🔄 Processed subcategories:', processedSubcategories);
+
             // Create the actual product
             const productData = {
                 title: request.description, // استخدام الوصف كعنوان
                 description: request.description,
                 price: request.price || 0,
                 category: request.category,
-                subcategory: request.subcategory,
+                subcategory: processedSubcategories, // استخدام المصفوفة المعالجة
                 governorate: request.governorate,
                 cities: request.cities,
                 whatsapp: request.whatsapp,
