@@ -580,7 +580,15 @@ class ProductRequestsService {
 
             // Delete images from storage if they exist
             if (request.image_urls && request.image_urls.length > 0) {
-                await this.deleteRequestImages(request.image_urls);
+                console.log(`🗑️ Deleting ${request.image_urls.length} images for rejected request`);
+                const deleteImagesResult = await this.deleteRequestImages(request.image_urls);
+
+                if (!deleteImagesResult.success) {
+                    console.warn('⚠️ Failed to delete images from storage, but continuing with request deletion');
+                    console.warn('⚠️ Images may remain in storage - manual cleanup may be needed');
+                } else {
+                    console.log('✅ Images deleted from storage successfully');
+                }
             }
 
             // Delete the request completely with multiple attempts
@@ -1182,46 +1190,81 @@ class ProductRequestsService {
     async deleteRequestImages(imageUrls) {
         try {
             if (!imageUrls || imageUrls.length === 0) {
-                return;
+                console.log('ℹ️ No images to delete');
+                return { success: true };
             }
 
             console.log(`🗑️ Deleting ${imageUrls.length} images from storage`);
 
-            for (let i = 0; i < imageUrls.length; i++) {
-                const image = imageUrls[i];
-                const imagePath = image.path || image.url;
+            // Extract file paths from image URLs (same logic as product-service.js)
+            const filePaths = imageUrls.map(url => {
+                // Extract the file path from the URL
+                // URL format: https://bekzucjtdmesirfjtcip.supabase.co/storage/v1/object/public/images/folder/filename.jpg
+                const urlParts = url.split('/');
+                const imagesIndex = urlParts.indexOf('images');
+                if (imagesIndex !== -1 && imagesIndex < urlParts.length - 1) {
+                    return urlParts.slice(imagesIndex + 1).join('/');
+                }
+                return null;
+            }).filter(path => path !== null);
 
-                if (imagePath) {
-                    try {
-                        // Extract path from URL if it's a full URL
-                        let storagePath = imagePath;
-                        if (imagePath.startsWith('http')) {
-                            // Extract path from URL (remove domain and bucket)
-                            const urlParts = imagePath.split('/');
-                            const pathIndex = urlParts.findIndex(part => part === 'images');
-                            if (pathIndex !== -1) {
-                                storagePath = urlParts.slice(pathIndex + 1).join('/');
-                            }
+            if (filePaths.length === 0) {
+                console.log('⚠️ No valid file paths found in image URLs');
+                return { success: true };
+            }
+
+            console.log('📁 File paths to delete:', filePaths);
+
+            // Delete files from storage with multiple attempts
+            let deleteSuccess = false;
+            let deleteError = null;
+            let deleteData = null;
+            const maxAttempts = 3;
+
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+                console.log(`🔄 Storage deletion attempt ${attempt}/${maxAttempts}`);
+
+                try {
+                    const { data, error } = await this.supabase.storage
+                        .from('images')
+                        .remove(filePaths);
+
+                    if (error) {
+                        console.error(`❌ Storage deletion attempt ${attempt} failed:`, error);
+                        deleteError = error;
+
+                        if (attempt < maxAttempts) {
+                            console.log(`⏳ Waiting 1 second before storage retry...`);
+                            await new Promise(resolve => setTimeout(resolve, 1000));
                         }
+                    } else {
+                        console.log(`✅ Storage deletion attempt ${attempt} successful`);
+                        deleteSuccess = true;
+                        deleteData = data;
+                        break;
+                    }
+                } catch (retryError) {
+                    console.error(`❌ Exception during storage deletion attempt ${attempt}:`, retryError);
+                    deleteError = retryError;
 
-                        if (storagePath && !storagePath.startsWith('http')) {
-                            const { error: deleteError } = await this.supabase.storage
-                                .from('images')
-                                .remove([storagePath]);
-
-                            if (deleteError) {
-                                console.warn(`⚠️ Could not delete image ${storagePath}:`, deleteError);
-                            } else {
-                                console.log(`✅ Deleted image: ${storagePath}`);
-                            }
-                        }
-                    } catch (imgError) {
-                        console.warn(`⚠️ Error deleting image ${i + 1}:`, imgError);
+                    if (attempt < maxAttempts) {
+                        console.log(`⏳ Waiting 1 second before storage retry...`);
+                        await new Promise(resolve => setTimeout(resolve, 1000));
                     }
                 }
             }
+
+            if (!deleteSuccess) {
+                console.error('❌ All storage deletion attempts failed');
+                return { success: false, error: `Failed to delete images from storage after ${maxAttempts} attempts: ${deleteError?.message || 'Unknown error'}` };
+            }
+
+            console.log('✅ Images deleted from storage successfully:', deleteData);
+            return { success: true, data: deleteData };
+
         } catch (error) {
-            console.error('Error deleting request images:', error);
+            console.error('❌ Error in deleteRequestImages:', error);
+            return { success: false, error: error.message };
         }
     }
 }
