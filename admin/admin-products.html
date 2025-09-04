@@ -880,6 +880,115 @@
                 opacity: 0.7;
             }
         }
+
+        /* Pagination Styles */
+        .pagination-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .pagination-info {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            min-width: 80px;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: #d4af37;
+            background: #fef9c3;
+            color: #92400e;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-number {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .page-number:hover {
+            border-color: #d4af37;
+            background: #fef9c3;
+            color: #92400e;
+        }
+
+        .page-number.active {
+            background: #d4af37;
+            border-color: #d4af37;
+            color: white;
+        }
+
+        .page-number.ellipsis {
+            cursor: default;
+            border: none;
+            background: none;
+        }
+
+        .page-number.ellipsis:hover {
+            background: none;
+            border: none;
+            color: #6b7280;
+        }
+
+        @media (max-width: 768px) {
+            .pagination-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .pagination-controls {
+                justify-content: center;
+            }
+            
+            .page-numbers {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -974,6 +1083,24 @@
         <div id="products-container" style="display: none;">
             <div id="products-grid" class="products-grid">
                 <!-- Products will be loaded here -->
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div id="pagination-container" class="pagination-container" style="display: none;">
+                <div class="pagination-info">
+                    <span id="pagination-info">عرض 1-15 من 0 منتج</span>
+                </div>
+                <div class="pagination-controls">
+                    <button id="prev-page" class="pagination-btn" onclick="goToPreviousPage()" disabled>
+                        ‹ السابق
+                    </button>
+                    <div id="page-numbers" class="page-numbers">
+                        <!-- Page numbers will be generated here -->
+                    </div>
+                    <button id="next-page" class="pagination-btn" onclick="goToNextPage()" disabled>
+                        التالي ›
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1191,6 +1318,11 @@
         let allProducts = [];
         let currentFilter = 'koshat';
         let productToDelete = null;
+        
+        // متغيرات الترقيم
+        let currentPage = 1;
+        let productsPerPage = 15;
+        let totalPages = 1;
 
         // Check admin authentication
         let adminSecurityCheckStarted = false;
@@ -1429,6 +1561,7 @@
         // Apply filter
         function applyFilter(category) {
             currentFilter = category;
+            currentPage = 1; // إعادة تعيين الصفحة إلى الأولى عند تغيير الفلتر
             
             // Update active button
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -1445,7 +1578,7 @@
             displayProducts(filteredProducts);
         }
 
-        // عرض المنتجات
+        // عرض المنتجات مع دعم الترقيم
         function displayProducts(products) {
             const loadingState = document.getElementById('loading-state');
             const emptyState = document.getElementById('empty-state');
@@ -1457,19 +1590,32 @@
             if (products.length === 0) {
                 emptyState.style.display = 'block';
                 productsContainer.style.display = 'none';
+                updatePagination(0);
                 return;
             }
 
             emptyState.style.display = 'none';
             productsContainer.style.display = 'block';
 
-            console.log('🔍 [DEBUG] Displaying products:', products.length);
-            console.log('🔍 [DEBUG] Sample product data:', products[0]);
+            // حساب الترقيم
+            totalPages = Math.ceil(products.length / productsPerPage);
+            if (currentPage > totalPages) {
+                currentPage = 1;
+            }
+
+            // تحديد المنتجات للصفحة الحالية
+            const startIndex = (currentPage - 1) * productsPerPage;
+            const endIndex = startIndex + productsPerPage;
+            const productsToShow = products.slice(startIndex, endIndex);
+
+            console.log('🔍 [DEBUG] Displaying products:', productsToShow.length);
+            console.log('🔍 [DEBUG] Page:', currentPage, 'of', totalPages);
+            console.log('🔍 [DEBUG] Sample product data:', productsToShow[0]);
 
             console.log('🔍 [DEBUG] ===== STARTING displayProducts =====');
-            console.log('🔍 [DEBUG] Total products to display:', products.length);
+            console.log('🔍 [DEBUG] Total products to display:', productsToShow.length);
 
-            productsGrid.innerHTML = products.map((product, index) => {
+            productsGrid.innerHTML = productsToShow.map((product, index) => {
                 console.log(`🔍 [DEBUG] Processing product ${index + 1}/${products.length}:`, {
                     id: product.id,
                     title: product.title,
@@ -1568,7 +1714,10 @@
             }).join('');
 
             console.log('🔍 [DEBUG] ===== END displayProducts =====');
-            console.log('🔍 [DEBUG] Total cards generated:', products.length);
+            console.log('🔍 [DEBUG] Total cards generated:', productsToShow.length);
+            
+            // تحديث واجهة الترقيم
+            updatePagination(products.length);
         }
 
         // Get category name
@@ -1582,6 +1731,109 @@
             'flowerbouquets': 'بوكيهات الورد'
             };
             return categories[category] || category;
+        }
+
+        // دوال الترقيم
+        function updatePagination(totalProducts) {
+            const paginationContainer = document.getElementById('pagination-container');
+            const paginationInfo = document.getElementById('pagination-info');
+            const pageNumbers = document.getElementById('page-numbers');
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+
+            if (totalProducts === 0) {
+                paginationContainer.style.display = 'none';
+                return;
+            }
+
+            paginationContainer.style.display = 'flex';
+
+            // تحديث معلومات الترقيم
+            const startItem = (currentPage - 1) * productsPerPage + 1;
+            const endItem = Math.min(currentPage * productsPerPage, totalProducts);
+            paginationInfo.textContent = `عرض ${startItem}-${endItem} من ${totalProducts} منتج`;
+
+            // تحديث أزرار التنقل
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+
+            // إنشاء أرقام الصفحات
+            pageNumbers.innerHTML = '';
+            
+            if (totalPages <= 7) {
+                // عرض جميع الصفحات إذا كانت 7 أو أقل
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageBtn = createPageButton(i, i === currentPage);
+                    pageNumbers.appendChild(pageBtn);
+                }
+            } else {
+                // عرض الصفحات مع النقاط (...)
+                const pageBtn1 = createPageButton(1, currentPage === 1);
+                pageNumbers.appendChild(pageBtn1);
+
+                if (currentPage > 3) {
+                    const ellipsis1 = createEllipsis();
+                    pageNumbers.appendChild(ellipsis1);
+                }
+
+                const start = Math.max(2, currentPage - 1);
+                const end = Math.min(totalPages - 1, currentPage + 1);
+
+                for (let i = start; i <= end; i++) {
+                    const pageBtn = createPageButton(i, i === currentPage);
+                    pageNumbers.appendChild(pageBtn);
+                }
+
+                if (currentPage < totalPages - 2) {
+                    const ellipsis2 = createEllipsis();
+                    pageNumbers.appendChild(ellipsis2);
+                }
+
+                if (totalPages > 1) {
+                    const pageBtnLast = createPageButton(totalPages, currentPage === totalPages);
+                    pageNumbers.appendChild(pageBtnLast);
+                }
+            }
+        }
+
+        function createPageButton(pageNum, isActive) {
+            const button = document.createElement('button');
+            button.className = `page-number ${isActive ? 'active' : ''}`;
+            button.textContent = pageNum;
+            button.onclick = () => goToPage(pageNum);
+            return button;
+        }
+
+        function createEllipsis() {
+            const ellipsis = document.createElement('span');
+            ellipsis.className = 'page-number ellipsis';
+            ellipsis.textContent = '...';
+            return ellipsis;
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > totalPages || page === currentPage) return;
+            
+            currentPage = page;
+            
+            // إعادة عرض المنتجات للصفحة الجديدة
+            const filteredProducts = allProducts.filter(product => product.category === currentFilter);
+            displayProducts(filteredProducts);
+            
+            // التمرير إلى أعلى الصفحة
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToPreviousPage() {
+            if (currentPage > 1) {
+                goToPage(currentPage - 1);
+            }
+        }
+
+        function goToNextPage() {
+            if (currentPage < totalPages) {
+                goToPage(currentPage + 1);
+            }
         }
 
         // Get subcategory display names and badges
