@@ -299,17 +299,55 @@ class ProductRequestsService {
                 ? finalImageUrls.map(img => img?.url).filter(url => url)
                 : [];
 
-            // معالجة التصنيفات الفرعية
+            // معالجة التصنيفات الفرعية مع تنظيف البيانات من علامات الاقتباس
             let processedSubcategories = [];
             if (request.subcategory) {
-                if (typeof request.subcategory === 'string' && request.subcategory.includes(', ')) {
-                    // تحويل النص المفصول بفواصل إلى array
-                    processedSubcategories = request.subcategory.split(', ').filter(item => item.trim() !== '');
-                } else if (Array.isArray(request.subcategory)) {
-                    processedSubcategories = request.subcategory;
-                } else if (typeof request.subcategory === 'string') {
-                    processedSubcategories = [request.subcategory];
+                let cleanSubcategory = request.subcategory;
+
+                // تنظيف البيانات من علامات الاقتباس الإضافية
+                if (typeof cleanSubcategory === 'string') {
+                    if (cleanSubcategory.startsWith('"') && cleanSubcategory.endsWith('"')) {
+                        cleanSubcategory = cleanSubcategory.slice(1, -1);
+                    }
+                    if (cleanSubcategory.startsWith("'") && cleanSubcategory.endsWith("'")) {
+                        cleanSubcategory = cleanSubcategory.slice(1, -1);
+                    }
                 }
+
+                if (Array.isArray(cleanSubcategory)) {
+                    processedSubcategories = cleanSubcategory;
+                } else if (typeof cleanSubcategory === 'string') {
+                    try {
+                        // محاولة تحليل JSON string
+                        const parsed = JSON.parse(cleanSubcategory);
+                        if (Array.isArray(parsed)) {
+                            processedSubcategories = parsed;
+                        } else {
+                            processedSubcategories = [cleanSubcategory];
+                        }
+                    } catch (e) {
+                        // إذا لم يكن JSON، حاول تقسيمه بفواصل
+                        if (cleanSubcategory.includes(', ')) {
+                            processedSubcategories = cleanSubcategory.split(', ').filter(item => item.trim() !== '');
+                        } else if (cleanSubcategory.includes(',')) {
+                            processedSubcategories = cleanSubcategory.split(',').filter(item => item.trim() !== '');
+                        } else {
+                            processedSubcategories = [cleanSubcategory];
+                        }
+                    }
+                }
+
+                // تنظيف كل عنصر من علامات الاقتباس الإضافية
+                processedSubcategories = processedSubcategories.map(sub => {
+                    let cleaned = sub.trim();
+                    if (cleaned.startsWith('"') && cleaned.endsWith('"')) {
+                        cleaned = cleaned.slice(1, -1);
+                    }
+                    if (cleaned.startsWith("'") && cleaned.endsWith("'")) {
+                        cleaned = cleaned.slice(1, -1);
+                    }
+                    return cleaned;
+                }).filter(sub => sub !== '');
             }
 
             console.log('🔍 Original subcategory from request:', request.subcategory);

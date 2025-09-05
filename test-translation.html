@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الترجمة</title>
+    <script src="js/subcategory-translations.js"></script>
+</head>
+<body>
+    <h1>اختبار ترجمة التصنيفات الفرعية</h1>
+
+    <div id="results"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const testCases = [
+                'mirror-engagement',
+                'mirr-wedding',
+                'koshat-engagement',
+                'cake-birthday',
+                'flowerbouquets-natural',
+                'invitation-wedding',
+                ['mirror-engagement'],
+                ['mirr-wedding', 'mirr-decorative'],
+                'مرايا زفاف',
+                'كوشات خطوبة',
+                'unknown-category'
+            ];
+
+            const resultsDiv = document.getElementById('results');
+
+            testCases.forEach(testCase => {
+                const result = translateSubcategory(testCase);
+                const englishResult = translateSubcategoryToEnglish(testCase);
+
+                const testDiv = document.createElement('div');
+                testDiv.innerHTML = `
+                    <strong>المدخل:</strong> ${JSON.stringify(testCase)}<br>
+                    <strong>الترجمة للعربية:</strong> ${result}<br>
+                    <strong>الترجمة للإنجليزية:</strong> ${englishResult}<br>
+                    <hr>
+                `;
+                resultsDiv.appendChild(testDiv);
+            });
+        });
+    </script>
+</body>
+</html>

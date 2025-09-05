@@ -5390,11 +5390,11 @@
 
             console.log('🔍 Saving selected subcategories for edit:', selectedSubcategories);
 
-            // تحويل التصنيفات الفرعية إلى JSON string للتخزين المتسق
+            // حفظ التصنيفات الفرعية كـ array مباشرة
             let subcategoryValue = null;
             if (selectedSubcategories.length > 0) {
-                subcategoryValue = JSON.stringify(selectedSubcategories);
-                console.log('🔍 Subcategory JSON value for edit:', subcategoryValue);
+                subcategoryValue = selectedSubcategories;
+                console.log('🔍 Subcategory array value for edit:', subcategoryValue);
             }
 
             // الحصول على المدن المختارة
@@ -5465,17 +5465,9 @@
                 // تحديث المصفوفة المحلية بتنسيق البيانات المتسق
                 const requestIndex = window.currentRequests.findIndex(r => r.id == requestId);
                 if (requestIndex !== -1) {
-                    // تحليل التصنيف الفرعي JSON للتخزين المحلي لضمان الاتساق
-                    let parsedSubcategory = null;
-                    if (subcategoryValue) {
-                        try {
-                            parsedSubcategory = JSON.parse(subcategoryValue);
-                            console.log('🔍 [DEBUG] Parsed subcategory for local storage:', parsedSubcategory);
-                        } catch (e) {
-                            console.log('🔍 [DEBUG] Could not parse subcategory for local storage:', e.message);
-                            parsedSubcategory = subcategoryValue;
-                        }
-                    }
+                    // التصنيف الفرعي محفوظ كـ array مباشرة
+                    let parsedSubcategory = subcategoryValue;
+                    console.log('🔍 [DEBUG] Subcategory for local storage:', parsedSubcategory);
 
                     const oldRequest = window.currentRequests[requestIndex];
                     

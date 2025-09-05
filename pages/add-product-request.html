@@ -1503,7 +1503,7 @@
                         description: document.getElementById('request-description').value.trim(),
                         price: document.getElementById('request-price').value || null,
                         category: document.getElementById('request-category').value,
-                        subcategory: Array.from(document.querySelectorAll('input[name="subcategory"]:checked')).map(cb => cb.value).join(', '),
+                        subcategory: Array.from(document.querySelectorAll('input[name="subcategory"]:checked')).map(cb => cb.value),
                         governorate: Array.from(document.querySelectorAll('.governorate-checkbox:checked')).map(cb => cb.value).join(', '), // تحويل إلى نص مفصول بفواصل
                         cities: Array.from(document.querySelectorAll('input[name="cities"]:checked')).map(cb => cb.value).join(', '), // تحويل إلى نص مفصول بفواصل
                         whatsapp: document.getElementById('request-whatsapp').value.trim() || '', // إرسال نص فارغ بدلاً من null

@@ -52,6 +52,7 @@
     <script src="../js/auth-service.js?v=2025-08-22-1"></script>
     <script src="../js/advertising-service.js?v=2025-08-22-1"></script>
     <script src="../js/common-utils.js?v=2025-08-22-1"></script>
+    <script src="../js/subcategory-translations.js?v=2025-08-22-1"></script>
 
     <style>
         :root {
@@ -1424,183 +1425,71 @@
                     ? product.image_urls[0] 
                     : 'https://placehold.co/400x300/EEE/31343C?text=لا+توجد+صورة';
                 
-                // Get subcategory display name
-                let subcategoryName = '';
-                let subcategoryColor = 'bg-blue-500';
-                
+                // Get subcategory display name using the centralized translation system
                 let subcategoryNames = [];
                 let subcategoryColors = [];
-                
-                if (product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0) {
-                    const subcategoryMap = {
-                        // القيم المحفوظة من صفحة إضافة المنتج
-                        'مرايا زفاف': { name: 'مرآة زفاف', color: 'bg-pink-500' },
-                        'مرايا خطوبة': { name: 'مرآة خطوبة', color: 'bg-purple-500' },
-                        'مرايا ديكور': { name: 'مرآة ديكور', color: 'bg-green-500' },
 
-                        // المفاتيح القديمة للتوافقية
-                        'mirr-wedding': { name: 'مرآة زفاف', color: 'bg-pink-500' },
-                        'mirr-engagement': { name: 'مرآة خطوبة', color: 'bg-purple-500' },
-                        'mirr-birthday': { name: 'مرآة عيد ميلاد', color: 'bg-green-500' },
-                        'mirr-decorative': { name: 'مرآة ديكور', color: 'bg-green-500' },
-                        'mirr-custom': { name: 'مرآة مخصصة', color: 'bg-indigo-500' },
-                        'mirr-classic': { name: 'مرآة كلاسيكية', color: 'bg-yellow-500' },
-                        'mirr-modern': { name: 'مرآة عصرية', color: 'bg-blue-500' },
-                        'mirr-luxury': { name: 'مرآة فاخرة', color: 'bg-red-500' },
-
-                        // إضافة المفاتيح البديلة
-                        'mirror-wedding': { name: 'مرآة زفاف', color: 'bg-pink-500' },
-                        'mirror-engagement': { name: 'مرآة خطوبة', color: 'bg-purple-500' },
-                        'mirror-birthday': { name: 'مرآة عيد ميلاد', color: 'bg-green-500' },
-                        'mirror-decorative': { name: 'مرآة ديكور', color: 'bg-green-500' },
-                        'mirror-custom': { name: 'مرآة مخصصة', color: 'bg-indigo-500' },
-                        'mirror-classic': { name: 'مرآة كلاسيكية', color: 'bg-yellow-500' },
-                        'mirror-modern': { name: 'مرآة عصرية', color: 'bg-blue-500' },
-                        'mirror-luxury': { name: 'مرآة فاخرة', color: 'bg-red-500' }
+                // Function to get color based on subcategory name
+                function getSubcategoryColor(subcategoryName) {
+                    const colorMap = {
+                        'مرايا زفاف': 'bg-pink-500',
+                        'مرايا خطوبة': 'bg-purple-500',
+                        'مرايا ديكور': 'bg-green-500',
+                        'مرآة زفاف': 'bg-pink-500',
+                        'مرآة خطوبة': 'bg-purple-500',
+                        'مرآة ديكور': 'bg-green-500',
+                        'مرآة مخصصة': 'bg-indigo-500',
+                        'مرآة كلاسيكية': 'bg-yellow-500',
+                        'مرآة عصرية': 'bg-blue-500',
+                        'مرآة فاخرة': 'bg-red-500'
                     };
-                    
-                    // معالجة جميع التصنيفات الفرعية
-                    product.subcategory.forEach(subcat => {
-                        const subcategoryInfo = subcategoryMap[subcat];
-                        if (subcategoryInfo) {
-                            subcategoryNames.push(subcategoryInfo.name);
-                            subcategoryColors.push(subcategoryInfo.color);
+                    return colorMap[subcategoryName] || 'bg-gray-500';
+                }
+
+                if (product.subcategory) {
+                    let subcategories = [];
+
+                    if (Array.isArray(product.subcategory)) {
+                        subcategories = product.subcategory;
+                    } else if (typeof product.subcategory === 'string') {
+                        try {
+                            let cleanString = product.subcategory.trim();
+                            // إزالة علامات الاقتباس الإضافية إذا كانت موجودة
+                            if (cleanString.startsWith('"') && cleanString.endsWith('"')) {
+                                cleanString = cleanString.slice(1, -1);
+                            }
+                            if (cleanString.startsWith("'") && cleanString.endsWith("'")) {
+                                cleanString = cleanString.slice(1, -1);
+                            }
+
+                            const parsed = JSON.parse(cleanString);
+                            subcategories = Array.isArray(parsed) ? parsed : [cleanString];
+                        } catch (e) {
+                            // تنظيف النص من علامات الاقتباس الإضافية
+                            let cleanText = product.subcategory.trim();
+                            if (cleanText.startsWith('"') && cleanText.endsWith('"')) {
+                                cleanText = cleanText.slice(1, -1);
+                            }
+                            if (cleanText.startsWith("'") && cleanText.endsWith("'")) {
+                                cleanText = cleanText.slice(1, -1);
+                            }
+                            subcategories = cleanText.split(',').map(s => s.trim()).filter(Boolean);
+                        }
+                    }
+
+                    subcategories.forEach(sub => {
+                        const translatedName = translateSubcategory(sub);
+                        if (translatedName && !subcategoryNames.includes(translatedName)) {
+                            subcategoryNames.push(translatedName);
+                            subcategoryColors.push(getSubcategoryColor(translatedName));
                         }
                     });
-                } else if (product.subcategory && typeof product.subcategory === 'string') {
-                    // Handle case where subcategory is a JSON string
-                    try {
-                        const subcategoryArray = JSON.parse(product.subcategory);
-                        
-                        if (Array.isArray(subcategoryArray) && subcategoryArray.length > 0) {
-                            const subcategoryMap = {
-                                // القيم المحفوظة من صفحة إضافة المنتج
-                                'مرايا زفاف': { name: 'مرآة زفاف', color: 'bg-pink-500' },
-                                'مرايا خطوبة': { name: 'مرآة خطوبة', color: 'bg-purple-500' },
-                                'مرايا ديكور': { name: 'مرآة ديكور', color: 'bg-green-500' },
-
-                                // المفاتيح القديمة للتوافقية
-                                'mirr-wedding': { name: 'مرآة زفاف', color: 'bg-pink-500' },
-                                'mirr-engagement': { name: 'مرآة خطوبة', color: 'bg-purple-500' },
-                                'mirr-birthday': { name: 'مرآة عيد ميلاد', color: 'bg-green-500' },
-                                'mirr-decorative': { name: 'مرآة ديكور', color: 'bg-green-500' },
-                                'mirr-custom': { name: 'مرآة مخصصة', color: 'bg-indigo-500' },
-                                'mirr-classic': { name: 'مرآة كلاسيكية', color: 'bg-yellow-500' },
-                                'mirr-modern': { name: 'مرآة عصرية', color: 'bg-blue-500' },
-                                'mirr-luxury': { name: 'مرآة فاخرة', color: 'bg-red-500' },
-
-                                // إضافة المفاتيح البديلة
-                                'mirror-wedding': { name: 'مرآة زفاف', color: 'bg-pink-500' },
-                                'mirror-engagement': { name: 'مرآة خطوبة', color: 'bg-purple-500' },
-                                'mirror-birthday': { name: 'مرآة عيد ميلاد', color: 'bg-green-500' },
-                                'mirror-decorative': { name: 'مرآة ديكور', color: 'bg-green-500' },
-                                'mirror-custom': { name: 'مرآة مخصصة', color: 'bg-indigo-500' },
-                                'mirror-classic': { name: 'مرآة كلاسيكية', color: 'bg-yellow-500' },
-                                'mirror-modern': { name: 'مرآة عصرية', color: 'bg-blue-500' },
-                                'mirror-luxury': { name: 'مرآة فاخرة', color: 'bg-red-500' }
-                            };
-                            
-                            // معالجة جميع التصنيفات الفرعية
-                            subcategoryArray.forEach(subcat => {
-                                const subcategoryInfo = subcategoryMap[subcat];
-                                if (subcategoryInfo) {
-                                    subcategoryNames.push(subcategoryInfo.name);
-                                    subcategoryColors.push(subcategoryInfo.color);
-                                }
-                            });
-                        }
-                    } catch (error) {
-                        console.error('🔍 Error parsing subcategory JSON:', error);
-                    }
                 }
-                
-                // إذا لم توجد تصنيفات فرعية، استخدم قيم افتراضية
+
+                // If no subcategories found, use default
                 if (subcategoryNames.length === 0) {
-                                    // محاولة استخراج التصنيف من اسم المنتج أو الوصف
-                if (product.title && (product.title.toLowerCase().includes('زفاف') || product.title.toLowerCase().includes('عرس') || product.title.toLowerCase().includes('wedding') || product.title.toLowerCase().includes('عرائس') || product.title.toLowerCase().includes('مرايا زفاف'))) {
-                    subcategoryNames = ['مرآة زفاف'];
-                    subcategoryColors = ['bg-pink-500'];
-                } else if (product.title && (product.title.toLowerCase().includes('خطوبة') || product.title.toLowerCase().includes('خطبة') || product.title.toLowerCase().includes('engagement') || product.title.toLowerCase().includes('خطيب') || product.title.toLowerCase().includes('مرايا خطوبة'))) {
-                    subcategoryNames = ['مرآة خطوبة'];
-                    subcategoryColors = ['bg-purple-500'];
-                } else if (product.title && (product.title.toLowerCase().includes('ديكور') || product.title.toLowerCase().includes('تزيين') || product.title.toLowerCase().includes('decorative') || product.title.toLowerCase().includes('زينة') || product.title.toLowerCase().includes('مرايا ديكور'))) {
-                    subcategoryNames = ['مرآة ديكور'];
-                    subcategoryColors = ['bg-green-500'];
-                } else if (product.title && (product.title.toLowerCase().includes('مخصص') || product.title.toLowerCase().includes('custom') || product.title.toLowerCase().includes('خاص'))) {
-                    subcategoryNames = ['مرآة مخصصة'];
-                    subcategoryColors = ['bg-indigo-500'];
-                } else if (product.title && (product.title.toLowerCase().includes('كلاسيك') || product.title.toLowerCase().includes('classic') || product.title.toLowerCase().includes('تقليدي'))) {
-                    subcategoryNames = ['مرآة كلاسيكية'];
-                    subcategoryColors = ['bg-yellow-500'];
-                } else if (product.title && (product.title.toLowerCase().includes('عصرية') || product.title.toLowerCase().includes('modern') || product.title.toLowerCase().includes('حديث'))) {
-                    subcategoryNames = ['مرآة عصرية'];
-                    subcategoryColors = ['bg-blue-500'];
-                } else if (product.title && (product.title.toLowerCase().includes('فاخر') || product.title.toLowerCase().includes('luxury') || product.title.toLowerCase().includes('مميز'))) {
-                    subcategoryNames = ['مرآة فاخرة'];
-                    subcategoryColors = ['bg-red-500'];
-                } else {
-                    // محاولة استخراج من الوصف إذا كان موجوداً
-                    if (product.description) {
-                        const desc = product.description.toLowerCase();
-                        if (desc.includes('زفاف') || desc.includes('عرس') || desc.includes('wedding') || desc.includes('مرايا زفاف')) {
-                            subcategoryNames = ['مرآة زفاف'];
-                            subcategoryColors = ['bg-pink-500'];
-                        } else if (desc.includes('خطوبة') || desc.includes('خطبة') || desc.includes('engagement') || desc.includes('مرايا خطوبة')) {
-                            subcategoryNames = ['مرآة خطوبة'];
-                            subcategoryColors = ['bg-purple-500'];
-                        } else if (desc.includes('ديكور') || desc.includes('تزيين') || desc.includes('decorative') || desc.includes('مرايا ديكور')) {
-                            subcategoryNames = ['مرآة ديكور'];
-                            subcategoryColors = ['bg-green-500'];
-                        } else if (desc.includes('مخصص') || desc.includes('custom')) {
-                            subcategoryNames = ['مرآة مخصصة'];
-                            subcategoryColors = ['bg-indigo-500'];
-                        } else if (desc.includes('كلاسيك') || desc.includes('classic')) {
-                            subcategoryNames = ['مرآة كلاسيكية'];
-                            subcategoryColors = ['bg-yellow-500'];
-                        } else if (desc.includes('عصرية') || desc.includes('modern')) {
-                            subcategoryNames = ['مرآة عصرية'];
-                            subcategoryColors = ['bg-blue-500'];
-                        } else if (desc.includes('فاخر') || desc.includes('luxury')) {
-                            subcategoryNames = ['مرآة فاخرة'];
-                            subcategoryColors = ['bg-red-500'];
-                        } else {
-                            // محاولة استخراج من الكلمات المفتاحية
-                            const keywords = ['زفاف', 'عرس', 'خطوبة', 'خطبة', 'ديكور', 'تزيين', 'مخصص', 'كلاسيك', 'عصرية', 'فاخر', 'مرايا زفاف', 'مرايا خطوبة', 'مرايا ديكور'];
-                            const foundKeyword = keywords.find(keyword => desc.includes(keyword));
-                            if (foundKeyword) {
-                                if (foundKeyword.includes('زفاف') || foundKeyword.includes('عرس') || foundKeyword.includes('مرايا زفاف')) {
-                                    subcategoryNames = ['مرآة زفاف'];
-                                    subcategoryColors = ['bg-pink-500'];
-                                } else if (foundKeyword.includes('خطوبة') || foundKeyword.includes('خطبة') || foundKeyword.includes('مرايا خطوبة')) {
-                                    subcategoryNames = ['مرآة خطوبة'];
-                                    subcategoryColors = ['bg-purple-500'];
-                                } else if (foundKeyword.includes('ديكور') || foundKeyword.includes('تزيين') || foundKeyword.includes('مرايا ديكور')) {
-                                    subcategoryNames = ['مرآة ديكور'];
-                                    subcategoryColors = ['bg-green-500'];
-                                } else if (foundKeyword.includes('مخصص')) {
-                                    subcategoryNames = ['مرآة مخصصة'];
-                                    subcategoryColors = ['bg-indigo-500'];
-                                } else if (foundKeyword.includes('كلاسيك')) {
-                                    subcategoryNames = ['مرآة كلاسيكية'];
-                                    subcategoryColors = ['bg-yellow-500'];
-                                } else if (foundKeyword.includes('عصرية')) {
-                                    subcategoryNames = ['مرآة عصرية'];
-                                    subcategoryColors = ['bg-blue-500'];
-                                } else if (foundKeyword.includes('فاخر')) {
-                                    subcategoryNames = ['مرآة فاخرة'];
-                                    subcategoryColors = ['bg-red-500'];
-                                }
-                            } else {
-                                subcategoryNames = ['مرآة'];
-                                subcategoryColors = ['bg-gray-500'];
-                            }
-                        }
-                    } else {
-                        // إذا لم يكن هناك وصف، استخدم التصنيف العام
-                        subcategoryNames = ['مرآة'];
-                        subcategoryColors = ['bg-gray-500'];
-                    }
-                }
+                    subcategoryNames = ['مرآة'];
+                    subcategoryColors = ['bg-gray-500'];
                 }
                 
 
